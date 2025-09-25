@@ -1,0 +1,27 @@
+services:
+  ucsmconecta_app:
+    build: ucsmconecta
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://ucsmconecta_bd:5432/ucsmconecta_bd?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DB_USERNAME: postgres
+      DB_PASSWORD: ketsunoks@365
+    restart: always
+    depends_on:
+      ucsmconecta_bd:
+        condition: service_healthy
+  ucsmconecta_bd:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ketsunoks@365
+      POSTGRES_DB: ucsmconecta_bd
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ucsmconecta_bd"]
+      timeout: 10s
+      retries: 10
