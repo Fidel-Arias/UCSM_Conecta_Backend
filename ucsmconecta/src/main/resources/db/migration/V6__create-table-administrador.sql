@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "Administrador" (
 	"id" serial NOT NULL UNIQUE,
-	"nombre" varchar(40) NOT NULL,
+	"nombres" varchar(40) NOT NULL,
 	"a_paterno" varchar(25) NOT NULL,
 	"a_materno" varchar(25) NOT NULL,
 	"email" varchar(255) NOT NULL UNIQUE,
