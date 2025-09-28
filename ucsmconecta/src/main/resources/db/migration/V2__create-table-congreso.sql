@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "Congreso" (
 	"fecha_fin" date NOT NULL,
 	"asistencia_total" bigint DEFAULT 0,
 	"n_refrigerio" bigint DEFAULT 0,
-	"estado" varchar(10) NOT NULL DEFAULT 'ACTIVO',
+	"estado" bool NOT NULL DEFAULT TRUE,
 	"escuela_profesional_id" bigint NOT NULL,
 	PRIMARY KEY ("id")
 );
