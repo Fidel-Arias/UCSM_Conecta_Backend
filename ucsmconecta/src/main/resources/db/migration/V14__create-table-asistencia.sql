@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS "Asistencia" (
 	"hora" time without time zone NOT NULL DEFAULT CURRENT_TIME,
 	"participante_id" bigint NOT NULL,
 	"bloque_id" bigint NOT NULL,
+    "congreso_id" bigint NOT NULL,
 	PRIMARY KEY ("id")
 );

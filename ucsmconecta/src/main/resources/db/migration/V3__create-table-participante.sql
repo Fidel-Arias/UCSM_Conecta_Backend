@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS "Participante" (
 	"email" varchar(255) NOT NULL UNIQUE,
 	"tipo_participante_id" bigint NOT NULL,
 	"escuela_profesional_id" bigint NOT NULL,
+	"congreso_id" bigint NOT NULL,
 	"estado" varchar(15) NOT NULL DEFAULT 'MATRICULADO',
 	"qr_code" varchar(255),
 	PRIMARY KEY ("id")
