@@ -1,12 +1,11 @@
-package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Refrigerio
+package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Dia
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
-import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import jakarta.persistence.*
 
-@Entity(name = "Refrigerio")
-@Table(name = "Refrigerio")
-open class Refrigerio(
+@Entity(name = "Dia")
+@Table(name = "Dia")
+open class Dia(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -19,23 +18,21 @@ open class Refrigerio(
     open var estado: Boolean = true,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "participante_id", nullable = false)
-    open val participante: Participante,
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "congreso_id", nullable = false)
     open val congreso: Congreso
-) {
+){
     constructor(
         fecha: String?,
         estado: Boolean,
-        participante: Participante,
         congreso: Congreso
     ) : this(
         id = null,
         fecha = fecha,
         estado = estado,
-        participante = participante,
         congreso = congreso
     )
+
+    override fun toString(): String {
+        return "Dia(id=$id, fecha=$fecha, estado=$estado, congreso=$congreso)"
+    }
 }
