@@ -1,7 +1,9 @@
-package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Valoracion
+package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.valoracion
 
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import jakarta.persistence.*
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Entity(name = "Comentario")
 @Table(name = "Comentario")
@@ -15,7 +17,7 @@ open class Comentario(
     open var texto: String? = null,
 
     @Column(name = "fecha", nullable = false)
-    open var fecha: String? = null,
+    open var fecha: LocalDate? = null,
 
     @Column(name = "estado", nullable = false)
     open var estado: Boolean = true,
@@ -26,7 +28,7 @@ open class Comentario(
 ) {
     constructor(
         texto: String?,
-        fecha: String?,
+        fecha: LocalDate?,
         participante: Participante
     ) : this(
         id = null,

@@ -1,7 +1,7 @@
-package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Valoracion
+package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.valoracion
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
-import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Ponencias.Ponencia
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponencia
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import jakarta.persistence.*
 

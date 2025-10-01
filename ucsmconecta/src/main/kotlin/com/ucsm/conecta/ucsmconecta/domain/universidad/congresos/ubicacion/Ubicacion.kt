@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Ubicacion
+package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ubicacion
 
 import jakarta.persistence.*
 

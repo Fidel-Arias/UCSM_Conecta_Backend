@@ -1,9 +1,10 @@
-package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Bloques
+package com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques
 
-import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Dia.Dia
-import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Ponencias.Ponencia
-import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Ubicacion.Ubicacion
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.dia.Dia
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponencia
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ubicacion.Ubicacion
 import jakarta.persistence.*
+import java.time.LocalTime
 
 @Entity(name = "Bloque")
 @Table(name = "Bloque")
@@ -14,10 +15,10 @@ open class Bloque(
     open val id: Long? = null,
 
     @Column(name = "hora_inicio", nullable = false)
-    open var horaInicio: String? = null,
+    open var horaInicio: LocalTime? = null,
 
     @Column(name = "hora_final", nullable = false)
-    open var horaFinal: String? = null,
+    open var horaFinal: LocalTime? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dia_d", nullable = false)
@@ -32,8 +33,8 @@ open class Bloque(
     open var ponencia: Ponencia
 ) {
     constructor(
-        horaInicio: String?,
-        horaFinal: String?,
+        horaInicio: LocalTime?,
+        horaFinal: LocalTime?,
         dia: Dia,
         ubicacion: Ubicacion,
         ponencia: Ponencia
