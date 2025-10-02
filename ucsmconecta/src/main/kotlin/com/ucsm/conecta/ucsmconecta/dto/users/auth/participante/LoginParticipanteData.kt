@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.users.authentication.participante
+package com.ucsm.conecta.ucsmconecta.dto.users.auth.participante
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty

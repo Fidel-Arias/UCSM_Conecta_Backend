@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.users.authentication.admin
+package com.ucsm.conecta.ucsmconecta.dto.users.auth.admin
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank

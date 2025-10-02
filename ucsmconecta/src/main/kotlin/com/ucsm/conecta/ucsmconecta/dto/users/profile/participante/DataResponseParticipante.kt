@@ -5,11 +5,11 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesiona
 data class DataResponseParticipante(
     val id: Long,
     val nombres: String,
-    val aPaterno: String,
-    val aMaterno: String,
-    val estado: Boolean,
+    val apPaterno: String,
+    val apMaterno: String,
+    val estado: String,
     val nDocumento: String,
-    val escuelaProfesional: EscuelaProfesional,
-    private val qrCode: String
-) {
-}
+    val tipoParticipanteId: Long?,
+    val escuelaProfesionalId: Long?,
+    private val qrCode: String?
+)
