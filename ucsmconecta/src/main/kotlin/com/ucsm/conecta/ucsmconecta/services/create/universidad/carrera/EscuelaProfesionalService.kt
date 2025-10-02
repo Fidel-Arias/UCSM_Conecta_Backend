@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired
 class EscuelaProfesionalService @Autowired constructor(
     private val escuelaProfesionalRepository: EscuelaProfesionalRepository
 ){
-    fun searchById(id: Long): EscuelaProfesional {
-        return escuelaProfesionalRepository.findById(id)
-            .orElseThrow { RuntimeException("Escuela Profesional no encontrada") }
-    }
+    fun searchById(id: Long): EscuelaProfesional = escuelaProfesionalRepository.findById(id)
+        .orElseThrow { RuntimeException("Escuela Profesional no encontrada") }
+
+    fun searchByNombre(nombre: String): EscuelaProfesional = escuelaProfesionalRepository.findByNombre(nombre)
+        .orElseThrow { RuntimeException("Escuela Profesional no encontrada") }
 }

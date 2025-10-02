@@ -39,6 +39,14 @@ class ParticipanteService @Autowired constructor(
         ))
     }
 
+    fun searchByNumDocumento(numDocumento: String): Participante = participanteRepository.findByNumDocumento(numDocumento)
+        .orElseThrow { RuntimeException("Participante no encontrado por su numero de documento") }
+
+    fun searchByNombres(nombres: String): List<Participante> = participanteRepository.findByName(nombres)
+
+    fun searchByApellidos(apPaterno: String, apMaterno: String) = participanteRepository.findByApellidos(apMaterno, apMaterno)
+        .orElseThrow { RuntimeException("Participante no encontrado por apellidos") }
+
     fun getAllParticipantes(): List<Participante> = participanteRepository.findAll()
 
     fun getParticipanteById(id: Long): Participante = participanteRepository.findById(id)
