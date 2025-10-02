@@ -1,0 +1,14 @@
+package com.ucsm.conecta.ucsmconecta.services.create.universidad.carrera
+
+import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
+import com.ucsm.conecta.ucsmconecta.repository.universidad.carrera.EscuelaProfesionalRepository
+import org.springframework.beans.factory.annotation.Autowired
+
+class EscuelaProfesionalService @Autowired constructor(
+    private val escuelaProfesionalRepository: EscuelaProfesionalRepository
+){
+    fun searchById(id: Long): EscuelaProfesional {
+        return escuelaProfesionalRepository.findById(id)
+            .orElseThrow { RuntimeException("Escuela Profesional no encontrada") }
+    }
+}
