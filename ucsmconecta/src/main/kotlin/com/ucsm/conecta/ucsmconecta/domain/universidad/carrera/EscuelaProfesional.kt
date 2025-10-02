@@ -7,13 +7,13 @@ import jakarta.persistence.*
 open class EscuelaProfesional(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open val id: Long? = null,
+    open val id: Long?,
 
-    @Column(nullable = false)
-    open var nombre: String? = null
+    @Column(nullable = false, length = 255)
+    open var nombre: String
 ) {
     constructor(
-        nombre: String?
+        nombre: String
     ) : this(
         null,
         nombre

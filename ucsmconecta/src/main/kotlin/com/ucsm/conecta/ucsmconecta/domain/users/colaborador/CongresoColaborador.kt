@@ -9,7 +9,7 @@ open class CongresoColaborador(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "colaborador_id", nullable = false)

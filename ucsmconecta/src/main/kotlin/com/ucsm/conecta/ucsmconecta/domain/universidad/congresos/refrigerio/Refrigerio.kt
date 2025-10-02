@@ -11,13 +11,13 @@ open class Refrigerio(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
 
     @Column(name = "fecha", nullable = false)
-    open var fecha: LocalDate? = null,
+    open var fecha: LocalDate,
 
     @Column(name = "estado", nullable = false)
-    open var estado: Boolean = true,
+    open var estado: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participante_id", nullable = false)
@@ -28,7 +28,7 @@ open class Refrigerio(
     open val congreso: Congreso
 ) {
     constructor(
-        fecha: LocalDate?,
+        fecha: LocalDate,
         estado: Boolean,
         participante: Participante,
         congreso: Congreso

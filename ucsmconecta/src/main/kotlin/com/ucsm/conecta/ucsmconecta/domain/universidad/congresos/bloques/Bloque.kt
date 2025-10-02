@@ -12,13 +12,13 @@ open class Bloque(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
 
     @Column(name = "hora_inicio", nullable = false)
-    open var horaInicio: LocalTime? = null,
+    open var horaInicio: LocalTime,
 
     @Column(name = "hora_final", nullable = false)
-    open var horaFinal: LocalTime? = null,
+    open var horaFinal: LocalTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dia_d", nullable = false)
@@ -33,8 +33,8 @@ open class Bloque(
     open var ponencia: Ponencia
 ) {
     constructor(
-        horaInicio: LocalTime?,
-        horaFinal: LocalTime?,
+        horaInicio: LocalTime,
+        horaFinal: LocalTime,
         dia: Dia,
         ubicacion: Ubicacion,
         ponencia: Ponencia

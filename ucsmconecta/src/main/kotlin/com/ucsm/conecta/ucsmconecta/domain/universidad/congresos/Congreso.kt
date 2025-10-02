@@ -10,26 +10,50 @@ open class Congreso(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
+
+    @Column(name = "nombre", nullable = false, length = 255)
+    open var nombre: String,
 
     @Column(name = "fecha_inicio", nullable = false)
-    open var fechaInicio: LocalDate? = null,
+    open var fechaInicio: LocalDate,
 
     @Column(name = "fecha_fin", nullable = false)
-    open var fechaFin: LocalDate? = null,
+    open var fechaFin: LocalDate,
 
     @Column(name = "asistencia_total", nullable = false)
-    open var numAsistencias: Int? = null,
+    open var numAsistencias: Int,
 
     @Column(name = "n_refrigerio", nullable = false)
-    open var numRefrigerios: Int? = null,
+    open var numRefrigerios: Int,
 
     @Column(name = "estado", nullable = false)
-    open var estado: Boolean = true,
+    open var estado: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id", nullable = false)
     open var escuelaProfesional: EscuelaProfesional
 ) {
+    constructor(
+        nombre: String,
+        fechaInicio: LocalDate,
+        fechaFin: LocalDate,
+        numAsistencias: Int,
+        numRefrigerios: Int,
+        estado: Boolean,
+        escuelaProfesional: EscuelaProfesional
+    ) : this(
+        id = null,
+        nombre = nombre,
+        fechaInicio = fechaInicio,
+        fechaFin = fechaFin,
+        numAsistencias = numAsistencias,
+        numRefrigerios = numRefrigerios,
+        estado = estado,
+        escuelaProfesional = escuelaProfesional
+    )
 
+    override fun toString(): String {
+        return "Congreso(id=$id, nombre='$nombre', fechaInicio=$fechaInicio, fechaFin=$fechaFin, numAsistencias=$numAsistencias, numRefrigerios=$numRefrigerios, estado=$estado, escuelaProfesional=${escuelaProfesional.id})"
+    }
 }

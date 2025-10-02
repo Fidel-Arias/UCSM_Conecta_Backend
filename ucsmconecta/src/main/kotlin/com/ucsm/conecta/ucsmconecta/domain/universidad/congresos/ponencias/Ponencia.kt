@@ -10,13 +10,13 @@ open class Ponencia(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
 
-    @Column(name = "nombre", nullable = false)
-    open var nombre: String? = null,
+    @Column(name = "nombre", nullable = false, length = 255)
+    open var nombre: String,
 
     @Column(name = "estado", nullable = false)
-    open var estado: Boolean = true,
+    open var estado: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ponente_id")
@@ -28,7 +28,7 @@ open class Ponencia(
 
 ) {
     constructor(
-        nombre: String?,
+        nombre: String,
         estado: Boolean,
         ponente: Ponente,
         congreso: Congreso

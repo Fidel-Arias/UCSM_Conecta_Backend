@@ -13,13 +13,13 @@ open class Asistencia(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
 
     @Column(name = "fecha", nullable = false)
-    open var fecha: LocalDate? = null,
+    open var fecha: LocalDate,
 
     @Column(name = "hora", nullable = false)
-    open var hora: LocalTime? = null,
+    open var hora: LocalTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participante_id", nullable = false)
@@ -34,8 +34,8 @@ open class Asistencia(
     open val congreso: Congreso
 ) {
     constructor(
-        fecha: LocalDate?,
-        hora: LocalTime?,
+        fecha: LocalDate,
+        hora: LocalTime,
         participante: Participante,
         bloque: Bloque,
         congreso: Congreso

@@ -9,36 +9,36 @@ open class Colaborador(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open var id: Long? = null,
+    open var id: Long?,
 
     @Column(name = "nombres", nullable = false)
-    open var nombres: String? = null,
+    open var nombres: String,
 
     @Column(name = "a_paterno", nullable = false)
-    open var aPaterno: String? = null,
+    open var aPaterno: String,
 
     @Column(name = "a_materno", nullable = false)
-    open var aMaterno: String? = null,
+    open var aMaterno: String,
 
     @Column(name = "email", nullable = false, unique = true)
-    open val email: String? = null,
+    open val email: String,
 
     @Column(name = "password", nullable = false)
-    private var password: String? = null,
+    private var password: String,
 
     @Column(name = "estado", nullable = false)
-    open var estado: Boolean = true,
+    open var estado: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id")
     open var escuelaProfesional: EscuelaProfesional
 ) {
     constructor(
-        nombres: String?,
-        aPaterno: String?,
-        aMaterno: String?,
-        email: String?,
-        password: String?,
+        nombres: String,
+        aPaterno: String,
+        aMaterno: String,
+        email: String,
+        password: String,
         estado: Boolean,
         escuelaProfesional: EscuelaProfesional
     ) : this(
@@ -51,4 +51,8 @@ open class Colaborador(
         estado = estado,
         escuelaProfesional = escuelaProfesional
     )
+
+    override fun toString(): String {
+        return "Colaborador(id=$id, nombres='$nombres', aPaterno='$aPaterno', aMaterno='$aMaterno', email='$email', estado=$estado, escuelaProfesional=${escuelaProfesional.id})"
+    }
 }

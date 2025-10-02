@@ -11,10 +11,10 @@ open class Votacion(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long,
 
     @Column(name = "score", nullable = false)
-    open var score: Int? = null,
+    open var score: Int,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participante_id", nullable = false)
@@ -28,4 +28,16 @@ open class Votacion(
     @JoinColumn(name = "congreso_id", nullable = false)
     open val congreso: Congreso
 ) {
+    constructor(
+        score: Int,
+        participante: Participante,
+        ponencia: Ponencia,
+        congreso: Congreso
+    ) : this(
+        id = 0,
+        score = score,
+        participante = participante,
+        ponencia = ponencia,
+        congreso = congreso
+    )
 }

@@ -10,20 +10,20 @@ open class Dia(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
 
     @Column(name = "fecha", nullable = false)
-    open var fecha: LocalDate? = null,
+    open var fecha: LocalDate,
 
     @Column(name = "estado", nullable = false)
-    open var estado: Boolean = true,
+    open var estado: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "congreso_id", nullable = false)
     open val congreso: Congreso
 ){
     constructor(
-        fecha: LocalDate?,
+        fecha: LocalDate,
         estado: Boolean,
         congreso: Congreso
     ) : this(

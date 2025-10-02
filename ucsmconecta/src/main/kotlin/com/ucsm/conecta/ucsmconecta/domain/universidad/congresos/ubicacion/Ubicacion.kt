@@ -8,16 +8,16 @@ open class Ubicacion(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long? = null,
+    open val id: Long?,
 
     @Column(name = "nombre", nullable = false)
-    open var nombre: String? = null,
+    open var nombre: String,
 
     @Column(name = "estado", nullable = false)
-    open var estado: Boolean = true
+    open var estado: Boolean
 ) {
     constructor(
-        nombre: String?,
+        nombre: String,
         estado: Boolean
     ) : this(
         id = null,
