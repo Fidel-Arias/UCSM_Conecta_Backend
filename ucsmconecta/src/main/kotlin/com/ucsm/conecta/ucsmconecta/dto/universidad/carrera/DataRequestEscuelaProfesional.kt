@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.universidad.carreras
+package com.ucsm.conecta.ucsmconecta.dto.universidad.carrera
 
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.NotBlank

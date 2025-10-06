@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.services.create.universidad.carrera
+package com.ucsm.conecta.ucsmconecta.services.universidad.carrera
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.repository.universidad.carrera.EscuelaProfesionalRepository

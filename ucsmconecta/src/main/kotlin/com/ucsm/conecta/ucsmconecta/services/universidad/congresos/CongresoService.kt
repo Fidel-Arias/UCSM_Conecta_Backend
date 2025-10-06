@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.services.create.universidad.congresos
+package com.ucsm.conecta.ucsmconecta.services.universidad.congresos
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.CongresoRepository

@@ -1,10 +1,10 @@
-package com.ucsm.conecta.ucsmconecta.services.create.users
+package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
-import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataRequestParticipante
-import com.ucsm.conecta.ucsmconecta.services.create.universidad.carrera.EscuelaProfesionalService
-import com.ucsm.conecta.ucsmconecta.services.create.universidad.congresos.CongresoService
+import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
+import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.repository.users.participante.ParticipanteRepository
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,26 +16,26 @@ class ParticipanteService @Autowired constructor(
     private val escuelaProfesionalService: EscuelaProfesionalService,
     private val congresoService: CongresoService
 ){
-    fun createParticipante(@RequestBody @Valid dataRequestParticipante: DataRequestParticipante): Participante {
+    fun createParticipante(@RequestBody @Valid registerParticipanteData: RegisterParticipanteData): Participante {
         // Buscar entidades relacionadas
-        val tipoParticipante: TipoParticipante = tipoParticipanteService.searchById(dataRequestParticipante.tipoParticipanteId)
+        val tipoParticipante: TipoParticipante = tipoParticipanteService.searchById(registerParticipanteData.tipoParticipanteId)
 
-        val escuelaProfesional = escuelaProfesionalService.searchById(dataRequestParticipante.escuelaProfesionalId)
+        val escuelaProfesional = escuelaProfesionalService.searchById(registerParticipanteData.escuelaProfesionalId)
 
-        val congreso = congresoService.searchById(dataRequestParticipante.congresoId)
+        val congreso = congresoService.searchById(registerParticipanteData.congresoId)
 
         // Crear y guardar el participante
         return participanteRepository.save(Participante(
-            nombres = dataRequestParticipante.nombres,
-            apPaterno = dataRequestParticipante.apPaterno,
-            apMaterno = dataRequestParticipante.apMaterno,
-            numDocumento = dataRequestParticipante.numDocumento,
-            email = dataRequestParticipante.email,
+            nombres = registerParticipanteData.nombres,
+            apPaterno = registerParticipanteData.apPaterno,
+            apMaterno = registerParticipanteData.apMaterno,
+            numDocumento = registerParticipanteData.numDocumento,
+            email = registerParticipanteData.email,
             tipoParticipante = tipoParticipante,
             escuelaProfesional = escuelaProfesional,
             congreso = congreso,
-            estado = dataRequestParticipante.estado,
-            qr_code = dataRequestParticipante.qr_code
+            estado = registerParticipanteData.estado,
+            qr_code = registerParticipanteData.qr_code
         ))
     }
 
