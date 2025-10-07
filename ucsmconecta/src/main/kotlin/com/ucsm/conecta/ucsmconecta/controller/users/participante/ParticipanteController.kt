@@ -1,9 +1,9 @@
 package com.ucsm.conecta.ucsmconecta.controller.users.participante
 
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
-import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataRequestParticipante
+import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseParticipante
-import com.ucsm.conecta.ucsmconecta.services.create.users.ParticipanteService
+import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,9 +26,9 @@ class ParticipanteController {
 
     @PostMapping
     @Transactional
-    fun createParticipante(@RequestBody @Valid dataRequestParticipante: DataRequestParticipante, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<Participante> {
+    fun createParticipante(@RequestBody @Valid registerParticipanteData: RegisterParticipanteData, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<Participante> {
         // Crear el participante
-        val participante = participanteService.createParticipante(dataRequestParticipante)
+        val participante = participanteService.createParticipante(registerParticipanteData)
 
         // Se pasan los datos creados a DataResponseParticipante para visualizarlos
         val dataResponseParticipante = DataResponseParticipante(
