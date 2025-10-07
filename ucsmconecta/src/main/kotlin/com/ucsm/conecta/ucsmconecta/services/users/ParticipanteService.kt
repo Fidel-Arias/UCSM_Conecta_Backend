@@ -8,8 +8,10 @@ import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoServi
 import com.ucsm.conecta.ucsmconecta.repository.users.participante.ParticipanteRepository
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
 
+@Service
 class ParticipanteService @Autowired constructor(
     private val participanteRepository: ParticipanteRepository,
     private val tipoParticipanteService: TipoParticipanteService,
