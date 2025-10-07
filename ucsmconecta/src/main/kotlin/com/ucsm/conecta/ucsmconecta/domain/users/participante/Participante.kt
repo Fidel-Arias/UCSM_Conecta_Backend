@@ -27,17 +27,14 @@ open class Participante(
     @Column(nullable = false, unique = true, length = 255)
     open val email: String,
 
-    @Column(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tipo_participante_id")
     open val tipoParticipante: TipoParticipante,
 
-    @Column(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id")
     open var escuelaProfesional: EscuelaProfesional,
 
-    @Column(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "congreso_id")
     open val congreso: Congreso,
