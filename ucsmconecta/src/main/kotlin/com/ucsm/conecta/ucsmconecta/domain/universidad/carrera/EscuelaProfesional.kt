@@ -9,7 +9,7 @@ open class EscuelaProfesional(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open val id: Long?,
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     open var nombre: String
 ) {
     constructor(

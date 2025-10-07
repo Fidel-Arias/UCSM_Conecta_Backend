@@ -11,16 +11,16 @@ open class Administrador(
     @Column(name = "id")
     open val id: Long?,
 
-    @Column(name = "nombres", nullable = false)
+    @Column(name = "nombres", nullable = false, length = 40)
     open var nombres: String,
 
-    @Column(name = "a_paterno", nullable = false)
+    @Column(name = "a_paterno", nullable = false, length = 25)
     open var aPaterno: String,
 
-    @Column(name = "a_materno", nullable = false)
+    @Column(name = "a_materno", nullable = false, length = 25)
     open var aMaterno: String,
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true, length = 255)
     open val email: String,
 
     @Column(name = "password", nullable = false)

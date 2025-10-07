@@ -24,7 +24,7 @@ open class Participante(
     @Column(nullable = false, unique = true, length = 20)
     open val numDocumento: String,
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true)
     open val email: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,7 +42,7 @@ open class Participante(
     @Column(nullable = false, length = 15)
     open var estado: String,
 
-    @Column(nullable = true, length = 255)
+    @Column(nullable = true)
     open var qr_code: String? = null,
 ) {
     constructor(

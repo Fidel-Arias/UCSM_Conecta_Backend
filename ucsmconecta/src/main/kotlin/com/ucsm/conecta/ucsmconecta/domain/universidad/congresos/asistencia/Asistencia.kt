@@ -15,10 +15,10 @@ open class Asistencia(
     @Column(name = "id")
     open val id: Long?,
 
-    @Column(name = "fecha", nullable = false)
+    @Column(name = "fecha", nullable = false, columnDefinition = "DATE DEFAULT CURRENT_DATE")
     open var fecha: LocalDate,
 
-    @Column(name = "hora", nullable = false)
+    @Column(name = "hora", nullable = false, columnDefinition = "TIME DEFAULT CURRENT_TIME")
     open var hora: LocalTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
