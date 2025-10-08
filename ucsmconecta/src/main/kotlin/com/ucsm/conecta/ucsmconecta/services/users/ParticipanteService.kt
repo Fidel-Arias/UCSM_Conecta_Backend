@@ -3,6 +3,7 @@ package com.ucsm.conecta.ucsmconecta.services.users
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.ParticipanteBusquedaDTO
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.repository.users.participante.ParticipanteRepository
@@ -44,10 +45,17 @@ class ParticipanteService @Autowired constructor(
     fun searchByNumDocumento(numDocumento: String): Participante = participanteRepository.findByNumDocumento(numDocumento)
         .orElseThrow { RuntimeException("Participante no encontrado por su numero de documento") }
 
-    fun searchByNombres(nombres: String): List<Participante> = participanteRepository.findByName(nombres)
+    fun searchByNombres(nombres: String): List<Participante> = participanteRepository.findByNombres(nombres)
 
-    fun searchByApellidos(apPaterno: String, apMaterno: String) = participanteRepository.findByApellidos(apMaterno, apMaterno)
-        .orElseThrow { RuntimeException("Participante no encontrado por apellidos") }
+    fun searchByApellidos(apPaterno: String, apMaterno: String): List<ParticipanteBusquedaDTO> {
+        val apellidosCompletos: String = "$apPaterno $apMaterno"
+        val resultados = participanteRepository.findByApellidos(apellidosCompletos)
+
+        if (resultados.isEmpty()) {
+            throw RuntimeException("No se encontraron participantes con los apellidos proporcionados")
+        }
+        return resultados
+    }
 
     fun getAllParticipantes(): List<Participante> = participanteRepository.findAll()
 
