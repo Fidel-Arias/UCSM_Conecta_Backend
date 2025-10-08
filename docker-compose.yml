@@ -5,7 +5,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DB_URL: jdbc:postgresql://ucsmconecta_bd:5432/ucsmconecta_bd?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DB_URL: jdbc:postgresql://ucsmconecta_bd:5432/ucsmconecta_bd
       DB_USERNAME: postgres
       DB_PASSWORD: ketsunoks@365
     restart: always
