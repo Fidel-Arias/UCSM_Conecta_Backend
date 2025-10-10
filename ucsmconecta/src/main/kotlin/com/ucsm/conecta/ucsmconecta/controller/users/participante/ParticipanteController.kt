@@ -16,13 +16,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/participantes")
-class ParticipanteController {
-    val participanteService: ParticipanteService;
-
-    @Autowired
-    constructor(participanteService: ParticipanteService) {
-        this.participanteService = participanteService;
-    }
+class ParticipanteController @Autowired constructor(
+    private val participanteService: ParticipanteService
+) {
 
     @PostMapping
     @Transactional
