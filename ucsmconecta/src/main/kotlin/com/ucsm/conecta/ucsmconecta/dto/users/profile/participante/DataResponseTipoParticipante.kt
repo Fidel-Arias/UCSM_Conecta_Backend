@@ -1,6 +1,6 @@
 package com.ucsm.conecta.ucsmconecta.dto.users.profile.participante
 
-data class DataResponseTIpoParticipante(
+data class DataResponseTipoParticipante(
     val id: Long,
     val descripcion: String,
 )
