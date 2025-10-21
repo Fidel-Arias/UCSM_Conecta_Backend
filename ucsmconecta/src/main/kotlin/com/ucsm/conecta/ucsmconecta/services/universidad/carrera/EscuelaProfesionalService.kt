@@ -14,10 +14,10 @@ import java.util.Optional
 class EscuelaProfesionalService @Autowired constructor(
     private val escuelaProfesionalRepository: EscuelaProfesionalRepository
 ){
-    fun searchById(id: Long): EscuelaProfesional = escuelaProfesionalRepository.findById(id)
+    fun searchById(id: Long): EscuelaProfesional? = escuelaProfesionalRepository.findById(id)
         .orElseThrow { EntityNotFoundException("Escuela Profesional no encontrada") }
 
-    fun searchByNombre(nombre: String): EscuelaProfesional = escuelaProfesionalRepository.findByNombre(nombre)
+    fun searchByNombre(nombre: String): EscuelaProfesional? = escuelaProfesionalRepository.findByNombre(nombre)
         .orElseThrow { EntityNotFoundException("Escuela Profesional no encontrada") }
 
     fun createEscuelaProfesional(@RequestBody @Valid dataRequestEscuelaProfesional: DataRequestEscuelaProfesional): EscuelaProfesional {
