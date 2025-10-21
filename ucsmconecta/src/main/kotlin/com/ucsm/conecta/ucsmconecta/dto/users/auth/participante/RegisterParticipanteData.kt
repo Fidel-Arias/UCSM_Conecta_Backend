@@ -35,18 +35,12 @@ data class RegisterParticipanteData(
     val email: String,
 
     @get:NotNull(message = "El id del tipo de participante es obligatorio")
-    @get:NotBlank(message = "El id del tipo de participante no puede estar en blanco")
-    @get:NotEmpty(message = "El id del tipo de participante no puede estar vacio")
     val tipoParticipanteId: Long,
 
     @get:NotNull(message = "El id de la escuela profesional es obligatorio")
-    @get:NotBlank(message = "El id de la escuela profesional no puede estar en blanco")
-    @get:NotEmpty(message = "El id de la escuela profesional no puede estar vacio")
     val escuelaProfesionalId: Long,
 
     @get:NotNull(message = "El id del congreso es obligatorio")
-    @get:NotBlank(message = "El id del congreso no puede estar en blanco")
-    @get:NotEmpty(message = "El id del congreso no puede estar vacio")
     val congresoId: Long,
 
     @get:NotNull(message = "El 'estado' es obligatorio")
