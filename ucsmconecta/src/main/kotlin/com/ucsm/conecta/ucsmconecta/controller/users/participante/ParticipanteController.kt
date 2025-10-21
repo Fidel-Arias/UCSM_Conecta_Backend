@@ -1,5 +1,6 @@
 package com.ucsm.conecta.ucsmconecta.controller.users.participante
 
+import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseParticipante
 import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
@@ -25,11 +26,11 @@ class ParticipanteController @Autowired constructor(
     @Transactional
     fun createParticipante(@RequestBody @Valid registerParticipanteData: RegisterParticipanteData, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseParticipante> {
         // Crear el participante
-        val participante = participanteService.createParticipante(registerParticipanteData)
+        val participante: Participante? = participanteService.createParticipante(registerParticipanteData)
 
         // Se pasan los datos creados a DataResponseParticipante para visualizarlos
         val dataResponseParticipante = DataResponseParticipante(
-            id = participante.id!!,
+            id = participante?.id!!,
             nombres = participante.nombres,
             apPaterno = participante.apPaterno,
             apMaterno = participante.apMaterno,
