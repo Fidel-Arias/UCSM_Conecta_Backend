@@ -25,11 +25,11 @@ class EscuelaProfesionalController @Autowired constructor(
     @Transactional
     fun createEscuelaProfesional(@RequestBody @Valid dataRequestEscuelaProfesional: DataRequestEscuelaProfesional, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseEscuelaProfesional> {
         // Lógica para crear una escuela profesional
-        val escuelaProfesional = escuelaProfesionalService.createEscuelaProfesional(dataRequestEscuelaProfesional)
+        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.createEscuelaProfesional(dataRequestEscuelaProfesional)
 
         // Se pasan los datos creados a DataResponseEscuelaProfesional para visualizarlos
-        val dataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
-            id = escuelaProfesional.id!!,
+        val dataResponseEscuelaProfesional: DataResponseEscuelaProfesional? = DataResponseEscuelaProfesional(
+            id = escuelaProfesional?.id!!,
             nombre = escuelaProfesional.nombre
         )
 
@@ -43,24 +43,30 @@ class EscuelaProfesionalController @Autowired constructor(
     }
 
     @GetMapping
-    fun getAllEscuelasProfesionales(): List<DataResponseEscuelaProfesional> {
+    fun getAllEscuelasProfesionales(): ResponseEntity<List<DataResponseEscuelaProfesional>> {
         val escuelasProfesionales = escuelaProfesionalService.getAllEscuelasProfesionales()
-        return escuelasProfesionales.map { escuela ->
+
+        if (escuelasProfesionales.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+
+        val dataResponseEscuelaProfesional = escuelasProfesionales.map { escuela ->
             DataResponseEscuelaProfesional(
                 id = escuela.id!!,
                 nombre = escuela.nombre
             )
         }
+        return ResponseEntity.ok(dataResponseEscuelaProfesional)
     }
 
     @GetMapping("/{id}")
     fun getEscuelaProfesionalById(@PathVariable id: Long): ResponseEntity<DataResponseEscuelaProfesional> {
         // Lógica para obtener una escuela profesional por su ID
-        val escuelaProfesional = escuelaProfesionalService.searchById(id)
+        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.searchById(id)
 
         // Se pasan los datos obtenidos a DataResponseEscuelaProfesional para visualizarlos
-        val dataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
-            id = escuelaProfesional.id!!,
+        val dataResponseEscuelaProfesional: DataResponseEscuelaProfesional? = DataResponseEscuelaProfesional(
+            id = escuelaProfesional?.id!!,
             nombre = escuelaProfesional.nombre
         )
 

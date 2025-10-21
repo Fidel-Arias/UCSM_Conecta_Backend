@@ -71,6 +71,10 @@ class ParticipanteController @Autowired constructor(
     fun getAllParticipantes(): ResponseEntity<List<DataResponseParticipante>> {
         val participantes = participanteService.getAllParticipantes()
 
+        if (participantes.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+
         val dataResponseParticipantes = participantes.map { participante ->
             DataResponseParticipante(
                 id = participante.id!!,

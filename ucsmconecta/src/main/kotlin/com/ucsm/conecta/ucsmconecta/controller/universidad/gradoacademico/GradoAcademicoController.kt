@@ -1,5 +1,6 @@
 package com.ucsm.conecta.ucsmconecta.controller.universidad.gradoacademico
 
+import com.ucsm.conecta.ucsmconecta.domain.universidad.gradoacademico.GradoAcademico
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataRequestGradoAcademico
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataResponseGradoAcademico
 import com.ucsm.conecta.ucsmconecta.services.universidad.gradoacademico.GradoAcademicoService
@@ -8,6 +9,7 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,11 +25,11 @@ class GradoAcademicoController @Autowired constructor(
     @Transactional
     fun createGradoAcademico(@RequestBody @Valid dataRequestGradoAcademico: DataRequestGradoAcademico, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseGradoAcademico> {
         // Lógica para crear un grado académico
-        val gradoAcademico = gradoAcademicoService.createGradoAcademico(dataRequestGradoAcademico)
+        val gradoAcademico: GradoAcademico? = gradoAcademicoService.createGradoAcademico(dataRequestGradoAcademico)
 
         // Se pasan los datos creados a DataResponseGradoAcademico para visualizarlos
         val dataResponseGradoAcademico = DataResponseGradoAcademico(
-            id = gradoAcademico.id!!,
+            id = gradoAcademico?.id!!,
             descripcion = gradoAcademico.descripcion
         )
 
@@ -41,22 +43,28 @@ class GradoAcademicoController @Autowired constructor(
     }
 
     @GetMapping
-    fun getAllGradosAcademicos(): List<DataResponseGradoAcademico> {
+    fun getAllGradosAcademicos(): ResponseEntity<List<DataResponseGradoAcademico>> {
         val gradosAcademicos = gradoAcademicoService.getAllGradosAcademicos()
-        return gradosAcademicos.map { grado ->
+
+        if (gradosAcademicos.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+
+        val dataResponseGradoAcademico = gradosAcademicos.map { grado ->
             DataResponseGradoAcademico(
                 id = grado.id!!,
                 descripcion = grado.descripcion
             )
         }
+        return ResponseEntity.ok(dataResponseGradoAcademico)
     }
 
-    @GetMapping
-    fun getGradoAcademicoById(id: Long): ResponseEntity<DataResponseGradoAcademico> {
+    @GetMapping("/{id}")
+    fun getGradoAcademicoById(@PathVariable id: Long): ResponseEntity<DataResponseGradoAcademico> {
         // Lógica para obtener un grado académico por su ID
-        val gradoAcademico = gradoAcademicoService.searchById(id)
+        val gradoAcademico: GradoAcademico? = gradoAcademicoService.searchById(id)
         val dataResponseGradoAcademico = DataResponseGradoAcademico(
-            id = gradoAcademico.id!!,
+            id = gradoAcademico?.id!!,
             descripcion = gradoAcademico.descripcion
         )
         return ResponseEntity.ok(dataResponseGradoAcademico)
