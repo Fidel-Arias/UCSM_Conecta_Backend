@@ -29,15 +29,15 @@ open class Participante(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tipo_participante_id")
-    open val tipoParticipante: TipoParticipante,
+    open val tipoParticipante: TipoParticipante?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id")
-    open var escuelaProfesional: EscuelaProfesional,
+    open var escuelaProfesional: EscuelaProfesional?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "congreso_id")
-    open val congreso: Congreso,
+    open val congreso: Congreso?,
 
     @Column(nullable = false, length = 15)
     open var estado: String,
@@ -51,9 +51,9 @@ open class Participante(
         apMaterno: String,
         numDocumento: String,
         email: String,
-        tipoParticipante: TipoParticipante,
-        escuelaProfesional: EscuelaProfesional,
-        congreso: Congreso,
+        tipoParticipante: TipoParticipante?,
+        escuelaProfesional: EscuelaProfesional?,
+        congreso: Congreso?,
         estado: String,
         qr_code: String?
     ) : this(
