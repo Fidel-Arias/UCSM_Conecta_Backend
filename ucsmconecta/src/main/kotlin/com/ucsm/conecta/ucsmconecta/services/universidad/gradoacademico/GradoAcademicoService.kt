@@ -23,9 +23,9 @@ class GradoAcademicoService @Autowired constructor(
 
     fun getAllGradosAcademicos(): List<GradoAcademico> = gradoAcademicoRepository.findAll()
 
-    fun searchById(id: Long): GradoAcademico = gradoAcademicoRepository.findById(id)
+    fun searchById(id: Long): GradoAcademico? = gradoAcademicoRepository.findById(id)
         .orElseThrow { EntityNotFoundException("Grado Academico no encontrado") }
 
-    fun searchByDescripcion(descripcion: String): GradoAcademico = gradoAcademicoRepository.findByDescripcion(descripcion)
+    fun searchByDescripcion(descripcion: String): GradoAcademico? = gradoAcademicoRepository.findByDescripcion(descripcion)
         .orElseThrow { EntityNotFoundException("Grado Academico no encontrado") }
 }
