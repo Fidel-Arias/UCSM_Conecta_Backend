@@ -31,7 +31,7 @@ open class Colaborador(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id")
-    open var escuelaProfesional: EscuelaProfesional
+    open var escuelaProfesional: EscuelaProfesional?
 ) {
     constructor(
         nombres: String,
@@ -39,20 +39,19 @@ open class Colaborador(
         aMaterno: String,
         email: String,
         password: String,
-        estado: Boolean,
-        escuelaProfesional: EscuelaProfesional
+        escuelaProfesional: EscuelaProfesional?
     ) : this(
-        id = null,
-        nombres = nombres,
-        aPaterno = aPaterno,
-        aMaterno = aMaterno,
-        email = email,
-        password = password,
-        estado = estado,
-        escuelaProfesional = escuelaProfesional
+        null,
+        nombres,
+        aPaterno,
+        aMaterno,
+        email,
+        password,
+        estado = true,
+        escuelaProfesional
     )
 
     override fun toString(): String {
-        return "Colaborador(id=$id, nombres='$nombres', aPaterno='$aPaterno', aMaterno='$aMaterno', email='$email', estado=$estado, escuelaProfesional=${escuelaProfesional.id})"
+        return "Colaborador(id=$id, nombres='$nombres', aPaterno='$aPaterno', aMaterno='$aMaterno', email='$email', estado=$estado, escuelaProfesional=${escuelaProfesional?.id})"
     }
 }
