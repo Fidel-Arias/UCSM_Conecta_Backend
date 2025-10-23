@@ -8,13 +8,12 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
-import java.util.Optional
 
 @Service
 class EscuelaProfesionalService @Autowired constructor(
     private val escuelaProfesionalRepository: EscuelaProfesionalRepository
 ){
-    fun searchById(id: Long): EscuelaProfesional? = escuelaProfesionalRepository.findById(id)
+    fun getEscuelaProfesionalById(id: Long): EscuelaProfesional? = escuelaProfesionalRepository.findById(id)
         .orElseThrow { EntityNotFoundException("Escuela Profesional no encontrada") }
 
     fun searchByNombre(nombre: String): EscuelaProfesional? = escuelaProfesionalRepository.findByNombre(nombre)
