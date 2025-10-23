@@ -3,7 +3,8 @@ RETURNS TABLE(
     nombres VARCHAR,
     a_paterno VARCHAR,
     a_materno VARCHAR,
-    estado BOOL,
+    email VARCHAR,
+    estado BOOL
 )
 AS $$
 BEGIN
@@ -12,6 +13,7 @@ BEGIN
         c.nombres,
         c.a_paterno,
         c.a_materno,
+        c.email,
         c.estado
     FROM colaborador c
     WHERE
