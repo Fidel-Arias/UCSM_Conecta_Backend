@@ -1,9 +1,10 @@
-CREATE OR REPLACE FUNCTION buscar_participante_apellidos(p_busqueda TEXT)
+CREATE OR REPLACE FUNCTION buscar_participante_apellidos(p_busqueda VARCHAR)
 RETURNS TABLE(
     nombres VARCHAR,
-    a_paterno VARCHAR,
-    a_materno VARCHAR,
-    n_documento VARCHAR,
+    a_paterno VARCHAR as apPaterno,
+    a_materno VARCHAR as apMaterno,
+    n_documento VARCHAR as numDocumento,
+    estado VARCHAR
 )
 AS $$
 BEGIN
@@ -12,7 +13,8 @@ BEGIN
         p.nombres,
         p.a_paterno,
         p.a_materno,
-        p.n_documento
+        p.n_documento,
+        p.estado
     FROM participante p
     WHERE
         -- Buscar por apellido paterno
