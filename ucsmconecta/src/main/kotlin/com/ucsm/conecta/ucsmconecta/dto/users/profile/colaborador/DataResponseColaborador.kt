@@ -7,6 +7,7 @@ data class DataResponseColaborador(
     val nombres: String,
     val aPaterno: String,
     val aMaterno: String,
+    val email: String,
     val estado: Boolean,
-    val escuelaProfesional: EscuelaProfesional
+    val escuelaProfesional: Long?
 )
