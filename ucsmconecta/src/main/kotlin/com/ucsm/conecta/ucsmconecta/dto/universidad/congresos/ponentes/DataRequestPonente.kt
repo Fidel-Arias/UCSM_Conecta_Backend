@@ -17,12 +17,8 @@ data class DataRequestPonente(
     val apellidos: String,
 
     @get:NotNull(message = "El 'grado academico' es obligatorio")
-    @get:NotBlank(message = "El 'grado academico' no puede estar en blanco")
-    @get:NotEmpty(message = "El 'grado academico' no puede estar vacio")
-    val gradoAcademico: GradoAcademico,
+    val gradoAcademicoId: Long,
 
     @get:NotNull(message = "El id del 'congreso' es obligatorio")
-    @get:NotBlank(message = "El id del 'congreso' no puede estar en blanco")
-    @get:NotEmpty(message = "El id del 'congreso' no puede estar vacio")
     val congresoId: Long
 )

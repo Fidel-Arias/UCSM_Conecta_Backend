@@ -11,17 +11,11 @@ data class DataRequestPonencia(
     val nombre: String,
 
     @get:NotNull(message = "El 'estado' es obligatorio")
-    @get:NotBlank(message = "El 'estado' no puede estar vacío")
-    @get:NotEmpty(message = "El 'estado' no puede estar vacío")
     val estado: Boolean,
 
     @get:NotNull(message = "El id del 'ponente' es obligatorio")
-    @get:NotBlank(message = "El id del 'ponente' no puede estar vacío")
-    @get:NotEmpty(message = "El id del 'ponente' no puede estar vacío")
     val ponenteID: Long,
 
     @get:NotNull(message = "El id del 'congreso' es obligatorio")
-    @get:NotBlank(message = "El id del 'congreso' no puede estar vacío")
-    @get:NotEmpty(message = "El id del 'congreso' no puede estar vacío")
     val congresoId: Long
 ){}
