@@ -39,17 +39,16 @@ open class Administrador(
         aMaterno: String,
         email: String,
         password: String,
-        estado: Boolean,
         escuelaProfesional: EscuelaProfesional
     ) : this(
-        id = null,
-        nombres = nombres,
-        aPaterno = aPaterno,
-        aMaterno = aMaterno,
-        email = email,
-        password = password,
-        estado = estado,
-        escuelaProfesional = escuelaProfesional
+        null,
+        nombres,
+        aPaterno,
+        aMaterno,
+        email,
+        password,
+        estado = true,
+        escuelaProfesional
     )
 
     override fun toString(): String {
