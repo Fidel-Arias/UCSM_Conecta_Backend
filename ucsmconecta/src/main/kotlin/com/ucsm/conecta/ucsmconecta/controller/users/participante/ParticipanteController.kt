@@ -130,10 +130,14 @@ class ParticipanteController @Autowired constructor(
 
     @GetMapping("/search/apellidos/{apPaterno}/{apMaterno}")
     fun searchParticipanteByApellidos(
-        @PathVariable apPaterno: String,
-        @PathVariable apMaterno: String
+        @PathVariable(required = false) apPaterno: String,
+        @PathVariable(required = false) apMaterno: String
     ): ResponseEntity<List<ParticipanteBusquedaDTO>> {
         val participantes = participanteService.searchByApellidos(apPaterno, apMaterno)
+
+        if (participantes.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
 
         val dataResponseParticipantes: List<ParticipanteBusquedaDTO> = participantes.map { participante ->
             ParticipanteBusquedaDTO(
@@ -168,6 +172,10 @@ class ParticipanteController @Autowired constructor(
     fun searchParticipanteByNombres(@PathVariable nombres: String): ResponseEntity<List<ParticipanteBusquedaDTO>> {
         // Buscar participantes por nombres
         val participantes: List<Participante> = participanteService.searchByNombres(nombres)
+
+        if (participantes.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
 
         // Mapear a lista de ParticipanteBusquedaDTO
         val dataResponseParticipantes: List<ParticipanteBusquedaDTO> = participantes.map { participante ->
