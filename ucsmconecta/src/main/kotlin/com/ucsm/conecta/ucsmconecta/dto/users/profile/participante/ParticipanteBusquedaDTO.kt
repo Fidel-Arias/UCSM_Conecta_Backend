@@ -5,4 +5,5 @@ data class ParticipanteBusquedaDTO(
     val apPaterno: String,
     val apMaterno: String,
     val numDocumento: String,
+    val estado: String
 )
