@@ -27,7 +27,7 @@ open class Congreso(
     @Column(name = "n_refrigerio", nullable = false)
     open var numRefrigerios: Int,
 
-    @Column(name = "estado", nullable = false)
+    @Column(name = "estado", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     open var estado: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,7 +40,6 @@ open class Congreso(
         fechaFin: LocalDate,
         numAsistencias: Int,
         numRefrigerios: Int,
-        estado: Boolean,
         escuelaProfesional: EscuelaProfesional
     ) : this(
         id = null,
@@ -49,7 +48,7 @@ open class Congreso(
         fechaFin = fechaFin,
         numAsistencias = numAsistencias,
         numRefrigerios = numRefrigerios,
-        estado = estado,
+        estado = true,
         escuelaProfesional = escuelaProfesional
     )
 
