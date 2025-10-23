@@ -62,7 +62,7 @@ class EscuelaProfesionalController @Autowired constructor(
     @GetMapping("/{id}")
     fun getEscuelaProfesionalById(@PathVariable id: Long): ResponseEntity<DataResponseEscuelaProfesional> {
         // Lógica para obtener una escuela profesional por su ID
-        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.searchById(id)
+        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.getEscuelaProfesionalById(id)
 
         // Se pasan los datos obtenidos a DataResponseEscuelaProfesional para visualizarlos
         val dataResponseEscuelaProfesional: DataResponseEscuelaProfesional? = DataResponseEscuelaProfesional(
