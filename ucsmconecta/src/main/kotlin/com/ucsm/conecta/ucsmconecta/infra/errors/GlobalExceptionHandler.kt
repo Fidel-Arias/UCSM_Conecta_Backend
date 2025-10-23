@@ -2,6 +2,7 @@ package com.ucsm.conecta.ucsmconecta.infra.errors
 
 import jakarta.el.MethodNotFoundException
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConversionException
@@ -37,5 +38,25 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException::class)
     fun handleBadCredentialsException(ex: BadCredentialsException): ResponseEntity<String> {
         return ResponseEntity("Credenciales inválidas: ${ex.message}", HttpStatus.UNAUTHORIZED)
+    }
+
+    // ⚠️ Captura violaciones de integridad (campos únicos, FK, etc.)
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    fun handleDataIntegrityViolation(ex: DataIntegrityViolationException): ResponseEntity<Map<String, String>> {
+        val message = if (ex.message?.contains("numDocumento") == true) {
+            "Ya existe un participante con ese número de documento."
+        } else {
+            "Error de integridad de datos. Verifique los campos únicos o relaciones."
+        }
+
+        val body = mapOf("error" to message)
+        return ResponseEntity(body, HttpStatus.CONFLICT) // 409 Conflict
+    }
+
+    // Maneja cualquier otro error no previsto
+    @ExceptionHandler(Exception::class)
+    fun handleGeneralException(ex: Exception): ResponseEntity<Map<String, String>> {
+        val body = mapOf("error" to (ex.message ?: "Error interno del servidor"))
+        return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }
