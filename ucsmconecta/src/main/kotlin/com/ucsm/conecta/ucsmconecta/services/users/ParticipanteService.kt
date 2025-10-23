@@ -26,9 +26,9 @@ class ParticipanteService @Autowired constructor(
         // Buscar entidades relacionadas
         val tipoParticipante: TipoParticipante? = tipoParticipanteService.searchById(registerParticipanteData.tipoParticipanteId)
 
-        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.searchById(registerParticipanteData.escuelaProfesionalId)
+        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.getEscuelaProfesionalById(registerParticipanteData.escuelaProfesionalId)
 
-        val congreso: Congreso? = congresoService.searchById(registerParticipanteData.congresoId)
+        val congreso: Congreso? = congresoService.getCongresoById(registerParticipanteData.congresoId)
 
         // Crear y guardar el participante
         return participanteRepository.save(Participante(
