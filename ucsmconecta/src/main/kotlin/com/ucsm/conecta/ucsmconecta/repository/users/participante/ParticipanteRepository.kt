@@ -9,7 +9,12 @@ import java.util.Optional
 
 interface ParticipanteRepository : JpaRepository<Participante, Long> {
     fun findByNumDocumento(numDocumento: String): Optional<Participante>
-    fun findByNombres(nombres: String): List<Participante>
+
+    @Query(
+        value = "SELECT * FROM buscar_participante_nombres(:nombres)",
+        nativeQuery = true
+    )
+    fun findByNombres(@Param("nombres") nombres: String): List<ParticipanteBusquedaDTO>
 
     @Query(
         value = "SELECT * FROM buscar_participante_apellidos(:busqueda)",
