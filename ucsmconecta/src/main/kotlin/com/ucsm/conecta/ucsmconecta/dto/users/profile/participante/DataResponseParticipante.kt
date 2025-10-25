@@ -1,7 +1,7 @@
 package com.ucsm.conecta.ucsmconecta.dto.users.profile.participante
 
-import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
-import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
+import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 
 data class DataResponseParticipante(
     val id: Long,
@@ -10,8 +10,8 @@ data class DataResponseParticipante(
     val apMaterno: String,
     val estado: String,
     val nDocumento: String,
-    val tipoParticipanteId: Long?,
-    val escuelaProfesionalId: Long?,
-    val congresoId: Long?,
+    val tipoParticipante: DataResponseTipoParticipante?,
+    val escuelaProfesional: DataResponseEscuelaProfesional?,
+    val congreso: DataResultCongreso?,
     private val qrCode: String?
 )

@@ -1,5 +1,6 @@
 package com.ucsm.conecta.ucsmconecta.dto.universidad.congresos
 
+import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import java.time.LocalDate
 
 data class DataResponseCongreso(
@@ -9,5 +10,5 @@ data class DataResponseCongreso(
     val fechaFin: LocalDate,
     val numAsistencias: Int,
     val numRefrigerios: Int,
-    val escuelaProfesionalId: Long
+    val escuelaProfesional: DataResponseEscuelaProfesional?
 )
