@@ -48,6 +48,7 @@ class PonenciaService @Autowired constructor(
         .orElseThrow { EntityNotFoundException("Ponencia no encontrada por su nombre") }
 
     // Metodo para desactivar una ponencia
+    @Transactional
     fun deactivatePonencia(id: Long): Ponencia {
         val ponencia: Ponencia = getPonenciaById(id)
         ponencia.estado = false
@@ -55,6 +56,7 @@ class PonenciaService @Autowired constructor(
     }
 
     // Metodo para activar una ponencia
+    @Transactional
     fun activatePonencia(id: Long): Ponencia {
         val ponencia: Ponencia = getPonenciaById(id)
         ponencia.estado = true
@@ -62,6 +64,7 @@ class PonenciaService @Autowired constructor(
     }
 
     // Metodo para actualizar una ponencia
+    @Transactional
     fun updatePonencia(id: Long, @RequestBody @Valid dataRequestPonencia: DataRequestPonencia): Ponencia {
         val ponencia: Ponencia = getPonenciaById(id)
 

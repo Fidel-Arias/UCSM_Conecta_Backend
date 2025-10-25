@@ -5,6 +5,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes.DataReque
 import com.ucsm.conecta.ucsmconecta.repository.users.ponente.PonenteRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.services.universidad.gradoacademico.GradoAcademicoService
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -16,6 +17,8 @@ class PonenteService @Autowired constructor(
     private val gradoAcademicoService: GradoAcademicoService,
     private val congresoService: CongresoService
 ) {
+    // Metodo para crear un nuevo ponente
+    @Transactional
     fun createPonente(@RequestBody @Valid dataRequestPonente: DataRequestPonente): Ponente {
         // Buscar grado academico relacionado
         val gradoAcademico = gradoAcademicoService.getGradoAcademicoById(dataRequestPonente.gradoAcademicoId)
@@ -31,16 +34,23 @@ class PonenteService @Autowired constructor(
         ))
     }
 
+    // Método para obtener un ponente por su ID
     fun getPonenteById(id: Long): Ponente = ponenteRepository.findById(id)
         .orElseThrow { Exception("Ponente no encontrado por su id") }
 
+    // Método para obtener todos los ponentes
     fun getAllPonentes(): List<Ponente> = ponenteRepository.findAll()
 
+    // Método para obtener un ponente por sus nombres
     fun getPonenteByNombres(nombres: String): Ponente = ponenteRepository.findByNombres(nombres)
         .orElseThrow { Exception("Ponente no encontrado por sus nombres") }
 
+    // Método para eliminar un ponente por su ID
+    @Transactional
     fun deletePonente(id: Long) = ponenteRepository.deleteById(id)
 
+    // Método para actualizar un ponente
+    @Transactional
     fun updatePonente(id: Long, @RequestBody @Valid dataRequestPonente: DataRequestPonente): Ponente {
         // Obtener el ponente existente
         val ponente = getPonenteById(id)

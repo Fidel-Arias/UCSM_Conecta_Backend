@@ -45,4 +45,16 @@ class AdminService @Autowired constructor(
         admin.estado = false
         adminRepository.save(admin)
     }
+
+    // Metodo para activar un administrador por su id
+    @Transactional
+    fun activateAdminById(id: Long) {
+        val admin: Administrador = getAdminById(id)
+        admin.estado = true
+        adminRepository.save(admin)
+    }
+
+    // Metodo para eliminar un administrador por su id
+    @Transactional
+    fun deleteAdminById(id: Long) = adminRepository.deleteById(id)
 }
