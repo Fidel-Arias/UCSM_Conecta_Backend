@@ -1,8 +1,8 @@
 CREATE OR REPLACE FUNCTION buscar_colaborador_apellidos(p_busqueda TEXT)
 RETURNS TABLE(
     nombres VARCHAR,
-    a_paterno VARCHAR,
-    a_materno VARCHAR,
+    apPaterno VARCHAR,
+    apMaterno VARCHAR,
     email VARCHAR,
     estado BOOL
 )
