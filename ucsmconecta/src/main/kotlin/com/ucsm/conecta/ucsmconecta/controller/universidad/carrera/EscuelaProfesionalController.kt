@@ -4,15 +4,16 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesiona
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataRequestEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
@@ -22,14 +23,13 @@ class EscuelaProfesionalController @Autowired constructor(
     private val escuelaProfesionalService: EscuelaProfesionalService
 ) {
     @PostMapping
-    @Transactional
     fun createEscuelaProfesional(@RequestBody @Valid dataRequestEscuelaProfesional: DataRequestEscuelaProfesional, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseEscuelaProfesional> {
         // Lógica para crear una escuela profesional
-        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.createEscuelaProfesional(dataRequestEscuelaProfesional)
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.createEscuelaProfesional(dataRequestEscuelaProfesional)
 
         // Se pasan los datos creados a DataResponseEscuelaProfesional para visualizarlos
-        val dataResponseEscuelaProfesional: DataResponseEscuelaProfesional? = DataResponseEscuelaProfesional(
-            id = escuelaProfesional?.id!!,
+        val dataResponseEscuelaProfesional: DataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
+            id = escuelaProfesional.id!!,
             nombre = escuelaProfesional.nombre
         )
 
@@ -62,15 +62,39 @@ class EscuelaProfesionalController @Autowired constructor(
     @GetMapping("/{id}")
     fun getEscuelaProfesionalById(@PathVariable id: Long): ResponseEntity<DataResponseEscuelaProfesional> {
         // Lógica para obtener una escuela profesional por su ID
-        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.getEscuelaProfesionalById(id)
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(id)
 
         // Se pasan los datos obtenidos a DataResponseEscuelaProfesional para visualizarlos
-        val dataResponseEscuelaProfesional: DataResponseEscuelaProfesional? = DataResponseEscuelaProfesional(
-            id = escuelaProfesional?.id!!,
+        val dataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
+            id = escuelaProfesional.id!!,
             nombre = escuelaProfesional.nombre
         )
 
         // Retornar la respuesta con el código de estado 200 OK y los datos de la escuela profesional
         return ResponseEntity.ok(dataResponseEscuelaProfesional)
+    }
+
+    @GetMapping("/search")
+    fun searchEscuelaProfesionalByNombre(@RequestParam nombre: String): ResponseEntity<DataResponseEscuelaProfesional> {
+        // Lógica para buscar una escuela profesional por su nombre
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchByNombre(nombre)
+
+        // Se pasan los datos obtenidos a DataResponseEscuelaProfesional para visualizarlos
+        val dataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
+            id = escuelaProfesional.id!!,
+            nombre = escuelaProfesional.nombre
+        )
+
+        // Retornar la respuesta con el código de estado 200 OK y los datos de la escuela profesional
+        return ResponseEntity.ok(dataResponseEscuelaProfesional)
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteEscuelaProfesionalById(@PathVariable id: Long): ResponseEntity<Void> {
+        // Lógica para eliminar una escuela profesional por su ID
+        escuelaProfesionalService.deleteEscuelaProfesionalById(id)
+
+        // Retornar la respuesta con el código de estado 204 No Content
+        return ResponseEntity.noContent().build()
     }
 }

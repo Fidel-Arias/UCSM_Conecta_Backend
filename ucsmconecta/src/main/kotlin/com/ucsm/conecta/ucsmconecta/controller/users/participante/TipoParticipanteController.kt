@@ -1,9 +1,9 @@
 package com.ucsm.conecta.ucsmconecta.controller.users.participante
 
+import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataRequestTipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseTipoParticipante
 import com.ucsm.conecta.ucsmconecta.services.users.TipoParticipanteService
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -21,21 +21,20 @@ class TipoParticipanteController @Autowired constructor(
     private val tipoParticipanteService: TipoParticipanteService
 ){
     @PostMapping
-    @Transactional
     fun createTipoParticipante(@RequestBody @Valid dataRequestTipoParticipante: DataRequestTipoParticipante, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseTipoParticipante> {
 
         // Lógica para crear un tipo de participante
-        val tipoParticipante = tipoParticipanteService.createTipoParticipante(dataRequestTipoParticipante.descripcion)
+        val tipoParticipante: TipoParticipante = tipoParticipanteService.createTipoParticipante(dataRequestTipoParticipante.descripcion)
 
         // Se pasan los datos creados a DataResponseTipoParticipante para visualizarlos
         val dataResponseTipoParticipante = DataResponseTipoParticipante(
-            id = tipoParticipante?.id!!,
+            id = tipoParticipante.id!!,
             descripcion = tipoParticipante.descripcion
         )
 
         // Construir la URI del nuevo recurso creado
         val uri = uriComponentsBuilder.path("/api/tipos-participantes/{id}")
-            .buildAndExpand(tipoParticipante?.id)
+            .buildAndExpand(tipoParticipante.id)
             .toUri()
 
         // Retornar la respuesta con el código de estado 201 Created y la ubicación del nuevo recurso
@@ -62,10 +61,10 @@ class TipoParticipanteController @Autowired constructor(
 
     @GetMapping("/{id}")
     fun getTipoParticipanteById(@PathVariable id: Long): ResponseEntity<DataResponseTipoParticipante> {
-        val tipoParticipante = tipoParticipanteService.searchById(id)
+        val tipoParticipante: TipoParticipante = tipoParticipanteService.searchById(id)
 
         val dataResponseTipoParticipante = DataResponseTipoParticipante(
-            id = tipoParticipante?.id!!,
+            id = tipoParticipante.id!!,
             descripcion = tipoParticipante.descripcion
         )
         return ResponseEntity.ok(dataResponseTipoParticipante)

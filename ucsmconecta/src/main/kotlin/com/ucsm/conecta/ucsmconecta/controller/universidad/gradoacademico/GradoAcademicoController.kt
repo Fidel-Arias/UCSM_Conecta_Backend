@@ -4,7 +4,6 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.gradoacademico.GradoAcade
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataRequestGradoAcademico
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataResponseGradoAcademico
 import com.ucsm.conecta.ucsmconecta.services.universidad.gradoacademico.GradoAcademicoService
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -22,14 +21,13 @@ class GradoAcademicoController @Autowired constructor(
     private val gradoAcademicoService: GradoAcademicoService
 ) {
     @PostMapping
-    @Transactional
     fun createGradoAcademico(@RequestBody @Valid dataRequestGradoAcademico: DataRequestGradoAcademico, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseGradoAcademico> {
         // Lógica para crear un grado académico
-        val gradoAcademico: GradoAcademico? = gradoAcademicoService.createGradoAcademico(dataRequestGradoAcademico)
+        val gradoAcademico: GradoAcademico = gradoAcademicoService.createGradoAcademico(dataRequestGradoAcademico)
 
         // Se pasan los datos creados a DataResponseGradoAcademico para visualizarlos
         val dataResponseGradoAcademico = DataResponseGradoAcademico(
-            id = gradoAcademico?.id!!,
+            id = gradoAcademico.id!!,
             descripcion = gradoAcademico.descripcion
         )
 
@@ -62,11 +60,12 @@ class GradoAcademicoController @Autowired constructor(
     @GetMapping("/{id}")
     fun getGradoAcademicoById(@PathVariable id: Long): ResponseEntity<DataResponseGradoAcademico> {
         // Lógica para obtener un grado académico por su ID
-        val gradoAcademico: GradoAcademico? = gradoAcademicoService.searchById(id)
+        val gradoAcademico: GradoAcademico = gradoAcademicoService.getGradoAcademicoById(id)
         val dataResponseGradoAcademico = DataResponseGradoAcademico(
-            id = gradoAcademico?.id!!,
+            id = gradoAcademico.id!!,
             descripcion = gradoAcademico.descripcion
         )
         return ResponseEntity.ok(dataResponseGradoAcademico)
     }
+
 }
