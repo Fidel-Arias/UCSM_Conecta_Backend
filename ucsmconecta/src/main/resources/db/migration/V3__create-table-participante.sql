@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS "Participante" (
   "nombres" varchar(40) NOT NULL,
   "ap_paterno" varchar(25) NOT NULL,
   "ap_materno" varchar(25) NOT NULL,
-  "n_documento" varchar(20) UNIQUE NOT NULL,
+  "num_documento" varchar(20) UNIQUE NOT NULL,
   "email" varchar(255) UNIQUE NOT NULL,
   "tipo_participante_id" bigint NOT NULL,
   "escuela_profesional_id" bigint NOT NULL,
