@@ -48,11 +48,14 @@ class ParticipanteService @Autowired constructor(
         ))
     }
 
+    // Metodo para buscar participante por su numero de documento
     fun searchByNumDocumento(numDocumento: String): Participante = participanteRepository.findByNumDocumento(numDocumento)
         .orElseThrow { ResourceNotFoundException("Participante no encontrado por su numero de documento $numDocumento") }
 
+    // Metodo para buscar participantes por nombres
     fun searchByNombres(nombres: String): List<ParticipanteBusquedaDTO> = participanteRepository.findByNombres(nombres)
 
+    // Metodo para buscar participantes por apellidos
     fun searchByApellidos(apPaterno: String?, apMaterno: String?): List<ParticipanteBusquedaDTO> {
         if (apPaterno.isNullOrBlank() && apMaterno.isNullOrBlank()) {
             throw IllegalArgumentException("Se debe proporcionar al menos un apellido para la búsqueda")
@@ -64,8 +67,18 @@ class ParticipanteService @Autowired constructor(
         return resultados
     }
 
+    // Metodo para obtener todos los participantes
     fun getAllParticipantes(): List<Participante> = participanteRepository.findAll()
 
+    // Metodo para obtener un participante por su ID
     fun getParticipanteById(id: Long): Participante = participanteRepository.findById(id)
         .orElseThrow { ResourceNotFoundException("Participante con id $id no encontrado") }
+
+    // Metodo para actualizar el estado de un participante por su ID
+    @Transactional
+    fun updateParticipanteEstadoById(id: Long, nuevoEstado: String): Participante {
+        val participante: Participante = getParticipanteById(id)
+        participante.estado = nuevoEstado
+        return participanteRepository.save(participante)
+    }
 }
