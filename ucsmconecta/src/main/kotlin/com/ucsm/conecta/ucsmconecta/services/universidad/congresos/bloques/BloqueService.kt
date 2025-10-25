@@ -2,6 +2,7 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques.Bloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataRequestBloque
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.bloques.BloqueRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.dia.DiaService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ponencias.PonenciaService
@@ -44,7 +45,7 @@ class BloqueService @Autowired constructor(
 
     // Método para obtener un bloque por su ID
     fun getBloqueById(id: Long): Bloque = bloqueRepository.findById(id).orElseThrow {
-        EntityNotFoundException("Bloque con id $id no encontrado")
+        ResourceNotFoundException("Bloque con id $id no encontrado")
     }
 
     // Método para obtener todos los bloques

@@ -2,8 +2,8 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.carrera
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataRequestEscuelaProfesional
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.carrera.EscuelaProfesionalRepository
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,11 +16,11 @@ class EscuelaProfesionalService @Autowired constructor(
 ){
     // Metodo para buscar una escuela profesional por su ID
     fun searchEscuelaProfesionalById(id: Long): EscuelaProfesional = escuelaProfesionalRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Escuela Profesional no encontrada") }
+        .orElseThrow { ResourceNotFoundException("Escuela Profesional no encontrada") }
 
     // Metodo para buscar una escuela profesional por su nombre
     fun searchByNombre(nombre: String): EscuelaProfesional = escuelaProfesionalRepository.findByNombre(nombre)
-        .orElseThrow { EntityNotFoundException("Escuela Profesional no encontrada") }
+        .orElseThrow { ResourceNotFoundException("Escuela Profesional no encontrada") }
 
     // Metodo para crear una escuela profesional
     @Transactional
