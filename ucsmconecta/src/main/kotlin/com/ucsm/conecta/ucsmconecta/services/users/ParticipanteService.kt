@@ -10,6 +10,7 @@ import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesio
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.repository.users.participante.ParticipanteRepository
 import jakarta.persistence.EntityNotFoundException
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -22,13 +23,15 @@ class ParticipanteService @Autowired constructor(
     private val escuelaProfesionalService: EscuelaProfesionalService,
     private val congresoService: CongresoService
 ){
+    // Metodo para crear un nuevo participante
+    @Transactional
     fun createParticipante(@RequestBody @Valid registerParticipanteData: RegisterParticipanteData): Participante {
         // Buscar entidades relacionadas
-        val tipoParticipante: TipoParticipante? = tipoParticipanteService.searchById(registerParticipanteData.tipoParticipanteId)
+        val tipoParticipante: TipoParticipante = tipoParticipanteService.searchById(registerParticipanteData.tipoParticipanteId)
 
-        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.getEscuelaProfesionalById(registerParticipanteData.escuelaProfesionalId)
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(registerParticipanteData.escuelaProfesionalId)
 
-        val congreso: Congreso? = congresoService.getCongresoById(registerParticipanteData.congresoId)
+        val congreso: Congreso = congresoService.getCongresoById(registerParticipanteData.congresoId)
 
         // Crear y guardar el participante
         return participanteRepository.save(Participante(
@@ -45,12 +48,16 @@ class ParticipanteService @Autowired constructor(
         ))
     }
 
-    fun searchByNumDocumento(numDocumento: String): Participante? = participanteRepository.findByNumDocumento(numDocumento)
-        .orElseThrow { RuntimeException("Participante no encontrado por su numero de documento") }
+    fun searchByNumDocumento(numDocumento: String): Participante = participanteRepository.findByNumDocumento(numDocumento)
+        .orElseThrow { EntityNotFoundException("Participante no encontrado por su numero de documento") }
 
-    fun searchByNombres(nombres: String): List<Participante> = participanteRepository.findByNombres(nombres)
+    fun searchByNombres(nombres: String): List<ParticipanteBusquedaDTO> = participanteRepository.findByNombres(nombres)
 
-    fun searchByApellidos(apPaterno: String, apMaterno: String): List<ParticipanteBusquedaDTO> {
+    fun searchByApellidos(apPaterno: String?, apMaterno: String?): List<ParticipanteBusquedaDTO> {
+        if (apPaterno.isNullOrBlank() && apMaterno.isNullOrBlank()) {
+            throw IllegalArgumentException("Se debe proporcionar al menos un apellido para la búsqueda")
+        }
+
         val apellidosCompletos: String = "$apPaterno $apMaterno"
         val resultados = participanteRepository.findByApellidos(apellidosCompletos)
 
@@ -62,6 +69,6 @@ class ParticipanteService @Autowired constructor(
 
     fun getAllParticipantes(): List<Participante> = participanteRepository.findAll()
 
-    fun getParticipanteById(id: Long): Participante? = participanteRepository.findById(id)
+    fun getParticipanteById(id: Long): Participante = participanteRepository.findById(id)
         .orElseThrow { EntityNotFoundException("Participante no encontrado") }
 }

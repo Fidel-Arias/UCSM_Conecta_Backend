@@ -4,6 +4,7 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesiona
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataRequestEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.repository.universidad.carrera.EscuelaProfesionalRepository
 import jakarta.persistence.EntityNotFoundException
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -13,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody
 class EscuelaProfesionalService @Autowired constructor(
     private val escuelaProfesionalRepository: EscuelaProfesionalRepository
 ){
-    fun getEscuelaProfesionalById(id: Long): EscuelaProfesional? = escuelaProfesionalRepository.findById(id)
+    // Metodo para buscar una escuela profesional por su ID
+    fun searchEscuelaProfesionalById(id: Long): EscuelaProfesional = escuelaProfesionalRepository.findById(id)
         .orElseThrow { EntityNotFoundException("Escuela Profesional no encontrada") }
 
-    fun searchByNombre(nombre: String): EscuelaProfesional? = escuelaProfesionalRepository.findByNombre(nombre)
+    // Metodo para buscar una escuela profesional por su nombre
+    fun searchByNombre(nombre: String): EscuelaProfesional = escuelaProfesionalRepository.findByNombre(nombre)
         .orElseThrow { EntityNotFoundException("Escuela Profesional no encontrada") }
 
+    // Metodo para crear una escuela profesional
+    @Transactional
     fun createEscuelaProfesional(@RequestBody @Valid dataRequestEscuelaProfesional: DataRequestEscuelaProfesional): EscuelaProfesional {
         // Lógica para crear una escuela profesional
         return escuelaProfesionalRepository.save(EscuelaProfesional(
@@ -26,5 +31,10 @@ class EscuelaProfesionalService @Autowired constructor(
         ))
     }
 
+    // Metodo para obtener todas las escuelas profesionales
     fun getAllEscuelasProfesionales(): List<EscuelaProfesional> = escuelaProfesionalRepository.findAll()
+
+    // Metodo para eliminar una escuela profesional por su ID
+    @Transactional
+    fun deleteEscuelaProfesionalById(id: Long) = escuelaProfesionalRepository.deleteById(id)
 }

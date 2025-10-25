@@ -16,14 +16,14 @@ class CongresoService @Autowired constructor(
     private val congresoRepository: CongresoRepository,
     private val escuelaProfesionalService: EscuelaProfesionalService
 ){
-    fun getCongresoById(id: Long):Congreso? = congresoRepository.findById(id)
+    fun getCongresoById(id: Long):Congreso = congresoRepository.findById(id)
         .orElseThrow { EntityNotFoundException("Congreso no encontrado") }
 
-    fun searchByNombre(nombre: String):Congreso? = congresoRepository.findByNombre(nombre)
+    fun searchByNombre(nombre: String):Congreso = congresoRepository.findByNombre(nombre)
         .orElseThrow { EntityNotFoundException("Congreso no encontrado") }
 
     fun createCongreso(@RequestBody @Valid dataRequestCongreso: DataRequestCongreso): Congreso {
-        val escuelaProfesional: EscuelaProfesional? = escuelaProfesionalService.getEscuelaProfesionalById(
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(
             dataRequestCongreso.escuelaProfesionalId
         )
 
@@ -34,7 +34,7 @@ class CongresoService @Autowired constructor(
                 fechaFin = dataRequestCongreso.fechaFin,
                 numAsistencias = dataRequestCongreso.numAsistencias,
                 numRefrigerios = dataRequestCongreso.numRefrigerios,
-                escuelaProfesional = escuelaProfesional!!
+                escuelaProfesional = escuelaProfesional
             )
         )
     }
