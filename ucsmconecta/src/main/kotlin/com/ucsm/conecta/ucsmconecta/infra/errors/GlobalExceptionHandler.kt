@@ -1,5 +1,6 @@
 package com.ucsm.conecta.ucsmconecta.infra.errors
 
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import jakarta.el.MethodNotFoundException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.dao.DataIntegrityViolationException
@@ -56,6 +57,18 @@ class GlobalExceptionHandler {
     // Maneja el error IllegalArgumentException
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> {
+        val body = mapOf("error" to ex.message!!)
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
+
+    // Maneja los errores de recurso no encontrado en métodos
+    @ExceptionHandler(ResourceNotFoundException::class)
+    fun handleNotFound(ex: ResourceNotFoundException): ResponseEntity<Map<String, String>> =
+        ResponseEntity(mapOf("error" to ex.message!!), HttpStatus.NOT_FOUND)
+
+    // Maneja el error IllegalStateException
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleIllegalStateException(ex: IllegalStateException): ResponseEntity<Map<String, String>> {
         val body = mapOf("error" to ex.message!!)
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
