@@ -1,9 +1,9 @@
-CREATE OR REPLACE FUNCTION buscar_participante_apellidos(p_busqueda VARCHAR)
+CREATE OR REPLACE FUNCTION buscar_participante_apellidos(p_busqueda TEXT)
 RETURNS TABLE(
     nombres VARCHAR,
-    a_paterno VARCHAR as apPaterno,
-    a_materno VARCHAR as apMaterno,
-    n_documento VARCHAR as numDocumento,
+    apPaterno VARCHAR,
+    apMaterno VARCHAR,
+    numDocumento VARCHAR,
     estado VARCHAR
 )
 AS $$
@@ -11,16 +11,16 @@ BEGIN
     RETURN QUERY
     SELECT
         p.nombres,
-        p.a_paterno,
-        p.a_materno,
-        p.n_documento,
+        p.ap_paterno,
+        p.ap_materno,
+        p.num_documento,
         p.estado
     FROM participante p
     WHERE
         -- Buscar por apellido paterno
-        LOWER(p.a_paterno) LIKE LOWER(CONCAT('%', p_busqueda, '%'))
+        LOWER(p.ap_paterno) LIKE LOWER(CONCAT('%', p_busqueda, '%'))
         OR
         -- Buscar por apellidos concatenados (ej: "Gomez Perez")
-        LOWER(CONCAT(p.a_paterno, ' ', p.a_materno)) LIKE LOWER(CONCAT('%', p_busqueda, '%'));
+        LOWER(CONCAT(p.ap_paterno, ' ', p.ap_materno)) LIKE LOWER(CONCAT('%', p_busqueda, '%'));
 END;
 $$ LANGUAGE plpgsql;
