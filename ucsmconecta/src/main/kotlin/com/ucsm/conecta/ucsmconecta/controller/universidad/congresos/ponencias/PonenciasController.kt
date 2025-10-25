@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/ponencias")
+@RequestMapping("/api/congresos/ponencias")
 class PonenciasController @Autowired constructor(
     private val ponenciasService: PonenciaService
 ) {
@@ -140,6 +140,7 @@ class PonenciasController @Autowired constructor(
         return ResponseEntity.noContent().build()
     }
 
+    // Metodo para actualizar una ponencia por su ID
     @PutMapping("/{id}")
     fun updatePonencia(@PathVariable id: Long, @RequestBody @Valid dataRequestPonencia: DataRequestPonencia): ResponseEntity<DataResponsePonencia> {
         // Actualizar la ponencia utilizando el servicio

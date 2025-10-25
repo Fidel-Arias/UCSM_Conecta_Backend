@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/ubicaciones")
+@RequestMapping("/api/congresos/ubicaciones")
 class UbicacionController @Autowired constructor(
     private val ubicacionService: UbicacionService
 ) {
