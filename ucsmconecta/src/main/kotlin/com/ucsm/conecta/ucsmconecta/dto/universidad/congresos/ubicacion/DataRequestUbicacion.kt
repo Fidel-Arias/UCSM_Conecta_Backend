@@ -9,7 +9,4 @@ data class DataRequestUbicacion(
     @get:NotBlank(message = "El campo 'nombre' no puede estar en blanco" )
     @get:NotEmpty(message = "El campo 'nombre' no puede estar vacio" )
     var nombre: String,
-
-    @get:NotBlank(message = "El campo 'estado' es obligatorio" )
-    var estado: Boolean,
-){}
+)

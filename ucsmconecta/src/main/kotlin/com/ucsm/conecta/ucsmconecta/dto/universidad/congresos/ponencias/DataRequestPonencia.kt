@@ -10,9 +10,6 @@ data class DataRequestPonencia(
     @get:NotEmpty(message = "El 'nombre' no puede estar vacío")
     val nombre: String,
 
-    @get:NotNull(message = "El 'estado' es obligatorio")
-    val estado: Boolean,
-
     @get:NotNull(message = "El id del 'ponente' es obligatorio")
     val ponenteID: Long,
 
