@@ -29,13 +29,12 @@ open class Ponencia(
 ) {
     constructor(
         nombre: String,
-        estado: Boolean,
         ponente: Ponente,
         congreso: Congreso
     ) : this(
         id = null,
         nombre = nombre,
-        estado = estado,
+        estado = true,
         ponente = ponente,
         congreso = congreso
     )

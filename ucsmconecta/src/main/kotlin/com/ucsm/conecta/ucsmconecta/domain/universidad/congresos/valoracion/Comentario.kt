@@ -29,13 +29,12 @@ open class Comentario(
     constructor(
         texto: String,
         fecha: LocalDate,
-        estado: Boolean,
         participante: Participante
     ) : this(
         id = null,
         texto = texto,
         fecha = fecha,
-        estado = estado,
+        estado = true,
         participante = participante
     )
 

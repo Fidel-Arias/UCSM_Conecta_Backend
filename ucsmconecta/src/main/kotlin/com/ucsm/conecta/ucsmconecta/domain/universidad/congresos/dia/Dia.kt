@@ -24,12 +24,11 @@ open class Dia(
 ){
     constructor(
         fecha: LocalDate,
-        estado: Boolean,
         congreso: Congreso
     ) : this(
         id = null,
         fecha = fecha,
-        estado = estado,
+        estado = true,
         congreso = congreso
     )
 

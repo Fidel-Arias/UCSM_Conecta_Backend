@@ -31,7 +31,7 @@ open class Colaborador(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id")
-    open var escuelaProfesional: EscuelaProfesional?
+    open var escuelaProfesional: EscuelaProfesional
 ) {
     constructor(
         nombres: String,
@@ -39,7 +39,7 @@ open class Colaborador(
         aMaterno: String,
         email: String,
         password: String,
-        escuelaProfesional: EscuelaProfesional?
+        escuelaProfesional: EscuelaProfesional
     ) : this(
         null,
         nombres,

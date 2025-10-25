@@ -11,7 +11,7 @@ open class Votacion(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long,
+    open val id: Long?,
 
     @Column(name = "score", nullable = false)
     open var score: Int,
@@ -34,7 +34,7 @@ open class Votacion(
         ponencia: Ponencia,
         congreso: Congreso
     ) : this(
-        id = 0,
+        id = null,
         score = score,
         participante = participante,
         ponencia = ponencia,

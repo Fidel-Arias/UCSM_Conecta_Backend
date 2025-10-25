@@ -18,11 +18,10 @@ open class Ubicacion(
 ) {
     constructor(
         nombre: String,
-        estado: Boolean
     ) : this(
         id = null,
         nombre = nombre,
-        estado = estado
+        estado = true
     )
 
     override fun toString(): String {

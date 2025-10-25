@@ -29,13 +29,12 @@ open class Refrigerio(
 ) {
     constructor(
         fecha: LocalDate,
-        estado: Boolean,
         participante: Participante,
         congreso: Congreso
     ) : this(
         id = null,
         fecha = fecha,
-        estado = estado,
+        estado = true,
         participante = participante,
         congreso = congreso
     )
