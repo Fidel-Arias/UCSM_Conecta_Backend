@@ -53,10 +53,18 @@ class GlobalExceptionHandler {
         return ResponseEntity(body, HttpStatus.CONFLICT) // 409 Conflict
     }
 
+    // Maneja el error IllegalArgumentException
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> {
+        val body = mapOf("error" to ex.message!!)
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
+
     // Maneja cualquier otro error no previsto
     @ExceptionHandler(Exception::class)
     fun handleGeneralException(ex: Exception): ResponseEntity<Map<String, String>> {
         val body = mapOf("error" to (ex.message ?: "Error interno del servidor"))
         return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
     }
+
 }
