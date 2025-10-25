@@ -33,4 +33,11 @@ class TipoParticipanteService @Autowired constructor(
 
     // Metodo para obtener todos los Tipos de Participantes
     fun getAllTiposParticipantes(): List<TipoParticipante> = tipoParticipanteRepository.findAll()
+
+    // Metodo para eliminar un TipoParticipante por su id
+    @Transactional
+    fun deleteTipoParticipanteById(id: Long) {
+        val tipoParticipante = searchById(id)
+        tipoParticipanteRepository.delete(tipoParticipante)
+    }
 }

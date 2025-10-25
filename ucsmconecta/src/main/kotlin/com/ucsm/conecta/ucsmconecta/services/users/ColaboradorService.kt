@@ -74,7 +74,10 @@ class ColaboradorService @Autowired constructor(
 
     @Transactional
     // Metodo para eliminar un colaborador por su ID
-    fun deleteColaboradorById(id: Long) = colaboradorRepository.deleteById(id)
+    fun deleteColaboradorById(id: Long) {
+        val colaborador: Colaborador = getColaboradorById(id)
+        colaboradorRepository.delete(colaborador)
+    }
 
     // Metodo para editar un colaborador
     @Transactional

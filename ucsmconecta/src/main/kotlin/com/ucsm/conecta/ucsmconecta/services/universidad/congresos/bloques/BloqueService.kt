@@ -52,7 +52,10 @@ class BloqueService @Autowired constructor(
 
     // Metodo para eliminar un bloque por su ID
     @Transactional
-    fun deleteBloqueById(id: Long) = bloqueRepository.deleteById(id)
+    fun deleteBloqueById(id: Long) {
+        val bloque = getBloqueById(id)
+        bloqueRepository.delete(bloque)
+    }
 
     // Metodo para actualizar un bloque
     @Transactional

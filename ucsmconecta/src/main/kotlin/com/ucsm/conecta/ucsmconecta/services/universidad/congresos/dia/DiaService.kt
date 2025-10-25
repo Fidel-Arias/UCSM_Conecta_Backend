@@ -56,5 +56,8 @@ class DiaService @Autowired constructor(
 
     // Método para eliminar un día por su ID
     @Transactional
-    fun deleteDiaById(id: Long) = diaRepository.deleteById(id)
+    fun deleteDiaById(id: Long) {
+        val dia = getDiaById(id)
+        diaRepository.delete(dia)
+    }
 }

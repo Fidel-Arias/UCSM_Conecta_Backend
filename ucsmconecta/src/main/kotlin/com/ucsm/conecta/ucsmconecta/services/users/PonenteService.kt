@@ -48,7 +48,10 @@ class PonenteService @Autowired constructor(
 
     // Método para eliminar un ponente por su ID
     @Transactional
-    fun deletePonente(id: Long) = ponenteRepository.deleteById(id)
+    fun deletePonente(id: Long) {
+        val ponente = getPonenteById(id)
+        ponenteRepository.delete(ponente)
+    }
 
     // Método para actualizar un ponente
     @Transactional

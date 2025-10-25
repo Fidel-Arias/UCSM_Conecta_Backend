@@ -57,5 +57,8 @@ class AdminService @Autowired constructor(
 
     // Metodo para eliminar un administrador por su id
     @Transactional
-    fun deleteAdminById(id: Long) = adminRepository.deleteById(id)
+    fun deleteAdminById(id: Long) {
+        val admin: Administrador = getAdminById(id)
+        adminRepository.delete(admin)
+    }
 }

@@ -36,5 +36,8 @@ class EscuelaProfesionalService @Autowired constructor(
 
     // Metodo para eliminar una escuela profesional por su ID
     @Transactional
-    fun deleteEscuelaProfesionalById(id: Long) = escuelaProfesionalRepository.deleteById(id)
+    fun deleteEscuelaProfesionalById(id: Long) {
+        val escuelaProfesional = searchEscuelaProfesionalById(id)
+        escuelaProfesionalRepository.delete(escuelaProfesional)
+    }
 }
