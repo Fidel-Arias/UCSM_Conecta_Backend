@@ -7,7 +7,6 @@ import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.bloques.Blo
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.dia.DiaService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ponencias.PonenciaService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ubicacion.UbicacionService
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired

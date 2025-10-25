@@ -6,10 +6,10 @@ import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.ParticipanteBusquedaDTO
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.repository.users.participante.ParticipanteRepository
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,7 +49,7 @@ class ParticipanteService @Autowired constructor(
     }
 
     fun searchByNumDocumento(numDocumento: String): Participante = participanteRepository.findByNumDocumento(numDocumento)
-        .orElseThrow { EntityNotFoundException("Participante no encontrado por su numero de documento") }
+        .orElseThrow { ResourceNotFoundException("Participante no encontrado por su numero de documento $numDocumento") }
 
     fun searchByNombres(nombres: String): List<ParticipanteBusquedaDTO> = participanteRepository.findByNombres(nombres)
 
@@ -61,14 +61,11 @@ class ParticipanteService @Autowired constructor(
         val apellidosCompletos: String = "$apPaterno $apMaterno"
         val resultados = participanteRepository.findByApellidos(apellidosCompletos)
 
-        if (resultados.isEmpty()) {
-            throw EntityNotFoundException("No se encontraron participantes con los apellidos proporcionados")
-        }
         return resultados
     }
 
     fun getAllParticipantes(): List<Participante> = participanteRepository.findAll()
 
     fun getParticipanteById(id: Long): Participante = participanteRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Participante no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Participante con id $id no encontrado") }
 }

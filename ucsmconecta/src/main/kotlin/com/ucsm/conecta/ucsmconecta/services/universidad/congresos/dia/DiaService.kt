@@ -2,9 +2,9 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.congresos.dia
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.dia.Dia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataRequestDia
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.dia.DiaRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +31,7 @@ class DiaService @Autowired constructor(
 
     // Método para obtener un día por su ID
     fun getDiaById(id: Long): Dia = diaRepository.findById(id).orElseThrow {
-        EntityNotFoundException("Día con id $id no encontrado")
+        ResourceNotFoundException("Día con id $id no encontrado")
     }
 
     // Método para obtener todos los días

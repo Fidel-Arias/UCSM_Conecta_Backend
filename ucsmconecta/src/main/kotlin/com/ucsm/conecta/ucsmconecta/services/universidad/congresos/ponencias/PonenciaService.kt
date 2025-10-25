@@ -4,10 +4,10 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponencia
 import com.ucsm.conecta.ucsmconecta.domain.users.ponente.Ponente
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataRequestPonencia
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.ponencias.PonenciaRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.services.users.PonenteService
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,14 +38,14 @@ class PonenciaService @Autowired constructor(
 
     // Metodo para buscar una ponencia por su id
     fun getPonenciaById(id: Long): Ponencia = ponenciaRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Ponencia no encontrada por su id") }
+        .orElseThrow { ResourceNotFoundException("Ponencia con id $id no encontrada") }
 
     // Metodo para obtener todas las ponencias activas
     fun getAllPonencias(): List<Ponencia> = ponenciaRepository.findAll()
         .filter { it.estado }
 
     fun getPonenciaByNombre(nombre: String): Ponencia = ponenciaRepository.findByNombre(nombre)
-        .orElseThrow { EntityNotFoundException("Ponencia no encontrada por su nombre") }
+        .orElseThrow { ResourceNotFoundException("Ponencia no encontrada por su nombre") }
 
     // Metodo para desactivar una ponencia
     @Transactional

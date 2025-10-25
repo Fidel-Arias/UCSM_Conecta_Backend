@@ -1,8 +1,8 @@
 package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.participante.TipoParticipanteRepository
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,11 +15,11 @@ class TipoParticipanteService @Autowired constructor(
 ){
     // Metodo para buscar un TipoParticipante por su descripción
     fun searchByDescripcion(descripcion: String): TipoParticipante? = tipoParticipanteRepository.findByDescripcion(descripcion)
-        .orElseThrow { EntityNotFoundException("Tipo de Participante no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Tipo de Participante no encontrado") }
 
     // Metodo para buscar un TipoParticipante por su id
     fun searchById(id: Long): TipoParticipante = tipoParticipanteRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Tipo de Participante no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Tipo de Participante con id $id no encontrado") }
 
     // Metodo para crear un nuevo TipoParticipante
     @Transactional

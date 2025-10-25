@@ -4,9 +4,9 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesiona
 import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador.RegisterColaboradorData
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.ColaboradorBusquedaDTO
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.colaborador.ColaboradorRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +50,7 @@ class ColaboradorService @Autowired constructor(
 
     // Metodo para obtener un colaborador por su ID
     fun getColaboradorById(id: Long): Colaborador = colaboradorRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Colaborador no encontrado por su ID") }
+        .orElseThrow { ResourceNotFoundException("Colaborador con id $id no encontrado") }
 
     // Metodo para obtener todos los colaboradores activos
     fun getAllColaboradores(): List<Colaborador> = colaboradorRepository.findAll()

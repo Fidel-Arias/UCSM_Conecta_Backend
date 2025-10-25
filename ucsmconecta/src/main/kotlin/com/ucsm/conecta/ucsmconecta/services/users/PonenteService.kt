@@ -2,6 +2,7 @@ package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.users.ponente.Ponente
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataRequestPonente
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.ponente.PonenteRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.services.universidad.gradoacademico.GradoAcademicoService
@@ -36,14 +37,14 @@ class PonenteService @Autowired constructor(
 
     // Método para obtener un ponente por su ID
     fun getPonenteById(id: Long): Ponente = ponenteRepository.findById(id)
-        .orElseThrow { Exception("Ponente no encontrado por su id") }
+        .orElseThrow { ResourceNotFoundException("Ponente con id $id no encontrado") }
 
     // Método para obtener todos los ponentes
     fun getAllPonentes(): List<Ponente> = ponenteRepository.findAll()
 
     // Método para obtener un ponente por sus nombres
     fun getPonenteByNombres(nombres: String): Ponente = ponenteRepository.findByNombres(nombres)
-        .orElseThrow { Exception("Ponente no encontrado por sus nombres") }
+        .orElseThrow { ResourceNotFoundException("Ponente no encontrado por sus nombres") }
 
     // Método para eliminar un ponente por su ID
     @Transactional

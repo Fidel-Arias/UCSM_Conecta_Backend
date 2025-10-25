@@ -2,8 +2,8 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ubicacion
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ubicacion.Ubicacion
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataRequestUbicacion
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.ubicacion.UbicacionRepository
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +23,7 @@ class UbicacionService @Autowired constructor(
    // Metodo para obtener una Ubicacion por su nombre
     fun getUbicacionByNombre(nombre: String): Ubicacion? {
         return ubicacionRepository.findByNombre(nombre)
-            .orElseThrow{ EntityNotFoundException("Ubicacion no encontrada") }
+            .orElseThrow{ ResourceNotFoundException("Ubicacion no encontrada") }
     }
 
     // Metodo para obtener todas las Ubicaciones
@@ -31,7 +31,7 @@ class UbicacionService @Autowired constructor(
 
     // Metodo para obtener una Ubicacion por su ID
     fun getUbicacionById(id: Long): Ubicacion = ubicacionRepository.findById(id)
-        .orElseThrow{ EntityNotFoundException("Ubicacion no encontrada") }
+        .orElseThrow{ ResourceNotFoundException("Ubicacion con id $id no encontrada") }
 
     // Metodo para desactivar una Ubicacion
     @Transactional

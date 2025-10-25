@@ -2,10 +2,10 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.congresos.refrigerio
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.refrigerio.Refrigerio
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.refrigerio.DataRequestRefrigerio
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.refrigerio.RefrigerioRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
-import jakarta.persistence.EntityNotFoundException
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -45,7 +45,7 @@ class RefrigerioService @Autowired constructor(
     // Metodo para obtener refrigerio por id
     fun getRefrigerioById(refrigerioId: Long): Refrigerio {
         return refrigerioRepository.findById(refrigerioId).orElseThrow {
-            EntityNotFoundException("Refrigerio con id $refrigerioId no encontrado")
+            ResourceNotFoundException("Refrigerio con id $refrigerioId no encontrado")
         }
     }
 

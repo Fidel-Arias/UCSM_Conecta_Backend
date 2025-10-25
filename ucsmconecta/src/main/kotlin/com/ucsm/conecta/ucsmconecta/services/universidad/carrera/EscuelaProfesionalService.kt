@@ -16,11 +16,11 @@ class EscuelaProfesionalService @Autowired constructor(
 ){
     // Metodo para buscar una escuela profesional por su ID
     fun searchEscuelaProfesionalById(id: Long): EscuelaProfesional = escuelaProfesionalRepository.findById(id)
-        .orElseThrow { ResourceNotFoundException("Escuela Profesional no encontrada") }
+        .orElseThrow { ResourceNotFoundException("Escuela Profesional no encontrada por su id $id") }
 
     // Metodo para buscar una escuela profesional por su nombre
     fun searchByNombre(nombre: String): EscuelaProfesional = escuelaProfesionalRepository.findByNombre(nombre)
-        .orElseThrow { ResourceNotFoundException("Escuela Profesional no encontrada") }
+        .orElseThrow { ResourceNotFoundException("Escuela Profesional no encontrada por el nombre") }
 
     // Metodo para crear una escuela profesional
     @Transactional

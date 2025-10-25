@@ -2,8 +2,8 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.gradoacademico
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.gradoacademico.GradoAcademico
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataRequestGradoAcademico
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.gradoacademico.GradoAcademicoRepository
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,9 +28,9 @@ class GradoAcademicoService @Autowired constructor(
 
     // Metodo para buscar un grado académico por id
     fun getGradoAcademicoById(id: Long): GradoAcademico = gradoAcademicoRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Grado Academico no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Grado Academico con id $id no encontrado") }
 
     // Metodo para buscar un grado académico por descripcion
     fun searchByDescripcion(descripcion: String): GradoAcademico = gradoAcademicoRepository.findByDescripcion(descripcion)
-        .orElseThrow { EntityNotFoundException("Grado Academico no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Grado Academico no encontrado") }
 }

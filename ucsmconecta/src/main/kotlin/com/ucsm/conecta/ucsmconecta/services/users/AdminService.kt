@@ -3,6 +3,7 @@ package com.ucsm.conecta.ucsmconecta.services.users
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.domain.users.administrador.Administrador
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.admin.RegisterAdminData
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.admin.AdminRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
 import jakarta.persistence.EntityNotFoundException
@@ -36,7 +37,7 @@ class AdminService @Autowired constructor(
 
     // Metodo para buscar un administrador por su id
     fun getAdminById(id: Long): Administrador = adminRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Administrador no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Administrador con id $id no encontrado") }
 
     // Metodo para desactivar un administrador por su id
     @Transactional

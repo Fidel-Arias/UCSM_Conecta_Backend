@@ -3,9 +3,9 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.congresos
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataRequestCongreso
+import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.CongresoRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
-import jakarta.persistence.EntityNotFoundException
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,10 +17,10 @@ class CongresoService @Autowired constructor(
     private val escuelaProfesionalService: EscuelaProfesionalService
 ){
     fun getCongresoById(id: Long):Congreso = congresoRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Congreso no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Congreso con id $id no encontrado") }
 
     fun searchByNombre(nombre: String):Congreso = congresoRepository.findByNombre(nombre)
-        .orElseThrow { EntityNotFoundException("Congreso no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Congreso no encontrado") }
 
     fun createCongreso(@RequestBody @Valid dataRequestCongreso: DataRequestCongreso): Congreso {
         val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(
