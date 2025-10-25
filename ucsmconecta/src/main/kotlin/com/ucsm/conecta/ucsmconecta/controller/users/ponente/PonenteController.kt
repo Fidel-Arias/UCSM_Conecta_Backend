@@ -2,8 +2,8 @@ package com.ucsm.conecta.ucsmconecta.controller.users.ponente
 
 import com.ucsm.conecta.ucsmconecta.domain.users.ponente.Ponente
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes.DataRequestPonente
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes.DataResponsePonente
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataRequestPonente
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResponsePonente
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataResponseGradoAcademico
 import com.ucsm.conecta.ucsmconecta.services.users.PonenteService
 import jakarta.validation.Valid

@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes
+package com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.gradoacademico.GradoAcademico
 import jakarta.validation.constraints.NotNull

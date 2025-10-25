@@ -1,7 +1,7 @@
 package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.users.ponente.Ponente
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes.DataRequestPonente
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataRequestPonente
 import com.ucsm.conecta.ucsmconecta.repository.users.ponente.PonenteRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.services.universidad.gradoacademico.GradoAcademicoService

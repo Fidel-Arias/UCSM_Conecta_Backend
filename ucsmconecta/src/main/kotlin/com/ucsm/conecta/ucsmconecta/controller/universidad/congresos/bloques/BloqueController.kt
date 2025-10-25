@@ -5,8 +5,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataReques
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResponseBloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes.DataResultPonente
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResponseUbicacion
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResultUbicacion
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques.BloqueService
 import jakarta.validation.Valid

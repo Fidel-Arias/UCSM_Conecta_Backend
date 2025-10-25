@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes
+package com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes
 
 data class DataResultPonente(
     val id: Long,

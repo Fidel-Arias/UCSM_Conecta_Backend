@@ -4,7 +4,7 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponen
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataRequestPonencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResponsePonencia
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes.DataResultPonente
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ponencias.PonenciaService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired

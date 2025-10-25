@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponentes
+package com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes
 
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataResponseGradoAcademico
