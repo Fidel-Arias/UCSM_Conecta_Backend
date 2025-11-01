@@ -3,6 +3,7 @@ package com.ucsm.conecta.ucsmconecta.controller.universidad.congresos.bloques
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques.Bloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataRequestBloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResponseBloque
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.UpdateDataBloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
@@ -67,6 +68,9 @@ class BloqueController @Autowired constructor(
     fun getAllBloques(): ResponseEntity<List<DataResponseBloque>> {
         val bloques: List<Bloque> = bloqueService.getAllBloques()
 
+        if (bloques.isEmpty())
+            return ResponseEntity.noContent().build()
+
         val dataResponseBloques: List<DataResponseBloque> = bloques.map { bloque ->
             DataResponseBloque(
                 id = bloque.id!!,
@@ -97,7 +101,7 @@ class BloqueController @Autowired constructor(
 
     // Endpoint para obtener un bloque por su id
     @GetMapping("/{id}")
-    fun searchBloqueById(id: Long): ResponseEntity<DataResponseBloque> {
+    fun searchBloqueById(@PathVariable id: Long): ResponseEntity<DataResponseBloque> {
         val bloque: Bloque = bloqueService.getBloqueById(id)
         val dataResponseBloque = DataResponseBloque(
             id = bloque.id!!,
@@ -126,7 +130,7 @@ class BloqueController @Autowired constructor(
 
     // Endpoint para eliminar un bloque por su id
     @DeleteMapping("/{id}")
-    fun deleteBloqueById(id: Long): ResponseEntity<Void> {
+    fun deleteBloqueById(@PathVariable id: Long): ResponseEntity<Void> {
         bloqueService.deleteBloqueById(id)
         return ResponseEntity.noContent().build()
     }
@@ -135,33 +139,9 @@ class BloqueController @Autowired constructor(
     @PutMapping("/{id}")
     fun updateBloque(
         @PathVariable id: Long,
-        @RequestBody @Valid dataRequestBloque: DataRequestBloque
-    ): ResponseEntity<DataResponseBloque> {
-        val bloqueActualizado: Bloque = bloqueService.updateBloque(id, dataRequestBloque)
-
-        val dataResponseBloque = DataResponseBloque(
-            id = bloqueActualizado.id!!,
-            horaInicial = bloqueActualizado.horaInicio,
-            horaFinal = bloqueActualizado.horaFinal,
-            dia = DataResultDia(
-                id = bloqueActualizado.dia.id!!,
-                fecha = bloqueActualizado.dia.fecha
-            ),
-            ubicacion = DataResultUbicacion(
-                id = bloqueActualizado.ubicacion.id!!,
-                nombre = bloqueActualizado.ubicacion.nombre,
-            ),
-            ponencia = DataResultPonencia(
-                id = bloqueActualizado.ponencia.id!!,
-                nombre = bloqueActualizado.ponencia.nombre,
-                ponente = DataResultPonente(
-                    id = bloqueActualizado.ponencia.ponente.id!!,
-                    nombres = bloqueActualizado.ponencia.ponente.nombres,
-                    apellidos = bloqueActualizado.ponencia.ponente.apellidos
-                )
-            )
-        )
-
-        return ResponseEntity.ok(dataResponseBloque)
+        @RequestBody @Valid updateDataBloque: UpdateDataBloque
+    ): ResponseEntity<Void> {
+        val bloqueActualizado: Bloque = bloqueService.updateBloque(id, updateDataBloque)
+        return ResponseEntity.noContent().build()
     }
 }

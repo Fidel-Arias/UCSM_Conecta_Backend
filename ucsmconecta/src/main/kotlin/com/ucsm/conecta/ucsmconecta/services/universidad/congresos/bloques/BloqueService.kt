@@ -2,6 +2,7 @@ package com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques.Bloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataRequestBloque
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.UpdateDataBloque
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.bloques.BloqueRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.dia.DiaService
@@ -25,6 +26,8 @@ class BloqueService @Autowired constructor(
     fun createBloque(@RequestBody @Valid dataRequestBloque: DataRequestBloque): Bloque {
         // Obtener la ubicación asociada al bloque
         val ubicacion = ubicacionService.getUbicacionById(dataRequestBloque.ubicacionId)
+
+        // Verificar si la ubicacion ya esta ocupada en ese rango de hora
 
         // Obtener la ponencia asociada al bloque
         val ponencia = ponenciaService.getPonenciaById(dataRequestBloque.ponenciaId)
@@ -59,23 +62,25 @@ class BloqueService @Autowired constructor(
 
     // Metodo para actualizar un bloque
     @Transactional
-    fun updateBloque(id: Long, @RequestBody @Valid dataRequestBloque: DataRequestBloque): Bloque {
+    fun updateBloque(id: Long, @RequestBody @Valid updateDataBloque: UpdateDataBloque): Bloque {
         // Obtener el bloque a actualizar
         val bloque = getBloqueById(id)
-        // Obtener la ubicación asociada al bloque
-        val ubicacion = ubicacionService.getUbicacionById(dataRequestBloque.ubicacionId)
-        // Obtener la ponencia asociada al bloque
-        val ponencia = ponenciaService.getPonenciaById(dataRequestBloque.ponenciaId)
-        // Obtener el día asociado al bloque
-        val dia = diaService.getDiaById(dataRequestBloque.diaId)
 
-        // Actualizar los campos del bloque
-        bloque.apply {
-            this.horaInicio = dataRequestBloque.horaInicial
-            this.horaFinal = dataRequestBloque.horaFinal
-            this.ubicacion = ubicacion
-            this.ponencia = ponencia
+        // Solo actualiza si los campos no son nulos o vacíos
+        updateDataBloque.horaInicial?.let { bloque.horaInicio = it }
+        updateDataBloque.horaFinal?.let { bloque.horaFinal = it }
+
+        // Si viene un id de ubicación o ponencia, actualizar la relación
+        updateDataBloque.ubicacionId?.let { ubicacionId ->
+            val nuevaUbicacion = ubicacionService.getUbicacionById(ubicacionId)
+            bloque.ubicacion = nuevaUbicacion
         }
+
+        updateDataBloque.ponenciaId?.let { ponenciaId ->
+            val nuevaPonencia = ponenciaService.getPonenciaById(ponenciaId)
+            bloque.ponencia = nuevaPonencia
+        }
+
         return bloqueRepository.save(bloque)
     }
 }
