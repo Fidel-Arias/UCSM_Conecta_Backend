@@ -31,7 +31,7 @@ open class Administrador(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id")
-    open var escuelaProfesional: EscuelaProfesional
+    open val escuelaProfesional: EscuelaProfesional
 ) {
     constructor(
         nombres: String,
@@ -57,5 +57,8 @@ open class Administrador(
 
     fun getFullName(): String {
         return "$nombres $aPaterno $aMaterno"
+    }
+    fun changePassword(newPassword: String) {
+        this.password = newPassword
     }
 }

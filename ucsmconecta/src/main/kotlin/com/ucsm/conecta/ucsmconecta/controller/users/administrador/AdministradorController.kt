@@ -3,6 +3,7 @@ package com.ucsm.conecta.ucsmconecta.controller.users.administrador
 import com.ucsm.conecta.ucsmconecta.domain.users.administrador.Administrador
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.admin.RegisterAdminData
+import com.ucsm.conecta.ucsmconecta.dto.users.auth.admin.UpdateDataAdministrador
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.admin.DataResponseAdmin
 import com.ucsm.conecta.ucsmconecta.services.users.AdminService
 import jakarta.validation.Valid
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -73,10 +75,23 @@ class AdministradorController @Autowired constructor(
     }
 
     // Metodo para desactivar un administrador por su ID
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deactivate/{id}")
     fun deleteAdministrador(@PathVariable id: Long): ResponseEntity<Void> {
         adminService.deactivateAdminById(id)
         return ResponseEntity.noContent().build()
     }
 
+    // Endpoint para activar un administrador por ID
+    @PutMapping("/activate/{id}")
+    fun activateAdministrador(@PathVariable id: Long): ResponseEntity<Void> {
+        adminService.activateAdminById(id)
+        return ResponseEntity.noContent().build()
+    }
+
+    // Endpoint para actualizar el usuario
+    @PutMapping("/{id}")
+    fun updateAdministrador(@PathVariable id: Long, @RequestBody @Valid updateDataAdministrador: UpdateDataAdministrador): ResponseEntity<Void> {
+        adminService.updateAdministrador(id, updateDataAdministrador)
+        return ResponseEntity.noContent().build()
+    }
 }
