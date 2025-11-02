@@ -7,12 +7,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class DataRequestAsistencia(
-    @get:NotNull(message = "La 'fecha' es obligatoria")
-    val fecha: LocalDate,
-
-    @get:NotNull(message = "La 'hora' es obligatoria")
-    val hora: LocalTime,
-
     @get:NotNull(message = "El id del 'participante' es obligatorio")
     val participanteId: Long,
 

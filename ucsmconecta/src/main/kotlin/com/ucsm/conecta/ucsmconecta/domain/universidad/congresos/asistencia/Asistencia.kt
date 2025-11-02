@@ -16,10 +16,10 @@ open class Asistencia(
     open val id: Long?,
 
     @Column(name = "fecha", nullable = false, columnDefinition = "DATE DEFAULT CURRENT_DATE")
-    open var fecha: LocalDate,
+    open var fecha: LocalDate = LocalDate.now(),
 
     @Column(name = "hora", nullable = false, columnDefinition = "TIME DEFAULT CURRENT_TIME")
-    open var hora: LocalTime,
+    open var hora: LocalTime = LocalTime.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participante_id", nullable = false)
@@ -34,15 +34,11 @@ open class Asistencia(
     open val congreso: Congreso
 ) {
     constructor(
-        fecha: LocalDate,
-        hora: LocalTime,
         participante: Participante,
         bloque: Bloque,
         congreso: Congreso
     ) : this(
         id = null,
-        fecha = fecha,
-        hora = hora,
         participante = participante,
         bloque = bloque,
         congreso = congreso
