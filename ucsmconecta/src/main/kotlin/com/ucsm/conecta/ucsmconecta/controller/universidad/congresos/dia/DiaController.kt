@@ -22,30 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 class DiaController @Autowired constructor(
     private val diaService: DiaService
 ) {
-    // Endpoint para crear un nuevo día
-    @PostMapping
-    fun createDia(@RequestBody @Valid dataRequestDia: DataRequestDia, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseDia> {
-        // Crear el nuevo día utilizando el servicio
-        val diaCreado = diaService.createDia(dataRequestDia)
-
-        // Construir la URI del nuevo recurso creado
-        val uri = uriComponentsBuilder.path("/api/congresos/dias/{id}").buildAndExpand(diaCreado.id).toUri()
-
-        // Mapear a DataResponseDia y devolver la respuesta con el código 201 Created
-        val dataResponseDia = DataResponseDia(
-            id = diaCreado.id!!,
-            fecha = diaCreado.fecha,
-            estado = diaCreado.estado,
-            congreso = DataResultCongreso(
-                id = diaCreado.congreso.id!!,
-                nombre = diaCreado.congreso.nombre
-            )
-        )
-
-        // Retornar la respuesta con el código 201 Created
-        return ResponseEntity.created(uri).body(dataResponseDia)
-    }
-
     // Endpoint para buscar un día por su ID
     @GetMapping("/{id}")
     fun searchDiaById(@PathVariable id: Long): ResponseEntity<DataResponseDia> {

@@ -5,6 +5,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaP
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataRequestCongreso
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResponseCongreso
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.dia.DiaService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,12 +22,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RequestMapping("/api/congresos")
 class CongresoController @Autowired constructor(
     private val congresoService: CongresoService,
+    private val diaService: DiaService,
 ) {
     @PostMapping
     @Transactional
     fun createCongreso(@RequestBody @Valid dataRequestCongreso: DataRequestCongreso, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseCongreso> {
         // Creacion del congreso
         val congreso: Congreso = congresoService.createCongreso(dataRequestCongreso)
+
+        // Creacion de la Entidad Dia con el servicio
+        diaService.createDia(dataRequestCongreso.fechaInicio, dataRequestCongreso.fechaFin, congreso.id!!)
 
         // Se pasan los datos creados a DataResponseCongreso para visualizarlos
         val dataResponseCongreso = DataResponseCongreso(

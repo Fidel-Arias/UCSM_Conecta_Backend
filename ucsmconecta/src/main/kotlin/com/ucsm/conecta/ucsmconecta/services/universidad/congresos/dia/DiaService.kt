@@ -10,6 +10,7 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
+import java.time.LocalDate
 
 @Service
 class DiaService @Autowired constructor(
@@ -18,15 +19,40 @@ class DiaService @Autowired constructor(
 ) {
     // Metodo para crear un nuevo día de congreso
     @Transactional
-    fun createDia(@RequestBody @Valid dataRequestDia: DataRequestDia): Dia {
+    fun createDia(fechaInicio: LocalDate, fechaFin: LocalDate, congresoId: Long) {
         // Obtener el congreso asociado al día
-        val congreso = congresoService.getCongresoById(dataRequestDia.congresoId)
+        val congreso = congresoService.getCongresoById(congresoId)
 
-        // Crear un nuevo día a partir de los datos recibidos
-        return diaRepository.save(Dia(
-            fecha = dataRequestDia.fecha,
-            congreso = congreso
-        ))
+        // Obtencion del numero de dias total
+        val diasTotal = calcDiasTotal(fechaInicio, fechaFin)
+
+        for (nDia in 0..<diasTotal) {
+            val day = fechaInicio.dayOfMonth + nDia
+            val month = fechaInicio.month
+            val year = fechaInicio.year
+
+            val fechaCompleta = LocalDate.of(year,month,day)
+
+            diaRepository.save(Dia(
+                fecha = fechaCompleta,
+                congreso = congreso
+            ))
+        }
+    }
+
+    // Metodo para calcular la cantidad de dias del congreso
+    fun calcDiasTotal(fechaInicio: LocalDate, fechaFin: LocalDate): Int {
+        val diaInicial = fechaInicio.dayOfMonth
+        val diaFinal = fechaFin.dayOfMonth
+        if (diaInicial == diaFinal)
+            return 1
+        else if (diaFinal > diaInicial) {
+            var numDias = 0
+            for (i in diaInicial..diaFinal) {
+                numDias += 1
+            }
+            return numDias
+        } else throw IllegalArgumentException("La fecha de inicio no puede ser mayor a la fecha final del congreso")
     }
 
     // Método para obtener un día por su ID
