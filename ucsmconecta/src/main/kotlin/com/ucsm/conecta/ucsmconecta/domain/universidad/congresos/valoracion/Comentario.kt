@@ -11,30 +11,32 @@ open class Comentario(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    open val id: Long?,
+    val id: Long?,
 
     @Column(name = "texto", nullable = false)
-    open var texto: String,
+    var texto: String,
 
     @Column(name = "fecha", nullable = false)
-    open var fecha: LocalDate,
+    val fecha: LocalDate = LocalDate.now(),
+
+    @Column(name = "hora", nullable = false)
+    val hora: LocalTime = LocalTime.now(),
 
     @Column(name = "estado", nullable = false)
-    open var estado: Boolean,
+    var estado: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participante_id", nullable = false)
-    open var participante: Participante
+    var participante: Participante
 ) {
     constructor(
         texto: String,
-        fecha: LocalDate,
+        estado: Boolean,
         participante: Participante
     ) : this(
         id = null,
         texto = texto,
-        fecha = fecha,
-        estado = true,
+        estado = estado,
         participante = participante
     )
 
