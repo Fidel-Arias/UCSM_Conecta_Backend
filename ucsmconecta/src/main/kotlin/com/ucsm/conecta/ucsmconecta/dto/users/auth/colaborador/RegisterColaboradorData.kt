@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Size
 import jakarta.validation.constraints.Pattern
 
 data class RegisterColaboradorData(
-    @get:NotNull(message = "El 'nombre' es obligatorio")
-    @get:NotEmpty(message = "El 'nombre' no puede estar vacio")
-    @get:NotBlank(message = "El 'nombre' no puede estar en blanco")
+    @get:NotNull(message = "El campo 'nombres' es obligatorio")
+    @get:NotEmpty(message = "El campo 'nombres' no puede estar vacio")
+    @get:NotBlank(message = "El campo 'nombres' no puede estar en blanco")
     val nombres: String,
 
     @get:NotNull(message = "El 'apellido paterno' es obligatorio")
@@ -41,7 +41,5 @@ data class RegisterColaboradorData(
     val password: String,
 
     @get:NotNull(message = "El id de la escuela profesional es obligatorio")
-    @get:NotBlank(message = "El id de la escuela profesional no puede estar en blanco")
-    @get:NotEmpty(message = "El id de la escuela profesional no puede estar vacio")
     val escuelaProfesionalId: Long
 )
