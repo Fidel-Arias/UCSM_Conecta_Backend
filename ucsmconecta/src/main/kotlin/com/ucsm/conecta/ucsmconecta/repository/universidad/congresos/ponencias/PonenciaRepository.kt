@@ -6,4 +6,5 @@ import java.util.Optional
 
 interface PonenciaRepository: JpaRepository<Ponencia, Long> {
     fun findByNombre(nombre: String): Optional<Ponencia>
+    fun findAllByEstadoTrueOrderByIdAsc(): List<Ponencia>
 }

@@ -4,6 +4,7 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponen
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataRequestPonencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResponsePonencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.UpdateDataPonencia
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ponencias.PonenciaService
 import jakarta.validation.Valid
@@ -60,6 +61,9 @@ class PonenciasController @Autowired constructor(
     fun searchPonenciasById(@PathVariable id: Long): ResponseEntity<DataResponsePonencia> {
         val ponencia: Ponencia = ponenciasService.getPonenciaById(id)
 
+        if (!ponencia.estado)
+            return ResponseEntity.noContent().build()
+
         val dataResponsePonencia = DataResponsePonencia(
             id = ponencia.id!!,
             nombre = ponencia.nombre,
@@ -82,6 +86,9 @@ class PonenciasController @Autowired constructor(
     @GetMapping
     fun getAllPonencias(): ResponseEntity<List<DataResponsePonencia>> {
         val ponencias: List<Ponencia> = ponenciasService.getAllPonencias()
+
+        if (ponencias.isEmpty())
+            return ResponseEntity.noContent().build()
 
         val dataResponsePonencias = ponencias.map { ponencia ->
             DataResponsePonencia(
@@ -142,24 +149,9 @@ class PonenciasController @Autowired constructor(
 
     // Metodo para actualizar una ponencia por su ID
     @PutMapping("/{id}")
-    fun updatePonencia(@PathVariable id: Long, @RequestBody @Valid dataRequestPonencia: DataRequestPonencia): ResponseEntity<DataResponsePonencia> {
+    fun updatePonencia(@PathVariable id: Long, @RequestBody @Valid updateDataPonencia: UpdateDataPonencia): ResponseEntity<Void> {
         // Actualizar la ponencia utilizando el servicio
-        val ponencia: Ponencia = ponenciasService.updatePonencia(id, dataRequestPonencia)
-        // Mapear la entidad Ponencia a DataResponsePonencia
-        val dataResponsePonencia = DataResponsePonencia(
-            id = ponencia.id!!,
-            nombre = ponencia.nombre,
-            estado = ponencia.estado,
-            ponente = DataResultPonente(
-                id = ponencia.ponente.id!!,
-                nombres = ponencia.ponente.nombres,
-                apellidos = ponencia.ponente.apellidos,
-            ),
-            congreso = DataResultCongreso(
-                id = ponencia.congreso.id!!,
-                nombre = ponencia.congreso.nombre,
-            )
-        )
-        return ResponseEntity.ok(dataResponsePonencia)
+        ponenciasService.updatePonencia(id, updateDataPonencia)
+        return ResponseEntity.noContent().build()
     }
 }

@@ -4,6 +4,7 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponencia
 import com.ucsm.conecta.ucsmconecta.domain.users.ponente.Ponente
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataRequestPonencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.UpdateDataPonencia
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.ponencias.PonenciaRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
@@ -37,12 +38,18 @@ class PonenciaService @Autowired constructor(
     }
 
     // Metodo para buscar una ponencia por su id
-    fun getPonenciaById(id: Long): Ponencia = ponenciaRepository.findById(id)
-        .orElseThrow { ResourceNotFoundException("Ponencia con id $id no encontrada") }
+    fun getPonenciaById(id: Long, includeInactive: Boolean = false): Ponencia {
+        val ponencia = ponenciaRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Ponencia con id $id no encontrada") }
+
+        if (!ponencia.estado && !includeInactive)
+            throw ResourceNotFoundException("Ponencia con id $id está desactivado o no disponible")
+
+        return ponencia
+    }
 
     // Metodo para obtener todas las ponencias activas
-    fun getAllPonencias(): List<Ponencia> = ponenciaRepository.findAll()
-        .filter { it.estado }
+    fun getAllPonencias(): List<Ponencia> = ponenciaRepository.findAllByEstadoTrueOrderByIdAsc()
 
     fun getPonenciaByNombre(nombre: String): Ponencia = ponenciaRepository.findByNombre(nombre)
         .orElseThrow { ResourceNotFoundException("Ponencia no encontrada por su nombre") }
@@ -58,22 +65,26 @@ class PonenciaService @Autowired constructor(
     // Metodo para activar una ponencia
     @Transactional
     fun activatePonencia(id: Long): Ponencia {
-        val ponencia: Ponencia = getPonenciaById(id)
+        val ponencia: Ponencia = getPonenciaById(id, includeInactive = true)
+        if (ponencia.estado)
+            throw IllegalStateException("El ponente ya está activo")
         ponencia.estado = true
         return ponenciaRepository.save(ponencia)
     }
 
     // Metodo para actualizar una ponencia
     @Transactional
-    fun updatePonencia(id: Long, @RequestBody @Valid dataRequestPonencia: DataRequestPonencia): Ponencia {
+    fun updatePonencia(id: Long, @RequestBody @Valid updateDataPonencia: UpdateDataPonencia): Ponencia {
         val ponencia: Ponencia = getPonenciaById(id)
 
-        // Buscar ponente relacionado
-        val ponente: Ponente = ponenteService.getPonenteById(dataRequestPonencia.ponenteID)
+        // Solo actualiza si los campos no son nulos o vacíos
+        updateDataPonencia.nombre.takeIf { !it.isNullOrBlank() }?.let {
+            ponencia.nombre = it
+        }
 
-        ponencia.apply {
-            nombre = dataRequestPonencia.nombre
-            this.ponente = ponente
+        updateDataPonencia.ponenteID?.let { id ->
+            val newPonente: Ponente = ponenteService.getPonenteById(id)
+            ponencia.ponente = newPonente
         }
 
         return ponenciaRepository.save(ponencia)
