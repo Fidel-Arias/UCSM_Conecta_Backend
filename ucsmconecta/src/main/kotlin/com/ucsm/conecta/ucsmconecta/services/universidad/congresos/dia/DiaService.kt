@@ -30,13 +30,19 @@ class DiaService @Autowired constructor(
     }
 
     // Método para obtener un día por su ID
-    fun getDiaById(id: Long): Dia = diaRepository.findById(id).orElseThrow {
-        ResourceNotFoundException("Día con id $id no encontrado")
+    fun getDiaById(id: Long, includeInactive: Boolean = false): Dia {
+        val dia = diaRepository.findById(id).orElseThrow {
+            ResourceNotFoundException("Día con id $id no encontrado")
+        }
+
+        if (!dia.estado && !includeInactive)
+            throw ResourceNotFoundException("Dia con id $id está desactivado o no disponible")
+
+        return dia
     }
 
     // Método para obtener todos los días
-    fun getAllDias(): List<Dia> = diaRepository.findAll()
-        .filter { it.estado }
+    fun getAllDias(): List<Dia> = diaRepository.findAllByEstadoTrueOrderByIdAsc()
 
     // Método para desactivar un día
     @Transactional
@@ -49,7 +55,9 @@ class DiaService @Autowired constructor(
     // Método para activar un día
     @Transactional
     fun activateDia(id: Long) {
-        val dia = getDiaById(id)
+        val dia = getDiaById(id, includeInactive = true)
+        if (dia.estado)
+            throw IllegalStateException("El día ya está activo")
         dia.estado = true
         diaRepository.save(dia)
     }
@@ -58,6 +66,9 @@ class DiaService @Autowired constructor(
     @Transactional
     fun deleteDiaById(id: Long) {
         val dia = getDiaById(id)
+
+        if (!dia.estado)
+            throw IllegalStateException("El día ya está activo")
         diaRepository.delete(dia)
     }
 }
