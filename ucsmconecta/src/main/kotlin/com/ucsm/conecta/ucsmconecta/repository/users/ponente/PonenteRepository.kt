@@ -6,4 +6,6 @@ import java.util.Optional
 
 interface PonenteRepository: JpaRepository<Ponente, Long> {
     fun findByNombres(nombres: String): Optional<Ponente>
+
+    fun findAllByOrderByIdAsc(): List<Ponente>
 }

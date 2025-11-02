@@ -5,6 +5,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataRequestPonente
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResponsePonente
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataResponseGradoAcademico
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.UpdateDataPonente
 import com.ucsm.conecta.ucsmconecta.services.users.PonenteService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -112,23 +113,8 @@ class PonenteController @Autowired constructor(
 
     // Metodo para actualizar un ponente por su id
     @PutMapping("/{id}")
-    fun updatePonenteById(@PathVariable id: Long, @RequestBody @Valid dataRequestPonente: DataRequestPonente): ResponseEntity<DataResponsePonente> {
-        val ponente: Ponente = ponenteService.updatePonente(id, dataRequestPonente)
-
-        val dataResponsePonente = DataResponsePonente(
-            id = ponente.id!!,
-            nombres = ponente.nombres,
-            apellidos = ponente.apellidos,
-            gradoAcademico = DataResponseGradoAcademico(
-                id = ponente.gradoAcademico.id!!,
-                descripcion = ponente.gradoAcademico.descripcion
-            ),
-            congreso = DataResultCongreso(
-                id = ponente.congreso.id!!,
-                nombre = ponente.congreso.nombre,
-            )
-        )
-
-        return ResponseEntity.ok(dataResponsePonente)
+    fun updatePonenteById(@PathVariable id: Long, @RequestBody @Valid updateDataPonente: UpdateDataPonente): ResponseEntity<Void> {
+        ponenteService.updatePonente(id, updateDataPonente)
+        return ResponseEntity.noContent().build()
     }
 }

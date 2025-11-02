@@ -43,5 +43,4 @@ open class Ponente (
         return "Ponente(id=$id, nombres='$nombres', apellidos='$apellidos', gradoAcademico=$gradoAcademico, congreso=$congreso)"
     }
 
-
 }

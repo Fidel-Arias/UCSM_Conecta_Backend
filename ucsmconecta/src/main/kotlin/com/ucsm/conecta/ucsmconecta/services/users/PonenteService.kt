@@ -2,6 +2,7 @@ package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.users.ponente.Ponente
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataRequestPonente
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.UpdateDataPonente
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.ponente.PonenteRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
@@ -40,7 +41,7 @@ class PonenteService @Autowired constructor(
         .orElseThrow { ResourceNotFoundException("Ponente con id $id no encontrado") }
 
     // Método para obtener todos los ponentes
-    fun getAllPonentes(): List<Ponente> = ponenteRepository.findAll()
+    fun getAllPonentes(): List<Ponente> = ponenteRepository.findAllByOrderByIdAsc()
 
     // Método para obtener un ponente por sus nombres
     fun getPonenteByNombres(nombres: String): Ponente = ponenteRepository.findByNombres(nombres)
@@ -55,19 +56,25 @@ class PonenteService @Autowired constructor(
 
     // Método para actualizar un ponente
     @Transactional
-    fun updatePonente(id: Long, @RequestBody @Valid dataRequestPonente: DataRequestPonente): Ponente {
+    fun updatePonente(id: Long, @RequestBody @Valid updateDataPonente: UpdateDataPonente): Ponente {
         // Obtener el ponente existente
-        val ponente = getPonenteById(id)
+        val ponente: Ponente = getPonenteById(id)
 
-        // Actualizar grado academico relacionado
-        val gradoAcademico = gradoAcademicoService.getGradoAcademicoById(dataRequestPonente.gradoAcademicoId)
-
-        // Actualizar campos
-        ponente.apply {
-            nombres = dataRequestPonente.nombres
-            apellidos = dataRequestPonente.apellidos
-            this.gradoAcademico = gradoAcademico
+        // Solo actualiza si los campos no son nulos o vacíos
+        updateDataPonente.nombres.takeIf { !it.isNullOrBlank() }?.let {
+            ponente.nombres = it
         }
+
+        updateDataPonente.apellidos.takeIf { !it.isNullOrBlank() }?.let {
+            ponente.apellidos = it
+        }
+
+        // Si viene un nuevo grado académico, lo buscamos y asignamos
+        updateDataPonente.gradoAcademicoId
+            ?.let { gradoID ->
+                val nuevoGrado = gradoAcademicoService.getGradoAcademicoById(gradoID)
+                ponente.gradoAcademico = nuevoGrado
+            }
 
         return ponenteRepository.save(ponente)
     }
