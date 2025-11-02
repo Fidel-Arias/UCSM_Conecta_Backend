@@ -71,6 +71,9 @@ class UbicacionController @Autowired constructor(
         // Obtener todas las Ubicaciones
         val ubicaciones: List<Ubicacion> = ubicacionService.getAllUbicaciones()
 
+        if (ubicaciones.isEmpty())
+            return ResponseEntity.noContent().build()
+
         // Mapear las ubicaciones a una lista de DataResponseUbicacion
         val dataResponseUbicaciones = ubicaciones.map { ubicacion ->
             DataResponseUbicacion(
@@ -86,7 +89,7 @@ class UbicacionController @Autowired constructor(
 
     // Metodo para desactivar una Ubicacion por su ID
     @DeleteMapping("/deactivate/{id}")
-    fun deactivateUbicacion(id: Long): ResponseEntity<Void> {
+    fun deactivateUbicacion(@PathVariable id: Long): ResponseEntity<Void> {
         // Desactivar la Ubicacion por su ID
         ubicacionService.deactivateUbicacion(id)
         return ResponseEntity.noContent().build()
@@ -94,7 +97,7 @@ class UbicacionController @Autowired constructor(
 
     // Metodo para activar una Ubicacion por su ID
     @PutMapping("/activate/{id}")
-    fun activateUbicacion(id: Long): ResponseEntity<Void> {
+    fun activateUbicacion(@PathVariable id: Long): ResponseEntity<Void> {
         // Activar la Ubicacion por su ID
         ubicacionService.activateUbicacion(id)
         return ResponseEntity.noContent().build()
@@ -102,17 +105,9 @@ class UbicacionController @Autowired constructor(
 
     // Metodo para actualizar una Ubicacion por su ID
     @PutMapping("/{id}")
-    fun updateUbicacion(@PathVariable id: Long, @RequestBody @Valid dataRequestUbicacion: DataRequestUbicacion): ResponseEntity<DataResponseUbicacion> {
+    fun updateUbicacion(@PathVariable id: Long, @RequestBody @Valid dataRequestUbicacion: DataRequestUbicacion): ResponseEntity<Void> {
         // Actualizar la Ubicacion por su ID
-        val ubicacion: Ubicacion = ubicacionService.updateUbicacion(id, dataRequestUbicacion)
-
-        // Mapear la ubicacion actualizada a un DataResponseUbicacion
-        val dataResponseUbicacion = DataResponseUbicacion(
-            id = ubicacion.id!!,
-            nombre = ubicacion.nombre,
-            estado = ubicacion.estado
-        )
-        // Retornar la respuesta con el recurso actualizado
-        return ResponseEntity.ok(dataResponseUbicacion)
+        ubicacionService.updateUbicacion(id, dataRequestUbicacion)
+        return ResponseEntity.noContent().build()
     }
 }

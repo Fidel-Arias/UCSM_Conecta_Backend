@@ -27,11 +27,18 @@ class UbicacionService @Autowired constructor(
     }
 
     // Metodo para obtener todas las Ubicaciones
-    fun getAllUbicaciones(): List<Ubicacion> = ubicacionRepository.findAll().filter { it.estado }
+    fun getAllUbicaciones(): List<Ubicacion> = ubicacionRepository.findAllByEstadoTrueOrderByIdAsc()
 
     // Metodo para obtener una Ubicacion por su ID
-    fun getUbicacionById(id: Long): Ubicacion = ubicacionRepository.findById(id)
-        .orElseThrow{ ResourceNotFoundException("Ubicacion con id $id no encontrada") }
+    fun getUbicacionById(id: Long, includeInactive: Boolean = false): Ubicacion {
+        val ubicacion: Ubicacion = ubicacionRepository.findById(id)
+            .orElseThrow{ ResourceNotFoundException("Ubicacion con id $id no encontrada") }
+
+        if (!ubicacion.estado && !includeInactive)
+            throw ResourceNotFoundException("Ubicacion con id $id está desactivado o no disponible")
+
+        return ubicacion
+    }
 
     // Metodo para desactivar una Ubicacion
     @Transactional
@@ -44,7 +51,9 @@ class UbicacionService @Autowired constructor(
     // Metodo para activar una Ubicacion
     @Transactional
     fun activateUbicacion(id: Long): Ubicacion {
-        val ubicacion = getUbicacionById(id)
+        val ubicacion = getUbicacionById(id, includeInactive = true)
+        if (ubicacion.estado)
+            throw IllegalStateException("La ubicación ya está activada")
         ubicacion.estado = true
         return ubicacionRepository.save(ubicacion)
     }
