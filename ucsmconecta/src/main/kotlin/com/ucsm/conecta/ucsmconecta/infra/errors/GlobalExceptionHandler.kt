@@ -7,22 +7,53 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConversionException
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.servlet.NoHandlerFoundException
+import java.time.LocalDateTime
 
 @ControllerAdvice
 class GlobalExceptionHandler {
-    @ExceptionHandler(EntityNotFoundException::class)
-    fun handleEntityNotFoundException(ex: EntityNotFoundException): ResponseEntity<Map<String, String>> {
-        val body = mapOf("error" to ex.message!!)
+    // ⚠️ Manejo de rutas inexistentes (404)
+    @ExceptionHandler(NoHandlerFoundException::class)
+    fun handleNotFound(ex: NoHandlerFoundException): ResponseEntity<Map<String, Any>> {
+        val body = mapOf(
+            "status" to 404,
+            "error" to "Not Found",
+            "message" to "La ruta solicitada no existe: ${ex.requestURL}"
+        )
         return ResponseEntity(body, HttpStatus.NOT_FOUND)
     }
 
-    @ExceptionHandler(RuntimeException::class)
-    fun handleRuntimeException(ex: RuntimeException): ResponseEntity<String> {
-        return ResponseEntity(ex.message, HttpStatus.BAD_REQUEST)
+    // Error de tipo de dato (conversión fallida)
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<Map<String, Any>> {
+        val response = mapOf(
+            "error" to "Tipo de dato inválido",
+            "mensaje" to "El parámetro '${ex.name}' tiene un valor '${ex.value}' que no se puede convertir a ${ex.requiredType?.simpleName}.",
+            "status" to HttpStatus.BAD_REQUEST.value()
+        )
+        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadable(
+        ex: HttpMessageNotReadableException
+    ): ResponseEntity<Map<String, Any>> {
+
+        val response: Map<String, Any> = mapOf(
+            "error" to "Error de formato en el cuerpo JSON",
+            "mensaje" to "Los datos enviados no tienen el formato esperado o contienen tipos incorrectos.",
+            "detalles" to (ex.rootCause?.message ?: ex.message ?: "Error desconocido"),
+            "status" to HttpStatus.BAD_REQUEST.value(),
+            "timestamp" to LocalDateTime.now().toString()
+        )
+
+        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
