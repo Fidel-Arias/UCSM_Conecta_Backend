@@ -5,6 +5,7 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
+import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.UpdateDataParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.ParticipanteBusquedaDTO
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
@@ -57,13 +58,13 @@ class ParticipanteService @Autowired constructor(
 
     // Metodo para buscar participantes por apellidos
     fun searchByApellidos(apPaterno: String?, apMaterno: String?): List<ParticipanteBusquedaDTO> {
-        if (apPaterno.isNullOrBlank() && apMaterno.isNullOrBlank()) {
-            throw IllegalArgumentException("Se debe proporcionar al menos un apellido para la búsqueda")
+        val busqueda = when {
+            !apPaterno.isNullOrBlank() && !apMaterno.isNullOrBlank() -> "$apPaterno $apMaterno"
+            !apPaterno.isNullOrBlank() -> apPaterno
+            !apMaterno.isNullOrBlank() -> apMaterno
+            else -> return emptyList()
         }
-
-        val apellidosCompletos: String = "$apPaterno $apMaterno"
-        val resultados = participanteRepository.findByApellidos(apellidosCompletos)
-
+        val resultados = participanteRepository.findByApellidos(busqueda)
         return resultados
     }
 
@@ -79,6 +80,19 @@ class ParticipanteService @Autowired constructor(
     fun updateParticipanteEstadoById(id: Long, nuevoEstado: String): Participante {
         val participante: Participante = getParticipanteById(id)
         participante.estado = nuevoEstado
+        return participanteRepository.save(participante)
+    }
+
+    // Metodo para cambiar el estado del participante por ID
+    @Transactional
+    fun changeStateParticipante(id: Long, @RequestBody @Valid updateDataParticipante: UpdateDataParticipante): Participante {
+        val participante: Participante = getParticipanteById(id)
+
+        // Solo actualiza si los campos no son nulos o vacíos
+        updateDataParticipante.estado.takeIf { !it.isNullOrBlank() }?.let {
+            participante.estado = it
+        }
+
         return participanteRepository.save(participante)
     }
 }

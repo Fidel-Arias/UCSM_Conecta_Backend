@@ -4,6 +4,7 @@ import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
+import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.UpdateDataParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseTipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.ParticipanteBusquedaDTO
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -41,7 +43,7 @@ class ParticipanteController @Autowired constructor(
             apPaterno = participante.apPaterno,
             apMaterno = participante.apMaterno,
             estado = participante.estado,
-            nDocumento = participante.numDocumento,
+            numDocumento = participante.numDocumento,
             escuelaProfesional = DataResponseEscuelaProfesional(
                 id = participante.escuelaProfesional.id!!,
                 nombre = participante.escuelaProfesional.nombre
@@ -77,7 +79,7 @@ class ParticipanteController @Autowired constructor(
             apPaterno = participante.apPaterno,
             apMaterno = participante.apMaterno,
             estado = participante.estado,
-            nDocumento = participante.numDocumento,
+            numDocumento = participante.numDocumento,
             escuelaProfesional = DataResponseEscuelaProfesional(
                 id = participante.escuelaProfesional.id!!,
                 nombre = participante.escuelaProfesional.nombre
@@ -112,7 +114,7 @@ class ParticipanteController @Autowired constructor(
                 apPaterno = participante.apPaterno,
                 apMaterno = participante.apMaterno,
                 estado = participante.estado,
-                nDocumento = participante.numDocumento,
+                numDocumento = participante.numDocumento,
                 escuelaProfesional = participante.escuelaProfesional.let {
                     DataResponseEscuelaProfesional(
                         id = it.id!!,
@@ -201,5 +203,11 @@ class ParticipanteController @Autowired constructor(
             )
         }
         return ResponseEntity.ok(dataResponseParticipantes)
+    }
+
+    @PutMapping("/change-estado/{id}")
+    fun changeEstadoParticiapante(@PathVariable id: Long, @RequestBody @Valid updateDataParticipante: UpdateDataParticipante): ResponseEntity<Void> {
+        participanteService.changeStateParticipante(id, updateDataParticipante)
+        return ResponseEntity.noContent().build()
     }
 }

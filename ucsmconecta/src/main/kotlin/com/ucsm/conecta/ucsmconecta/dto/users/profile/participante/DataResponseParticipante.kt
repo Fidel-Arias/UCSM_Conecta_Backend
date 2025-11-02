@@ -9,7 +9,7 @@ data class DataResponseParticipante(
     val apPaterno: String,
     val apMaterno: String,
     val estado: String,
-    val nDocumento: String,
+    val numDocumento: String,
     val tipoParticipante: DataResponseTipoParticipante?,
     val escuelaProfesional: DataResponseEscuelaProfesional?,
     val congreso: DataResultCongreso?,
