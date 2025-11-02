@@ -4,6 +4,7 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import jakarta.persistence.*
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Entity(name = "Refrigerio")
 @Table(name = "Refrigerio")
@@ -14,10 +15,10 @@ open class Refrigerio(
     open val id: Long?,
 
     @Column(name = "fecha", nullable = false)
-    open var fecha: LocalDate,
+    open var fecha: LocalDate = LocalDate.now(),
 
-    @Column(name = "estado", nullable = false)
-    open var estado: Boolean,
+    @Column(name = "hora", nullable = false)
+    open val hora: LocalTime = LocalTime.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participante_id", nullable = false)
@@ -28,13 +29,10 @@ open class Refrigerio(
     open val congreso: Congreso
 ) {
     constructor(
-        fecha: LocalDate,
         participante: Participante,
         congreso: Congreso
     ) : this(
         id = null,
-        fecha = fecha,
-        estado = true,
         participante = participante,
         congreso = congreso
     )

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -31,7 +32,7 @@ class RefrigerioController @Autowired constructor(
         val dataResponseRefrigerio = DataResponseRefrigerio(
             id = refrigerio.id!!,
             fecha = refrigerio.fecha,
-            estado = refrigerio.estado,
+            hora = refrigerio.hora,
             participante = DataResultParticipante(
                 nombres = refrigerio.participante.nombres,
                 apPaterno = refrigerio.participante.apPaterno,
@@ -53,14 +54,15 @@ class RefrigerioController @Autowired constructor(
 
     // Endpoint para obtener el refrigerio por id
     @GetMapping("/{id}")
-    fun searchRefrigerioById(id: Long): ResponseEntity<DataResponseRefrigerio> {
+    fun searchRefrigerioById(@PathVariable id: Long): ResponseEntity<DataResponseRefrigerio> {
         // Obtener refrigerio
         val refrigerio = refrigerioService.getRefrigerioById(id)
+
         // Mapear a DataResponseRefrigerio
         val dataResponseRefrigerio = DataResponseRefrigerio(
             id = refrigerio.id!!,
             fecha = refrigerio.fecha,
-            estado = refrigerio.estado,
+            hora = refrigerio.hora,
             participante = DataResultParticipante(
                 nombres = refrigerio.participante.nombres,
                 apPaterno = refrigerio.participante.apPaterno,
@@ -78,7 +80,7 @@ class RefrigerioController @Autowired constructor(
 
     // Endpoint para eliminar refrigerio por id
     @DeleteMapping("/{id}")
-    fun deleteRefrigerioById(id: Long): ResponseEntity<Void> {
+    fun deleteRefrigerioById(@PathVariable id: Long): ResponseEntity<Void> {
         // Eliminar refrigerio
         refrigerioService.deleteRefrigerioById(id)
         // Retornar respuesta sin contenido

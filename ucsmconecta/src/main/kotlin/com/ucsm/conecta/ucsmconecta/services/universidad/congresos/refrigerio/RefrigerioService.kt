@@ -6,6 +6,7 @@ import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.refrigerio.RefrigerioRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -18,6 +19,7 @@ class RefrigerioService @Autowired constructor(
     private val congresoService: CongresoService
 ) {
     // Metodo para crear refrigerio
+    @Transactional
     fun createRefrigerio(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio): Refrigerio {
         // Buscar participante asociado al refrigerio
         val participante = participanteService.getParticipanteById(dataRequestRefrigerio.participanteId)
@@ -26,7 +28,7 @@ class RefrigerioService @Autowired constructor(
         val congreso = congresoService.getCongresoById(dataRequestRefrigerio.congresoId)
 
         // Validar la cantidad de refrigerios asignados al participante en el congreso
-        val refrigeriosAsignados = refrigerioRepository.countByParticipanteAndCongreso(participante.id!!, congreso.id!!)
+        val refrigeriosAsignados = refrigerioRepository.countByParticipante_IdAndCongreso_Id(participante.id!!, congreso.id!!)
 
         if (refrigeriosAsignados >= congreso.numRefrigerios) {
             throw IllegalStateException("Limite de refrigerios alcanzados para este congreso")
@@ -35,7 +37,6 @@ class RefrigerioService @Autowired constructor(
         // Crear refrigerio
         return refrigerioRepository.save(
             Refrigerio(
-                fecha = dataRequestRefrigerio.fecha,
                 participante = participante,
                 congreso = congreso
             )
@@ -50,6 +51,7 @@ class RefrigerioService @Autowired constructor(
     }
 
     // Metodo para eliminar refrigerio por id
+    @Transactional
     fun deleteRefrigerioById(id: Long) {
         // Obtener refrigerio
         val refrigerio = getRefrigerioById(id)

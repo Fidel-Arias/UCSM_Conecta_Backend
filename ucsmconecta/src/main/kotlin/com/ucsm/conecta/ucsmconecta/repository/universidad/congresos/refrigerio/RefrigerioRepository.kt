@@ -4,5 +4,5 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.refrigerio.Refr
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface RefrigerioRepository: JpaRepository<Refrigerio, Long> {
-    fun countByParticipanteAndCongreso(participanteId: Long, congresoId: Long): Int
+    fun countByParticipante_IdAndCongreso_Id(participanteId: Long, congresoId: Long): Int
 }
