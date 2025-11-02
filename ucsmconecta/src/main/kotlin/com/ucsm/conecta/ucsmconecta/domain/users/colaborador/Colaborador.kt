@@ -31,7 +31,7 @@ open class Colaborador(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escuela_profesional_id")
-    open var escuelaProfesional: EscuelaProfesional
+    open val escuelaProfesional: EscuelaProfesional
 ) {
     constructor(
         nombres: String,
@@ -53,5 +53,9 @@ open class Colaborador(
 
     override fun toString(): String {
         return "Colaborador(id=$id, nombres='$nombres', aPaterno='$aPaterno', aMaterno='$aMaterno', email='$email', estado=$estado, escuelaProfesional=${escuelaProfesional?.id})"
+    }
+
+    fun changePassword(newPassword: String){
+        this.password = newPassword
     }
 }

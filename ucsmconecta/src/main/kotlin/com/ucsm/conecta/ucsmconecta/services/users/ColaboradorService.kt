@@ -3,6 +3,7 @@ package com.ucsm.conecta.ucsmconecta.services.users
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador.RegisterColaboradorData
+import com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador.UpdateDataColaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.ColaboradorBusquedaDTO
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.colaborador.ColaboradorRepository
@@ -36,9 +37,14 @@ class ColaboradorService @Autowired constructor(
     }
 
     // Metodo para buscar colaboradores por apellidos
-    fun searchByApellidos(aPaterno: String, aMaterno: String): List<ColaboradorBusquedaDTO> {
-        val apellidosCompletos: String = "$aPaterno $aMaterno"
-        return colaboradorRepository.findByApellidos(apellidosCompletos)
+    fun searchByApellidos(aPaterno: String?, aMaterno: String?): List<ColaboradorBusquedaDTO> {
+        val busqueda = when {
+            !aPaterno.isNullOrBlank() && !aMaterno.isNullOrBlank() -> "$aPaterno $aMaterno"
+            !aPaterno.isNullOrBlank() -> aPaterno
+            !aMaterno.isNullOrBlank() -> aMaterno
+            else -> return emptyList()
+        }
+        return colaboradorRepository.findByApellidos(busqueda)
     }
 
     // Metodo para buscar colaboradores por nombres
@@ -49,12 +55,18 @@ class ColaboradorService @Autowired constructor(
     }
 
     // Metodo para obtener un colaborador por su ID
-    fun getColaboradorById(id: Long): Colaborador = colaboradorRepository.findById(id)
-        .orElseThrow { ResourceNotFoundException("Colaborador con id $id no encontrado") }
+    fun getColaboradorById(id: Long, includeInactive: Boolean = false): Colaborador {
+        val colaborador = colaboradorRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Colaborador con id $id no encontrado") }
+
+        if (!colaborador.estado && !includeInactive)
+            throw ResourceNotFoundException("Colaborador con id $id está desactivado o no disponible")
+
+        return colaborador
+    }
 
     // Metodo para obtener todos los colaboradores activos
-    fun getAllColaboradores(): List<Colaborador> = colaboradorRepository.findAll()
-        .filter { it.estado }
+    fun getAllColaboradores(): List<Colaborador> = colaboradorRepository.findAllByEstadoTrueOrderByIdAsc()
 
     // Metodo para desactivar un colaborador por su ID
     @Transactional
@@ -67,7 +79,12 @@ class ColaboradorService @Autowired constructor(
     // Metodo para activar un colaborador por su ID
     @Transactional
     fun activateColaboradorById(id: Long): Colaborador {
-        val colaborador: Colaborador = getColaboradorById(id)
+        val colaborador: Colaborador = getColaboradorById(id, includeInactive = true)
+
+        if (colaborador.estado) {
+            throw IllegalStateException("El colaborador ya está activo")
+        }
+
         colaborador.estado = true
         return colaboradorRepository.save(colaborador)
     }
@@ -81,17 +98,24 @@ class ColaboradorService @Autowired constructor(
 
     // Metodo para editar un colaborador
     @Transactional
-    fun editColaborador(id: Long, updatedColaboradorData: RegisterColaboradorData): Colaborador {
+    fun editColaborador(id: Long, updatedColaboradorData: UpdateDataColaborador): Colaborador {
         val colaborador: Colaborador = getColaboradorById(id)
 
-        val escuelaProfesional: EscuelaProfesional =
-            escuelaProfesionalService.searchEscuelaProfesionalById(updatedColaboradorData.escuelaProfesionalId)
+        // Solo actualiza si los campos no son nulos o vacíos
+        updatedColaboradorData.nombres.takeIf { !it.isNullOrBlank() }?.let {
+            colaborador.nombres = it
+        }
 
-        colaborador.apply {
-            this.nombres = updatedColaboradorData.nombres
-            this.aPaterno = updatedColaboradorData.aPaterno
-            this.aMaterno = updatedColaboradorData.aMaterno
-            this.escuelaProfesional = escuelaProfesional
+        updatedColaboradorData.aPaterno.takeIf { !it.isNullOrBlank() }?.let {
+            colaborador.aPaterno = it
+        }
+
+        updatedColaboradorData.aMaterno.takeIf { !it.isNullOrBlank() }?.let {
+            colaborador.aMaterno = it
+        }
+
+        updatedColaboradorData.password.takeIf { !it.isNullOrBlank() }?.let {
+            colaborador.changePassword(it)
         }
 
         return colaboradorRepository.save(colaborador)
