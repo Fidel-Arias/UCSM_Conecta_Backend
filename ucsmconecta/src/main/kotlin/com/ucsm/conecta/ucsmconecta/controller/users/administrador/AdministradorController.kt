@@ -90,30 +90,6 @@ class AdministradorController @Autowired constructor(
     private val asistenciaService: AsistenciaService
 ) {
     /********* ENDPOINTS PARA LA ENTIDAD ADMIN *********/
-    // Endpoint para subir participantes desde archivo excel
-    @PostMapping("/subir-participantes")
-    fun subirParticipantesExcel(
-        @RequestParam("file") file: MultipartFile,
-        @RequestParam("adminId") adminId: Long
-    ): ResponseEntity<Map<String, Any>> {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.MULTIPART_FORM_DATA
-
-        val body = LinkedMultiValueMap<String, Any>()
-        body.add("file", file.resource)
-        body.add("adminId", adminId)
-
-        val requestEntity = HttpEntity(body, headers)
-        val response = restTemplate.exchange(
-            "http://localhost:8080/api/participantes/importar-excel?adminId=$adminId",
-            HttpMethod.POST,
-            requestEntity,
-            object : ParameterizedTypeReference<Map<String, Any>>() {}
-        )
-
-        return ResponseEntity.status(response.statusCode).body(response.body)
-    }
-
     // Endpoint para obtener un administrador por su ID
     @GetMapping("/profile/{id}")
     fun getAdministradorById(@PathVariable id: Long): ResponseEntity<DataResponseAdmin> {
@@ -789,6 +765,18 @@ class AdministradorController @Autowired constructor(
     }
 
     /******** ENDPOINTS PARA LA ENTIDAD PARTICIPANTE ********/
+    // Endpoint para importar estudiantes desde excel
+    @PostMapping("/importar-participantes")
+    fun importarParticipantesDesdeExcel(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("adminId") adminId: Long
+    ): ResponseEntity<Map<String, Any>> {
+        if (file.isEmpty) {
+            return ResponseEntity.badRequest().body(mapOf("error" to "Debe subir un archivo Excel válido."))
+        }
+        val resultado = participanteService.registrarParticipantesDesdeExcel(file, adminId)
+        return ResponseEntity.ok(resultado)
+    }
     // Endpoint para obtener todos los participantes
     @GetMapping("/participantes")
     fun getAllParticipantes(): ResponseEntity<List<DataResponseParticipante>> {
