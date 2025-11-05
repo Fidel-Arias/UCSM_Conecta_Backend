@@ -26,6 +26,9 @@ open class SecurityConfig(
                 "/", "/index.html", "/app.html", "/main.css", "/app.js",
                 "/ws/**", "/topic/**", "/sockjs/**", "/index.html/info").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/grados-academicos").permitAll()
+                    .requestMatchers("/api/escuelas-profesionales").permitAll()
+                    .requestMatchers("/api/tipos-participantes").permitAll()
                     .requestMatchers("/api/register/administrador").permitAll()
                     .requestMatchers("/api/administrador/**").hasAuthority("ADMIN")
                     .requestMatchers("/api/colaborador/**").hasAnyAuthority("COLABORADOR")
