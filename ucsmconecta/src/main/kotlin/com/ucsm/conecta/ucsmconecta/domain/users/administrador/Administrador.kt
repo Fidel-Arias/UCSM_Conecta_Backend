@@ -1,6 +1,7 @@
 package com.ucsm.conecta.ucsmconecta.domain.users.administrador
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import jakarta.persistence.*
 
 @Entity(name = "Administrador")
@@ -51,14 +52,9 @@ open class Administrador(
         escuelaProfesional
     )
 
-    override fun toString(): String {
-        return "Administrador(id=$id, nombres=$nombres, aPaterno=$aPaterno, aMaterno=$aMaterno, email=$email, password=$password)"
-    }
-
-    fun getFullName(): String {
-        return "$nombres $aPaterno $aMaterno"
-    }
     fun changePassword(newPassword: String) {
         this.password = newPassword
     }
+
+    fun getPassword() = this.password
 }

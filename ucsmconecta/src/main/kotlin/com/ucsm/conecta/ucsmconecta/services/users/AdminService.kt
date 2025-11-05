@@ -1,39 +1,55 @@
 package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.domain.users.administrador.Administrador
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.admin.RegisterAdminData
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.admin.UpdateDataAdministrador
+import com.ucsm.conecta.ucsmconecta.domain.users.administrador.CongresoAdministrador
+import com.ucsm.conecta.ucsmconecta.dto.users.register.admin.RegisterAdminData
+import com.ucsm.conecta.ucsmconecta.dto.users.register.admin.UpdateDataAdministrador
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.admin.AdminRepository
+import com.ucsm.conecta.ucsmconecta.repository.users.admin.CongresoAdministradorRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
-import jakarta.persistence.EntityNotFoundException
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
 
 @Service
 class AdminService @Autowired constructor(
     private val adminRepository: AdminRepository,
-    private val escuelaProfesionalService: EscuelaProfesionalService
+    private val congresoAdministradorRepository: CongresoAdministradorRepository,
+    private val escuelaProfesionalService: EscuelaProfesionalService,
+    private val passwordEncoder: PasswordEncoder
 ) {
     // Metodo para crear un administrador
     @Transactional
-    fun createAdmin(@RequestBody @Valid registerAdminData: RegisterAdminData): Administrador {
+    fun createAdmin(@RequestBody @Valid registerAdminData: RegisterAdminData, congreso: Congreso): Administrador {
         // Buscar escuela profesional asociada
         val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(registerAdminData.escuelaProfesionalId)
 
-        return adminRepository.save(Administrador(
-                nombres = registerAdminData.nombres,
-                aPaterno = registerAdminData.aPaterno,
-                aMaterno = registerAdminData.aMaterno,
-                email = registerAdminData.email,
-                password = registerAdminData.password,
-                escuelaProfesional = escuelaProfesional
-            )
-        )
+        val encodedPassword = passwordEncoder.encode(registerAdminData.password)
+
+        // Crear y guardar la entidad con JPA
+        val newAdministrador = adminRepository.save(Administrador(
+            nombres = registerAdminData.nombres,
+            aPaterno = registerAdminData.aPaterno,
+            aMaterno = registerAdminData.aMaterno,
+            email = registerAdminData.email,
+            password = encodedPassword,
+            escuelaProfesional = escuelaProfesional
+        ))
+
+        // Vincular al congreso con la entidad CongresoAdministrador y guardarla
+        congresoAdministradorRepository.save(CongresoAdministrador(
+            administrador = newAdministrador,
+            congreso = congreso
+        ))
+
+        return newAdministrador
     }
 
     // Metodo para buscar un administrador por su id
