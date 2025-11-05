@@ -45,19 +45,6 @@ class ParticipanteController @Autowired constructor(
     private val ponenciaService: PonenciaService
     ) {
     /******** ENDPOINTS PARA LA ENTIDAD PARTICIPANTE ********/
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/importar-excel")
-    fun importarParticipantesDesdeExcel(
-        @RequestParam("file") file: MultipartFile,
-        @RequestParam("adminId") adminId: Long
-    ): ResponseEntity<Map<String, Any>> {
-        if (file.isEmpty) {
-            return ResponseEntity.badRequest().body(mapOf("error" to "Debe subir un archivo Excel válido."))
-        }
-        val resultado = participanteService.registrarParticipantesDesdeExcel(file, adminId)
-        return ResponseEntity.ok(resultado)
-    }
-
     // Metodo para obtener un participante por su ID
     @GetMapping("/{id}")
     fun getParticipanteById(@PathVariable id: Long): ResponseEntity<DataResponseParticipante> {
