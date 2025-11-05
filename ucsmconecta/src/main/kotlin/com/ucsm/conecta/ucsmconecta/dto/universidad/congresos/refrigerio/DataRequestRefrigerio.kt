@@ -8,4 +8,4 @@ data class DataRequestRefrigerio(
 
     @get:NotNull(message = "El id del 'congreso' es obligatorio")
     val congresoId: Long
-){}
+)

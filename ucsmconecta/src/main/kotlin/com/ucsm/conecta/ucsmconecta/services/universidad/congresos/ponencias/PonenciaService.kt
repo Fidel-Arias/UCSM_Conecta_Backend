@@ -25,7 +25,7 @@ class PonenciaService @Autowired constructor(
     @Transactional
     fun createPonencia(@RequestBody @Valid dataRequestPonencia: DataRequestPonencia): Ponencia {
         // Buscar ponente relacionado
-        val ponente: Ponente = ponenteService.getPonenteById(dataRequestPonencia.ponenteID)
+        val ponente: Ponente = ponenteService.getPonenteById(dataRequestPonencia.ponenteId)
 
         // Buscar congreso relacionado
         val congreso: Congreso = congresoService.getCongresoById(dataRequestPonencia.congresoId)

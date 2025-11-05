@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.users.auth.admin
+package com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
@@ -7,10 +7,10 @@ import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 import jakarta.validation.constraints.Pattern
 
-data class RegisterAdminData(
-    @get:NotNull(message = "El 'nombre' es obligatorio")
-    @get:NotEmpty(message = "El 'nombre' no puede estar vacio")
-    @get:NotBlank(message = "El 'nombre' no puede estar en blanco")
+data class RegisterColaboradorData(
+    @get:NotNull(message = "El campo 'nombres' es obligatorio")
+    @get:NotEmpty(message = "El campo 'nombres' no puede estar vacio")
+    @get:NotBlank(message = "El campo 'nombres' no puede estar en blanco")
     val nombres: String,
 
     @get:NotNull(message = "El 'apellido paterno' es obligatorio")

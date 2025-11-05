@@ -6,6 +6,7 @@ import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.ColaboradorBus
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.util.Optional
 
 interface ColaboradorRepository: JpaRepository<Colaborador, Long> {
     @Query(
@@ -19,4 +20,6 @@ interface ColaboradorRepository: JpaRepository<Colaborador, Long> {
     fun findByNombres(@Param("busqueda") busqueda: String): List<ColaboradorBusquedaDTO>
 
     fun findAllByEstadoTrueOrderByIdAsc(): List<Colaborador>
+
+    fun findByEmail(email: String): Optional<Colaborador>
 }

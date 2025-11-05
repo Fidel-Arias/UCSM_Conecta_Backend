@@ -12,6 +12,7 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.NoHandlerFoundException
 import java.time.LocalDateTime
@@ -27,6 +28,22 @@ class GlobalExceptionHandler {
             "message" to "La ruta solicitada no existe: ${ex.requestURL}"
         )
         return ResponseEntity(body, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(HttpClientErrorException.BadRequest::class)
+    fun handleBadRequest(ex: HttpClientErrorException.BadRequest): ResponseEntity<Map<String, String>> {
+        val mensaje = try {
+            // Extraer mensaje de error del JSON del backend
+            val errorJson = ex.responseBodyAsString
+            Regex("\"error\"\\s*:\\s*\"([^\"]+)\"").find(errorJson)?.groupValues?.get(1)
+                ?: "Solicitud inválida"
+        } catch (_: Exception) {
+            "Solicitud inválida"
+        }
+
+        return ResponseEntity
+            .badRequest()
+            .body(mapOf("error" to mensaje))
     }
 
     // Error de tipo de dato (conversión fallida)
@@ -48,7 +65,6 @@ class GlobalExceptionHandler {
         val response: Map<String, Any> = mapOf(
             "error" to "Error de formato en el cuerpo JSON",
             "mensaje" to "Los datos enviados no tienen el formato esperado o contienen tipos incorrectos.",
-            "detalles" to (ex.rootCause?.message ?: ex.message ?: "Error desconocido"),
             "status" to HttpStatus.BAD_REQUEST.value(),
             "timestamp" to LocalDateTime.now().toString()
         )

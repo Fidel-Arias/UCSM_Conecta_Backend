@@ -2,25 +2,45 @@ package com.ucsm.conecta.ucsmconecta.infra.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
-open class SecurityConfig {
-    // Aquí puedes agregar configuraciones de seguridad adicionales si es necesario
+open class SecurityConfig(
+    private val jwtFilter: JwtAuthenticationFilter
+) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        // Configuraciones de seguridad
-        http
-            .csrf { csrf -> csrf.disable() } // Deshabilitar CSRF para APIs REST
-            .authorizeHttpRequests { auth ->
-                auth.anyRequest().permitAll() // Permitir todas las solicitudes
+        http.csrf { it.disable() }
+            .authorizeHttpRequests {
+                it
+                    //Permitir archivos estáticos y recursos públicos
+                .requestMatchers(
+                "/", "/index.html", "/app.html", "/main.css", "/app.js",
+                "/ws/**", "/topic/**", "/sockjs/**", "/index.html/info").permitAll()
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/register/administrador").permitAll()
+                    .requestMatchers("/api/administrador/**").hasAuthority("ADMIN")
+                    .requestMatchers("/api/colaborador/**").hasAnyAuthority("COLABORADOR")
+                    .requestMatchers("/api/participante/**").hasAnyAuthority("PARTICIPANTE")
+                    .anyRequest().authenticated()
             }
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
+
         return http.build()
+    }
+
+    @Bean
+    @Throws(Exception::class)
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? {
+        return authenticationConfiguration.authenticationManager
     }
 
     /*

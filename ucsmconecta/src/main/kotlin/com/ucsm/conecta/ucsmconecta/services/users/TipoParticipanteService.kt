@@ -14,7 +14,7 @@ class TipoParticipanteService @Autowired constructor(
     private val tipoParticipanteRepository: TipoParticipanteRepository
 ){
     // Metodo para buscar un TipoParticipante por su descripción
-    fun searchByDescripcion(descripcion: String): TipoParticipante? = tipoParticipanteRepository.findByDescripcion(descripcion)
+    fun searchByDescripcion(descripcion: String): TipoParticipante = tipoParticipanteRepository.findByDescripcion(descripcion)
         .orElseThrow { ResourceNotFoundException("Tipo de Participante no encontrado") }
 
     // Metodo para buscar un TipoParticipante por su id
@@ -23,7 +23,7 @@ class TipoParticipanteService @Autowired constructor(
 
     // Metodo para crear un nuevo TipoParticipante
     @Transactional
-    fun createTipoParticipante(@RequestBody @Valid descripcion: String): TipoParticipante {
+    fun createTipoParticipante(@Valid descripcion: String): TipoParticipante {
         val nuevoTipoParticipante = TipoParticipante(
             descripcion = descripcion
         )

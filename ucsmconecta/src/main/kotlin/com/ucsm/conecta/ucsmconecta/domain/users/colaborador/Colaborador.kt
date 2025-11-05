@@ -51,11 +51,9 @@ open class Colaborador(
         escuelaProfesional
     )
 
-    override fun toString(): String {
-        return "Colaborador(id=$id, nombres='$nombres', aPaterno='$aPaterno', aMaterno='$aMaterno', email='$email', estado=$estado, escuelaProfesional=${escuelaProfesional?.id})"
-    }
-
     fun changePassword(newPassword: String){
         this.password = newPassword
     }
+
+    fun getPassword() = this.password
 }

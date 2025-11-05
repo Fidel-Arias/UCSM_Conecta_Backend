@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador
+package com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador
 
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size

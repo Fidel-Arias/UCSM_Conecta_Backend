@@ -1,52 +1,99 @@
 package com.ucsm.conecta.ucsmconecta.services.users
 
-import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
-import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.UpdateDataParticipante
+import com.ucsm.conecta.ucsmconecta.dto.users.register.participante.UpdateDataParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.ParticipanteBusquedaDTO
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import com.ucsm.conecta.ucsmconecta.repository.users.participante.ParticipanteRepository
+import com.ucsm.conecta.ucsmconecta.util.ExcelReader
+import com.ucsm.conecta.ucsmconecta.util.QRCodeGenerator
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class ParticipanteService @Autowired constructor(
     private val participanteRepository: ParticipanteRepository,
+    private val congresoAdministradorService: CongresoAdministradorService,
     private val tipoParticipanteService: TipoParticipanteService,
     private val escuelaProfesionalService: EscuelaProfesionalService,
     private val congresoService: CongresoService
 ){
     // Metodo para crear un nuevo participante
     @Transactional
-    fun createParticipante(@RequestBody @Valid registerParticipanteData: RegisterParticipanteData): Participante {
-        // Buscar entidades relacionadas
-        val tipoParticipante: TipoParticipante = tipoParticipanteService.searchById(registerParticipanteData.tipoParticipanteId)
+    fun registrarParticipantesDesdeExcel(file: MultipartFile, adminId: Long): Map<String, Any> {
+        val participantesExcel = ExcelReader.leerParticipantesDesdeExcel(file)
 
-        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(registerParticipanteData.escuelaProfesionalId)
+        // Buscar al admin para obtener su escuela y congreso
+        val adminCongreso = congresoAdministradorService.getAdministradorWithCongresoById(adminId)
 
-        val congreso: Congreso = congresoService.getCongresoById(registerParticipanteData.congresoId)
+        // Cachear entidades comunes (no repetir consultas)
+        val escuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(adminCongreso.administrador.escuelaProfesional.id!!)
+        val congreso = congresoService.getCongresoById(adminCongreso.congreso.id!!)
 
-        // Crear y guardar el participante
-        return participanteRepository.save(Participante(
-            nombres = registerParticipanteData.nombres,
-            apPaterno = registerParticipanteData.apPaterno,
-            apMaterno = registerParticipanteData.apMaterno,
-            numDocumento = registerParticipanteData.numDocumento,
-            email = registerParticipanteData.email,
-            tipoParticipante = tipoParticipante,
-            escuelaProfesional = escuelaProfesional,
-            congreso = congreso,
-            estado = registerParticipanteData.estado,
-            qr_code = registerParticipanteData.qr_code
-        ))
+        // Lista mutable de participantes registrados
+        val existentes = participanteRepository.findAllNumDocumentos()
+        val duplicados = mutableListOf<String>()
+        val nuevos = mutableListOf<Participante>()
+
+        for (p in participantesExcel) {
+            if (p.numDocumento in existentes) {
+                duplicados.add(p.numDocumento)
+                continue
+            }
+
+            if (!verificarEstado(p.estado)) {
+                continue
+            }
+
+            // Buscar y verificar que exista el Tipo Participante
+            val tipoParticipante: TipoParticipante = tipoParticipanteService.searchByDescripcion(p.tipoParticipante)
+
+            // ✅ Generar QR para este participante
+            val qrPath = QRCodeGenerator.generarQR(
+                nombres = "${p.nombres} ${p.apPaterno} ${p.apMaterno}",
+                numDocumento = p.numDocumento,
+                estado = p.estado,
+                congreso = congreso.nombre,
+                escuelaProfesional = escuelaProfesional.nombre,
+                tipoParticipante = tipoParticipante.descripcion
+            )
+
+            nuevos.add(
+                Participante(
+                    nombres = p.nombres,
+                    apPaterno = p.apPaterno,
+                    apMaterno = p.apMaterno,
+                    numDocumento = p.numDocumento,
+                    email = p.email,
+                    tipoParticipante = tipoParticipante,
+                    escuelaProfesional = escuelaProfesional,
+                    congreso = congreso,
+                    estado = p.estado,
+                    qr_code = qrPath
+                )
+            )
+        }
+
+        // Inserción masiva (1 solo viaje a la base)
+        participanteRepository.saveAll(nuevos)
+
+        return mapOf(
+            "totalLeidos" to participantesExcel.size,
+            "registrados" to nuevos.size,
+            "duplicados" to duplicados.size
+        )
+    }
+
+    // Metodo para validar si se agrega o no a la base de datos segun su estado
+    fun verificarEstado(estado: String): Boolean {
+        return estado == "3PG"
     }
 
     // Metodo para buscar participante por su numero de documento

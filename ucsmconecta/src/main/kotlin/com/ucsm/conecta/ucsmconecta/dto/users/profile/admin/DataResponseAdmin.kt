@@ -1,7 +1,7 @@
 package com.ucsm.conecta.ucsmconecta.dto.users.profile.admin
 
-import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 
 data class DataResponseAdmin(
     val id: Long,

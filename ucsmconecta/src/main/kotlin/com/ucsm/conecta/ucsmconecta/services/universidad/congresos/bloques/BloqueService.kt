@@ -13,6 +13,8 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Service
 class BloqueService @Autowired constructor(
@@ -27,13 +29,35 @@ class BloqueService @Autowired constructor(
         // Obtener la ubicación asociada al bloque
         val ubicacion = ubicacionService.getUbicacionById(dataRequestBloque.ubicacionId)
 
-        // Verificar si la ubicacion ya esta ocupada en ese rango de hora
-
         // Obtener la ponencia asociada al bloque
         val ponencia = ponenciaService.getPonenciaById(dataRequestBloque.ponenciaId)
 
         // Obtener el día asociado al bloque
         val dia = diaService.getDiaById(dataRequestBloque.diaId)
+
+        // Validar que la hora final sea mayor a la inicial
+        if (dataRequestBloque.horaFinal.isBefore(dataRequestBloque.horaInicial) ||
+            dataRequestBloque.horaFinal == dataRequestBloque.horaInicial) {
+            throw IllegalArgumentException("La 'hora final' debe ser mayor a la hora inicial")
+        }
+
+        // Validar que la hora no sea anterior al momento actual si el día es hoy
+        val hoy = LocalDate.now()
+        if (dia.fecha == hoy && dataRequestBloque.horaInicial.isBefore(LocalTime.now())) {
+            throw IllegalArgumentException("La hora de inicio no puede estar en el pasado para el día actual")
+        }
+
+        // Verificar si la ubicación ya está ocupada en ese rango
+        val existeOcupacion = bloqueRepository.existsByUbicacionAndDiaAndRangoHoras(
+            ubicacion.id!!,
+            dia.id!!,
+            dataRequestBloque.horaInicial,
+            dataRequestBloque.horaFinal
+        )
+
+        if (existeOcupacion) {
+            throw IllegalArgumentException("La ubicación '${ubicacion.nombre}' ya está ocupada en ese horario.")
+        }
 
         // Crear un nuevo bloque a partir de los datos recibidos
         return bloqueRepository.save(Bloque(
@@ -51,7 +75,14 @@ class BloqueService @Autowired constructor(
     }
 
     // Método para obtener todos los bloques
-    fun getAllBloques(): List<Bloque> = bloqueRepository.findAll()
+    fun getAllBloques(): List<Bloque> = bloqueRepository.findAllByOrderByIdAsc()
+
+    // Metodo para obtener todos los bloques segun el dia actual
+    fun getAllBloquesByDia(): List<Bloque> {
+        val diaActual = LocalDate.now()
+        return bloqueRepository.findAllByOrderByIdAsc()
+            .filter { it.dia.fecha == diaActual }
+    }
 
     // Metodo para eliminar un bloque por su ID
     @Transactional

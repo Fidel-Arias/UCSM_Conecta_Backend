@@ -20,7 +20,7 @@ class RefrigerioService @Autowired constructor(
 ) {
     // Metodo para crear refrigerio
     @Transactional
-    fun createRefrigerio(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio): Refrigerio {
+    fun createRefrigerioWithQR(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio): Refrigerio {
         // Buscar participante asociado al refrigerio
         val participante = participanteService.getParticipanteById(dataRequestRefrigerio.participanteId)
 
@@ -31,7 +31,7 @@ class RefrigerioService @Autowired constructor(
         val refrigeriosAsignados = refrigerioRepository.countByParticipante_IdAndCongreso_Id(participante.id!!, congreso.id!!)
 
         if (refrigeriosAsignados >= congreso.numRefrigerios) {
-            throw IllegalStateException("Limite de refrigerios alcanzados para este congreso")
+            throw IllegalStateException("Límite alcanzado")
         }
 
         // Crear refrigerio
@@ -44,18 +44,12 @@ class RefrigerioService @Autowired constructor(
     }
 
     // Metodo para obtener refrigerio por id
-    fun getRefrigerioById(refrigerioId: Long): Refrigerio {
-        return refrigerioRepository.findById(refrigerioId).orElseThrow {
-            ResourceNotFoundException("Refrigerio con id $refrigerioId no encontrado")
-        }
+    fun getAllRefrigeriosByNumDocumento(numDocumento: String): List<Refrigerio> {
+        return refrigerioRepository.findByParticipante_NumDocumento(numDocumento)
     }
 
-    // Metodo para eliminar refrigerio por id
-    @Transactional
-    fun deleteRefrigerioById(id: Long) {
-        // Obtener refrigerio
-        val refrigerio = getRefrigerioById(id)
-        // Eliminar refrigerio
-        refrigerioRepository.delete(refrigerio)
-    }
+    //Metodo para obtener el refrigerio mas reciente del participante por su numero de documento
+    fun getRefrigerioParticipanteByNumDocumento(numDocumento: String): Refrigerio = refrigerioRepository.findTopByParticipante_NumDocumentoOrderByFechaDescHoraDesc(numDocumento)
+        .orElseThrow { ResourceNotFoundException("El participante con el numero de documento $numDocumento no tiene refrigerios registrados") }
+
 }

@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.users.auth.admin
+package com.ucsm.conecta.ucsmconecta.dto.users.register.admin
 
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size

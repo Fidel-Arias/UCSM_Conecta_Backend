@@ -1,70 +1,61 @@
 package com.ucsm.conecta.ucsmconecta.controller.users.participante
 
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponencia
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.valoracion.Comentario
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.valoracion.Votacion
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.RegisterParticipanteData
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.participante.UpdateDataParticipante
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResponsePonencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.valoracion.comentarios.DataRequestComentario
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.valoracion.comentarios.DataResponseComentario
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.valoracion.votaciones.DataRequestVotacion
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.valoracion.votaciones.DataResponseVotacion
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseTipoParticipante
-import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.ParticipanteBusquedaDTO
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResultParticipante
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ponencias.PonenciaService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.valoracion.ComentarioService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.valoracion.VotacionService
 import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/participantes")
 class ParticipanteController @Autowired constructor(
     private val participanteService: ParticipanteService,
+    private val comentarioService: ComentarioService,
+    private val votacionService: VotacionService,
+    private val messagingTemplate: SimpMessagingTemplate,
+    private val ponenciaService: PonenciaService
     ) {
-    // Metodo para crear un nuevo participante
-    @PostMapping
-    fun createParticipante(
-        @RequestBody @Valid registerParticipanteData: RegisterParticipanteData,
-        uriComponentsBuilder: ServletUriComponentsBuilder
-    ): ResponseEntity<DataResponseParticipante> {
-        // Crear el participante
-        val participante: Participante = participanteService.createParticipante(registerParticipanteData)
-
-        // Se pasan los datos creados a DataResponseParticipante para visualizarlos
-        val dataResponseParticipante = DataResponseParticipante(
-            id = participante.id!!,
-            nombres = participante.nombres,
-            apPaterno = participante.apPaterno,
-            apMaterno = participante.apMaterno,
-            estado = participante.estado,
-            numDocumento = participante.numDocumento,
-            escuelaProfesional = DataResponseEscuelaProfesional(
-                id = participante.escuelaProfesional.id!!,
-                nombre = participante.escuelaProfesional.nombre
-            ),
-            tipoParticipante = DataResponseTipoParticipante(
-                id = participante.tipoParticipante.id!!,
-                descripcion = participante.tipoParticipante.descripcion
-            ),
-            congreso = DataResultCongreso(
-                id = participante.congreso.id!!,
-                nombre = participante.congreso.nombre,
-            ),
-            qrCode = participante.qr_code
-        )
-
-        // Construir la URI del nuevo recurso creado
-        val uri = uriComponentsBuilder.path("/api/participantes/{id}")
-            .buildAndExpand(participante.id)
-            .toUri()
-        // Retornar la respuesta con el código de estado 201 Created y la ubicación del nuevo recurso
-        return ResponseEntity.created(uri).body(dataResponseParticipante)
+    /******** ENDPOINTS PARA LA ENTIDAD PARTICIPANTE ********/
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/importar-excel")
+    fun importarParticipantesDesdeExcel(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("adminId") adminId: Long
+    ): ResponseEntity<Map<String, Any>> {
+        if (file.isEmpty) {
+            return ResponseEntity.badRequest().body(mapOf("error" to "Debe subir un archivo Excel válido."))
+        }
+        val resultado = participanteService.registrarParticipantesDesdeExcel(file, adminId)
+        return ResponseEntity.ok(resultado)
     }
 
     // Metodo para obtener un participante por su ID
@@ -98,116 +89,167 @@ class ParticipanteController @Autowired constructor(
         return ResponseEntity.ok(dataResponseParticipante)
     }
 
-    // Metodo para obtener todos los participantes
-    @GetMapping
-    fun getAllParticipantes(): ResponseEntity<List<DataResponseParticipante>> {
-        val participantes = participanteService.getAllParticipantes()
+    /******** ENDPOINTS PARA LA ENTIDAD PONENCIAS ********/
+    // Endpoint para obtener todas las ponencias activas
+    @GetMapping("/ponencias")
+    fun getAllPonencias(): ResponseEntity<List<DataResponsePonencia>> {
+        val ponencias: List<Ponencia> = ponenciaService.getAllPonencias()
 
-        if (participantes.isEmpty()) {
+        if (ponencias.isEmpty())
             return ResponseEntity.noContent().build()
-        }
 
-        val dataResponseParticipantes = participantes.map { participante ->
-            DataResponseParticipante(
-                id = participante.id!!,
-                nombres = participante.nombres,
-                apPaterno = participante.apPaterno,
-                apMaterno = participante.apMaterno,
-                estado = participante.estado,
-                numDocumento = participante.numDocumento,
-                escuelaProfesional = participante.escuelaProfesional.let {
-                    DataResponseEscuelaProfesional(
-                        id = it.id!!,
-                        nombre = it.nombre
-                    )
-                },
-                tipoParticipante = participante.tipoParticipante.let {
-                    DataResponseTipoParticipante(
-                        id = it.id!!,
-                        descripcion = it.descripcion
-                    )
-                },
-                congreso = participante.congreso.let {
-                    DataResultCongreso(
-                        id = it.id!!,
-                        nombre = it.nombre,
-                    )
-                },
-                qrCode = participante.qr_code
+        val dataResponsePonencias = ponencias.map { ponencia ->
+            DataResponsePonencia(
+                id = ponencia.id!!,
+                nombre = ponencia.nombre,
+                estado = ponencia.estado,
+                ponente = DataResultPonente(
+                    id = ponencia.ponente.id!!,
+                    nombres = ponencia.ponente.nombres,
+                    apellidos = ponencia.ponente.apellidos,
+                ),
+                congreso = DataResultCongreso(
+                    id = ponencia.congreso.id!!,
+                    nombre = ponencia.congreso.nombre,
+                )
             )
         }
 
-        return ResponseEntity.ok(dataResponseParticipantes)
+        return ResponseEntity.ok(dataResponsePonencias)
     }
 
-    // Metodo para buscar participantes por apellidos
-    @GetMapping("/search/apellidos")
-    fun searchParticipanteByApellidos(
-        @RequestParam(required = false) apPaterno: String?,
-        @RequestParam(required = false) apMaterno: String?
-    ): ResponseEntity<List<ParticipanteBusquedaDTO>> {
-        val participantes = participanteService.searchByApellidos(apPaterno, apMaterno)
+    /******** ENDPOINTS PARA LA ENTIDAD COMENTARIO ********/
+    // Endpoint para crear el comentario
+    @PostMapping("/create-comentario")
+    fun createComentario(@RequestBody @Valid dataRequestComentario: DataRequestComentario, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseComentario> {
+        // Uso del servicio para guardar el comentario
+        val comentario = comentarioService.createComentario(dataRequestComentario)
 
-        if (participantes.isEmpty()) {
-            return ResponseEntity.noContent().build()
-        }
-
-        val dataResponseParticipantes: List<ParticipanteBusquedaDTO> = participantes.map { participante ->
-            ParticipanteBusquedaDTO(
-                nombres = participante.nombres,
-                apPaterno = participante.apPaterno,
-                apMaterno = participante.apMaterno,
-                estado = participante.estado,
-                numDocumento = participante.numDocumento,
+        // Mapear el comentario en DataResponseComentario
+        val dataResponseComentario = DataResponseComentario(
+            id = comentario.id!!,
+            comentario = comentario.texto,
+            fecha = comentario.fecha,
+            hora = comentario.hora,
+            participante = DataResultParticipante(
+                nombres = comentario.participante.nombres,
+                apPaterno = comentario.participante.apPaterno,
+                apMaterno = comentario.participante.apMaterno,
+                numDocumento = comentario.participante.numDocumento
             )
-        }
-        return ResponseEntity.ok(dataResponseParticipantes)
-    }
-
-    // Metodo para buscar participante por numero de documento
-    @GetMapping("/search/documento")
-    fun searchParticipanteByNumDocumento(@RequestParam numDocumento: String): ResponseEntity<ParticipanteBusquedaDTO> {
-        // Buscar el participante por número de documento
-        val participante: Participante = participanteService.searchByNumDocumento(numDocumento)
-
-        // Mapear a ParticipanteBusquedaDTO
-        val dataResponseParticipante: ParticipanteBusquedaDTO = ParticipanteBusquedaDTO(
-            nombres = participante.nombres,
-            apPaterno = participante.apPaterno,
-            apMaterno = participante.apMaterno,
-            estado = participante.estado,
-            numDocumento = participante.numDocumento,
         )
 
-        return ResponseEntity.ok(dataResponseParticipante)
+        // Enviar el comentario a todos los clientes conectados
+        messagingTemplate.convertAndSend("/topic/comentarios", dataResponseComentario)
+
+        // Construir la URI del nuevo recurso creado
+        val location = uriComponentsBuilder.path("/api/congresos/comentario/{id}")
+            .buildAndExpand(comentario.id).toUri()
+
+        // Retornar la respuesta con el código 201 Created y el cuerpo de la ponencia creada
+        return ResponseEntity.created(location).body(dataResponseComentario)
     }
 
-    // Metodo para buscar participantes por nombres
-    @GetMapping("/search/nombres")
-    fun searchParticipanteByNombres(@RequestParam nombres: String): ResponseEntity<List<ParticipanteBusquedaDTO>> {
-        // Buscar participantes por nombres
-        val participantes: List<ParticipanteBusquedaDTO> = participanteService.searchByNombres(nombres)
+    // Obtener todos los comentarios
+    @GetMapping("/comentarios")
+    fun getAllComentarios(): ResponseEntity<List<DataResponseComentario>> {
+        val comentarios: List<Comentario> = comentarioService.getALlComentarios()
 
-        if (participantes.isEmpty()) {
+        if (comentarios.isEmpty())
             return ResponseEntity.noContent().build()
-        }
 
-        // Mapear a lista de ParticipanteBusquedaDTO
-        val dataResponseParticipantes: List<ParticipanteBusquedaDTO> = participantes.map { participante ->
-            ParticipanteBusquedaDTO(
-                nombres = participante.nombres,
-                apPaterno = participante.apPaterno,
-                apMaterno = participante.apMaterno,
-                estado = participante.estado,
-                numDocumento = participante.numDocumento,
+        val dataResponseComentario = comentarios.map { comentario ->
+            DataResponseComentario(
+                id = comentario.id!!,
+                comentario = comentario.texto,
+                fecha = comentario.fecha,
+                hora = comentario.hora,
+                participante = DataResultParticipante(
+                    nombres = comentario.participante.nombres,
+                    apPaterno = comentario.participante.apPaterno,
+                    apMaterno = comentario.participante.apMaterno,
+                    numDocumento = comentario.participante.numDocumento
+                )
             )
         }
-        return ResponseEntity.ok(dataResponseParticipantes)
+
+        return ResponseEntity.ok(dataResponseComentario)
     }
 
-    @PutMapping("/change-estado/{id}")
-    fun changeEstadoParticiapante(@PathVariable id: Long, @RequestBody @Valid updateDataParticipante: UpdateDataParticipante): ResponseEntity<Void> {
-        participanteService.changeStateParticipante(id, updateDataParticipante)
-        return ResponseEntity.noContent().build()
+    /******** ENDPOINTS PARA LA ENTIDAD VOTACION ********/
+    // Endpoint para crear una Votacion
+    @PostMapping("/create-votacion")
+    fun createVotacion(@RequestBody @Valid dataRequestVotacion: DataRequestVotacion, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseVotacion> {
+        // Uso del servicio votacionService
+        val votacion = votacionService.createVotacion(dataRequestVotacion)
+
+        // Mapear la votacion en DataResponseVotacion
+        val dataResponseVotacion = DataResponseVotacion(
+            id = votacion.id!!,
+            score = votacion.score,
+            participante = DataResultParticipante(
+                nombres = votacion.participante.nombres,
+                apPaterno = votacion.participante.apPaterno,
+                apMaterno = votacion.participante.apMaterno,
+                numDocumento = votacion.participante.numDocumento
+            ),
+            ponencia = DataResultPonencia(
+                id = votacion.ponencia.id!!,
+                nombre = votacion.ponencia.nombre,
+                ponente = DataResultPonente(
+                    id = votacion.ponencia.ponente.id!!,
+                    nombres = votacion.ponencia.ponente.nombres,
+                    apellidos = votacion.ponencia.ponente.apellidos
+                )
+            ),
+            congreso = DataResultCongreso(
+                id = votacion.congreso.id!!,
+                nombre = votacion.congreso.nombre
+            )
+        )
+
+        // Construir la URI del recurso creado
+        val uri = uriComponentsBuilder.path("/api/congresos/votacion/{id}")
+            .buildAndExpand(votacion.id).toUri()
+
+        // Retornar la respuesta con el código 201 Created y el cuerpo de la ponencia creada
+        return ResponseEntity.created(uri).body(dataResponseVotacion)
+    }
+
+    @GetMapping("/votaciones")
+    fun getALlVotaciones(): ResponseEntity<List<DataResponseVotacion>> {
+        val votaciones: List<Votacion> = votacionService.getALlVotaciones()
+
+        if (votaciones.isEmpty())
+            return ResponseEntity.noContent().build()
+
+        // Mapear la lista de votaciones
+        val dataResponseVotacion = votaciones.map { votacion ->
+            DataResponseVotacion(
+                id = votacion.id!!,
+                score = votacion.score,
+                participante = DataResultParticipante(
+                    nombres = votacion.participante.nombres,
+                    apPaterno = votacion.participante.apPaterno,
+                    apMaterno = votacion.participante.apMaterno,
+                    numDocumento = votacion.participante.numDocumento
+                ),
+                ponencia = DataResultPonencia(
+                    id = votacion.ponencia.id!!,
+                    nombre = votacion.ponencia.nombre,
+                    ponente = DataResultPonente(
+                        id = votacion.ponencia.ponente.id!!,
+                        nombres = votacion.ponencia.ponente.nombres,
+                        apellidos = votacion.ponencia.ponente.apellidos
+                    )
+                ),
+                congreso = DataResultCongreso(
+                    id = votacion.congreso.id!!,
+                    nombre = votacion.congreso.nombre
+                )
+            )
+        }
+
+        return ResponseEntity.ok(dataResponseVotacion)
     }
 }

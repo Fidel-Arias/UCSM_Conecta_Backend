@@ -1,4 +1,4 @@
-package com.ucsm.conecta.ucsmconecta.dto.users.auth.participante
+package com.ucsm.conecta.ucsmconecta.dto.users.register.participante
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
@@ -34,20 +34,14 @@ data class RegisterParticipanteData(
     @get:Email(message = "El email debe tener un formato valido")
     val email: String,
 
-    @get:NotNull(message = "El id del tipo de participante es obligatorio")
-    val tipoParticipanteId: Long,
-
-    @get:NotNull(message = "El id de la escuela profesional es obligatorio")
-    val escuelaProfesionalId: Long,
-
-    @get:NotNull(message = "El id del congreso es obligatorio")
-    val congresoId: Long,
+    @get:NotNull(message = "El campo 'tipo de participante' es obligatorio")
+    @get:NotEmpty(message = "El campo 'tipo de participante' no puede estar vacio")
+    @get:NotBlank(message = "El campo 'tipo de participante' no puede estar en blanco")
+    val tipoParticipante: String,
 
     @get:NotNull(message = "El 'estado' es obligatorio")
     @get:NotEmpty(message = "El 'estado' no puede estar vacio")
     @get:NotBlank(message = "El 'estado' no puede estar en blanco")
     @get:Size(min = 1, max = 15, message = "El 'estado' debe tener entre 1 y 15 caracteres")
     val estado: String,
-
-    val qr_code: String?,
-){}
+)

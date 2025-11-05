@@ -2,8 +2,8 @@ package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador.RegisterColaboradorData
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador.UpdateDataColaborador
+import com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador.RegisterColaboradorData
+import com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador.UpdateDataColaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.ColaboradorBusquedaDTO
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.colaborador.ColaboradorRepository
@@ -11,12 +11,14 @@ import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesio
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
 
 @Service
 class ColaboradorService @Autowired constructor(
     private val colaboradorRepository: ColaboradorRepository,
+    private val passwordEncoder: PasswordEncoder,
     private val escuelaProfesionalService: EscuelaProfesionalService
 ){
     // Metodo para crear un nuevo colaborador
@@ -25,13 +27,15 @@ class ColaboradorService @Autowired constructor(
         // Buscar escuela profesional
         val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(registerColaboradorData.escuelaProfesionalId)
 
+        val encodedPassword = passwordEncoder.encode(registerColaboradorData.password)
+
         // Crear y guardar el colaborador
         return colaboradorRepository.save(Colaborador(
             nombres = registerColaboradorData.nombres,
             aPaterno = registerColaboradorData.aPaterno,
             aMaterno = registerColaboradorData.aMaterno,
             email = registerColaboradorData.email,
-            password = registerColaboradorData.password,
+            password = encodedPassword,
             escuelaProfesional = escuelaProfesional
         ))
     }

@@ -69,10 +69,4 @@ open class Participante(
         estado,
         qr_code
     )
-    override fun toString(): String {
-        return "Participante(id=$id, nombres=$nombres, aPaterno=$apPaterno, aMaterno=$apMaterno, n_documento=$numDocumento, email=$email, tipoParticipante=$tipoParticipante, escuelaProfesional=$escuelaProfesional, congreso=$congreso, estado=$estado, qr_code=$qr_code)"
-    }
-    fun getFullName(): String {
-        return "$nombres $apPaterno $apMaterno"
-    }
 }

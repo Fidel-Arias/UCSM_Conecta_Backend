@@ -11,7 +11,7 @@ data class DataRequestPonencia(
     val nombre: String,
 
     @get:NotNull(message = "El id del 'ponente' es obligatorio")
-    val ponenteID: Long,
+    val ponenteId: Long,
 
     @get:NotNull(message = "El id del 'congreso' es obligatorio")
     val congresoId: Long

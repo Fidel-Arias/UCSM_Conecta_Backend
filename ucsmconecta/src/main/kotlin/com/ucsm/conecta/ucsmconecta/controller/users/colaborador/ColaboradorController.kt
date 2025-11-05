@@ -1,20 +1,35 @@
 package com.ucsm.conecta.ucsmconecta.controller.users.colaborador
 
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques.Bloque
 import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador.RegisterColaboradorData
-import com.ucsm.conecta.ucsmconecta.dto.users.auth.colaborador.UpdateDataColaborador
-import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.ColaboradorBusquedaDTO
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataRequestAsistencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataRequestAsistenciaByNumDocumento
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataResponseAsistencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResponseBloque
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResultBloque
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.refrigerio.DataRequestRefrigerio
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.refrigerio.DataResponseRefrigerio
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResultUbicacion
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResponseColaborador
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResponseColaboradorWithCongreso
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResultColaborador
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResultParticipante
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.asistencia.AsistenciaService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques.BloqueService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.refrigerio.RefrigerioService
 import com.ucsm.conecta.ucsmconecta.services.users.ColaboradorService
+import com.ucsm.conecta.ucsmconecta.services.users.CongresoColaboradorService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -22,16 +37,24 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/colaboradores")
+@RequestMapping("/api/colaborador")
 class ColaboradorController @Autowired constructor(
+    private val congresoColaboradorService: CongresoColaboradorService,
     private val colaboradorService: ColaboradorService,
+    private val asistenciaService: AsistenciaService,
+    private val refrigerioService: RefrigerioService,
+    private val bloqueService: BloqueService
 ){
-    @PostMapping
-    fun createColaborador(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseColaborador> {
-        // Crear el colaborador
-        val colaborador: Colaborador = colaboradorService.createColaborador(registerColaboradorData)
+    /******** ENDPOINTS PARA LA ENTIDAD COLABORADOR ********/
+    // Endpoint para obtener un colaborador por su id
+    @GetMapping("/profile/{id}")
+    fun getColaboradorById(@PathVariable id: Long): ResponseEntity<DataResponseColaborador> {
+        val colaborador: Colaborador = colaboradorService.getColaboradorById(id)
 
-        // Se pasan los datos creados a DataResponseColaborador para visualizarlos
+        if (!colaborador.estado) {
+            return ResponseEntity.noContent().build()
+        }
+
         val dataResponseColaborador = DataResponseColaborador(
             id = colaborador.id!!,
             nombres = colaborador.nombres,
@@ -44,108 +67,140 @@ class ColaboradorController @Autowired constructor(
                 nombre = colaborador.escuelaProfesional.nombre,
             )
         )
-        // Construir la URI del nuevo recurso creado
-        val uri = uriComponentsBuilder.path("/api/colaboradores/{id}")
-            .buildAndExpand(colaborador.id).toUri()
-
-        return ResponseEntity.created(uri).body(dataResponseColaborador)
-    }
-
-    @GetMapping("/{id}")
-    fun getColaboradorById(@PathVariable id: Long): ResponseEntity<DataResponseColaborador> {
-        val colaborador: Colaborador = colaboradorService.getColaboradorById(id)
-
-        if (!colaborador.estado) {
-            return ResponseEntity.noContent().build()
-        }
-
-        val dataResponseColaborador: DataResponseColaborador = DataResponseColaborador(
-            id = colaborador.id!!,
-            nombres = colaborador.nombres,
-            aPaterno = colaborador.aPaterno,
-            aMaterno = colaborador.aMaterno,
-            email = colaborador.email,
-            estado = colaborador.estado,
-            escuelaProfesional = DataResponseEscuelaProfesional(
-                id = colaborador.escuelaProfesional.id!!,
-                nombre = colaborador.escuelaProfesional.nombre,
-            )
-        )
 
         return ResponseEntity.ok(dataResponseColaborador)
     }
 
-    @GetMapping
-    fun getAllColaboradores(): ResponseEntity<List<DataResponseColaborador>> {
-        val colaboradores: List<Colaborador> = colaboradorService.getAllColaboradores()
+    /******** ENDPOINTS PARA LA ENTIDAD COLABORADOR_CONGRESO ********/
+    @GetMapping("/{id}")
+    fun getColaboradorWithCongresoById(@PathVariable id: Long): ResponseEntity<DataResponseColaboradorWithCongreso> {
+        val colaboradorCongreso = congresoColaboradorService.getCOlaboradorWithCongresoById(id)
 
-        if (colaboradores.isEmpty()) {
-            return ResponseEntity.noContent().build()
-        }
-
-        val dataResponseColaborador: List<DataResponseColaborador> = colaboradores.map { colaborador ->
-            DataResponseColaborador(
-                id = colaborador.id!!,
-                nombres = colaborador.nombres,
-                aPaterno = colaborador.aPaterno,
-                aMaterno = colaborador.aMaterno,
-                email = colaborador.email,
-                estado = colaborador.estado,
+        // Mapear la entidad colaboradorCongreso
+        val dataResponseColaboradorWithCongreso = DataResponseColaboradorWithCongreso(
+            colaborador = DataResultColaborador(
+                nombres = colaboradorCongreso.colaborador.nombres,
                 escuelaProfesional = DataResponseEscuelaProfesional(
-                    id = colaborador.escuelaProfesional.id!!,
-                    nombre = colaborador.escuelaProfesional.nombre,
+                    id = colaboradorCongreso.colaborador.escuelaProfesional.id!!,
+                    nombre = colaboradorCongreso.colaborador.escuelaProfesional.nombre
+                )
+            ),
+            congreso = DataResultCongreso(
+                id = colaboradorCongreso.congreso.id!!,
+                nombre = colaboradorCongreso.congreso.nombre
+            )
+        )
+
+        return ResponseEntity.ok(dataResponseColaboradorWithCongreso)
+    }
+
+    /******** ENDPOINTS PARA LA ENTIDAD ASISTENCIA ********/
+    // Endpoint para registrar la asistencia de los participantes por QR
+    @PostMapping("/registrar-asistencia/qr")
+    fun createAsistenciaWithQR(@RequestBody @Valid dataRequestAsistencia: DataRequestAsistencia): ResponseEntity<Map<String, String>> {
+        // creacion de la asistencia con el servicio
+        val asistencia = asistenciaService.createAsistenciaWithQR(dataRequestAsistencia)
+        val response: Map<String, String> = mapOf("success" to "Registro exitoso")
+
+        return ResponseEntity.ok(response)
+    }
+
+    // Endpoint para registrar la asistencia de los participantes por numDocumento
+    @PostMapping("/registrar-asistencia/form")
+    fun createAsistenciaWithNumDocumento(@RequestBody @Valid dataRequestAsistenciaByNumDocumento: DataRequestAsistenciaByNumDocumento): ResponseEntity<Map<String, String>> {
+        // creacion de la asistencia con el servicio
+        val asistencia = asistenciaService.createAsistenciaWithNumDocumento(dataRequestAsistenciaByNumDocumento)
+        val response: Map<String, String> = mapOf("success" to "Registro exitoso")
+
+        return ResponseEntity.ok(response)
+    }
+
+    /******** ENDPOINTS PARA LA ENTIDAD BLOQUE ********/
+    @GetMapping("/bloques")
+    fun getAllBloquesByDia(): ResponseEntity<List<DataResponseBloque>> {
+        val bloques: List<Bloque> = bloqueService.getAllBloquesByDia()
+
+        if (bloques.isEmpty())
+            return ResponseEntity.noContent().build()
+
+        val dataResponseBloques: List<DataResponseBloque> = bloques.map { bloque ->
+            DataResponseBloque(
+                id = bloque.id!!,
+                horaInicial = bloque.horaInicio,
+                horaFinal = bloque.horaFinal,
+                dia = DataResultDia(
+                    id = bloque.dia.id!!,
+                    fecha = bloque.dia.fecha
+                ),
+                ubicacion = DataResultUbicacion(
+                    id = bloque.ubicacion.id!!,
+                    nombre = bloque.ubicacion.nombre,
+                ),
+                ponencia = DataResultPonencia(
+                    id = bloque.ponencia.id!!,
+                    nombre = bloque.ponencia.nombre,
+                    ponente = DataResultPonente(
+                        id = bloque.ponencia.ponente.id!!,
+                        nombres = bloque.ponencia.ponente.nombres,
+                        apellidos = bloque.ponencia.ponente.apellidos
+                    )
                 )
             )
         }
 
-        return ResponseEntity.ok(dataResponseColaborador)
+        return ResponseEntity.ok(dataResponseBloques)
     }
 
-    @GetMapping("/search/nombres")
-    fun searchColaboradoresByNombres(@RequestParam nombres: String): ResponseEntity<List<ColaboradorBusquedaDTO>> {
-        // Buscar colaboradores por nombres
-        val colaboradores: List<ColaboradorBusquedaDTO> = colaboradorService.searchByNombres(nombres)
+    /******** ENDPOINTS PARA LA ENTIDAD REFRIGERIO ********/
+    // Endpoint para crear refrigerio del participante por QR
+    @PostMapping("/registrar-refrigerio/qr")
+    fun createRefrigerioWithQR(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<Map<String, String>> {
+        // Crear refrigerio
+        val refrigerio = refrigerioService.createRefrigerioWithQR(dataRequestRefrigerio)
 
-        return if (colaboradores.isEmpty()) {
-            ResponseEntity.noContent().build() // 204 No Content
-        } else {
-            ResponseEntity.ok(colaboradores) // 200 OK con la lista de colaboradores
-        }
+        // Mapear a DataResponseRefrigerio
+        val response: Map<String, String> = mapOf("success" to "Registro exitoso")
+
+        // Retornar respuesta con el nuevo recurso creado
+        return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/search/apellidos")
-    fun searchColaboradoresByApellidos(
-        @RequestParam(required = false) aPaterno: String?,
-        @RequestParam(required = false) aMaterno: String?
-    ): ResponseEntity<List<ColaboradorBusquedaDTO>> {
-        // Buscar colaboradores por apellidos
-        val colaboradores: List<ColaboradorBusquedaDTO> = colaboradorService.searchByApellidos(aPaterno, aMaterno)
+    // Endpoint para crear refrigerio del participante por numero de documento
+    @PostMapping("/registrar-refrigerio/form")
+    fun createRefrigerioWithNumDocumento(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<Map<String, String>> {
+        // Crear refrigerio
+        val refrigerio = refrigerioService.createRefrigerioWithQR(dataRequestRefrigerio)
 
-        return if (colaboradores.isEmpty()) {
-            ResponseEntity.noContent().build() // 204 No Content
-        } else {
-            ResponseEntity.ok(colaboradores) // 200 OK con la lista de colaboradores
-        }
+        // Mapear a DataResponseRefrigerio
+        val response: Map<String, String> = mapOf("success" to "Registro exitoso")
+
+        // Retornar respuesta con el nuevo recurso creado
+        return ResponseEntity.ok(response)
     }
 
-    // Metodo para desactivar un colaborador por su ID
-    @DeleteMapping("/deactivate/{id}")
-    fun deleteColaboradorById(@PathVariable id: Long): ResponseEntity<Void> {
-        colaboradorService.deactivateColaboradorById(id)
-        return ResponseEntity.noContent().build()
-    }
+    // Endpoint para obtener el refrigerio por numDocumento de Participante
+    @GetMapping("/refrigerio/search")
+    fun searchRefrigerioByNumDocumento(@RequestParam numDocumento: String): ResponseEntity<DataResponseRefrigerio> {
+        // Obtener refrigerio
+        val refrigerio = refrigerioService.getRefrigerioParticipanteByNumDocumento(numDocumento)
 
-    // Metodo para activar un colaborador por su ID
-    @PutMapping("/activate/{id}")
-    fun activateColaboradorById(@PathVariable id: Long): ResponseEntity<Void> {
-        colaboradorService.activateColaboradorById(id)
-        return ResponseEntity.noContent().build()
-    }
-
-    // Metodo para editar un colaborador
-    @PutMapping("/{id}")
-    fun editColaborador(@PathVariable id: Long, @RequestBody @Valid updatedColaboradorData: UpdateDataColaborador): ResponseEntity<Void> {
-        colaboradorService.editColaborador(id, updatedColaboradorData)
-        return ResponseEntity.noContent().build()
+        // Mapear a DataResponseRefrigerio
+        val dataResponseRefrigerio = DataResponseRefrigerio(
+            id = refrigerio.id!!,
+            fecha = refrigerio.fecha,
+            hora = refrigerio.hora,
+            participante = DataResultParticipante(
+                nombres = refrigerio.participante.nombres,
+                apPaterno = refrigerio.participante.apPaterno,
+                apMaterno = refrigerio.participante.apMaterno,
+                numDocumento = refrigerio.participante.numDocumento
+            ),
+            congreso = DataResultCongreso(
+                id = refrigerio.congreso.id!!,
+                nombre = refrigerio.congreso.nombre,
+            )
+        )
+        // Retornar respuesta con el refrigerio
+        return ResponseEntity.ok(dataResponseRefrigerio)
     }
 }

@@ -21,4 +21,7 @@ interface ParticipanteRepository : JpaRepository<Participante, Long> {
         nativeQuery = true
     )
     fun findByApellidos(@Param("busqueda") busqueda: String): List<ParticipanteBusquedaDTO>
+
+    @Query("SELECT p.numDocumento FROM Participante p")
+    fun findAllNumDocumentos(): List<String>
 }
