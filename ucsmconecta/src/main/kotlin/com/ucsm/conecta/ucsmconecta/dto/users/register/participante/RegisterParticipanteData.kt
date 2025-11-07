@@ -42,6 +42,6 @@ data class RegisterParticipanteData(
     @get:NotNull(message = "El 'estado' es obligatorio")
     @get:NotEmpty(message = "El 'estado' no puede estar vacio")
     @get:NotBlank(message = "El 'estado' no puede estar en blanco")
-    @get:Size(min = 1, max = 15, message = "El 'estado' debe tener entre 1 y 15 caracteres")
+    @get:Size(min = 1, max = 17, message = "El 'estado' debe tener entre 1 y 17 caracteres")
     val estado: String,
 )
