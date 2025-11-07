@@ -2,12 +2,15 @@ package com.ucsm.conecta.ucsmconecta.services.users
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
+import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.CongresoColaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador.RegisterColaboradorData
 import com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador.UpdateDataColaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.ColaboradorBusquedaDTO
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.users.colaborador.ColaboradorRepository
+import com.ucsm.conecta.ucsmconecta.repository.users.colaborador.CongresoColaboradorRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,25 +21,35 @@ import org.springframework.web.bind.annotation.RequestBody
 @Service
 class ColaboradorService @Autowired constructor(
     private val colaboradorRepository: ColaboradorRepository,
+    private val congresoColaboradorRepository: CongresoColaboradorRepository,
+    private val congresoService: CongresoService,
     private val passwordEncoder: PasswordEncoder,
     private val escuelaProfesionalService: EscuelaProfesionalService
 ){
     // Metodo para crear un nuevo colaborador
     @Transactional
-    fun createColaborador(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData): Colaborador {
+    fun createColaboradorWithCongreso(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, idCongreso: Long): CongresoColaborador {
         // Buscar escuela profesional
         val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(registerColaboradorData.escuelaProfesionalId)
 
         val encodedPassword = passwordEncoder.encode(registerColaboradorData.password)
 
-        // Crear y guardar el colaborador
-        return colaboradorRepository.save(Colaborador(
+        // Encontrar congreso
+        val congreso = congresoService.getCongresoById(idCongreso)
+
+        val colaborador = colaboradorRepository.save(Colaborador(
             nombres = registerColaboradorData.nombres,
             aPaterno = registerColaboradorData.aPaterno,
             aMaterno = registerColaboradorData.aMaterno,
             email = registerColaboradorData.email,
             password = encodedPassword,
             escuelaProfesional = escuelaProfesional
+        ))
+
+        // Crear y guardar el colaborador con el congreso
+        return congresoColaboradorRepository.save(CongresoColaborador(
+            colaborador = colaborador,
+            congreso = congreso
         ))
     }
 
