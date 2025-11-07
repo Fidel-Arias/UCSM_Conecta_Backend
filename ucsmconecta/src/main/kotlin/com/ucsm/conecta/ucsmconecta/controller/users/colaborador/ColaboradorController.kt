@@ -6,9 +6,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaP
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataRequestAsistencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataRequestAsistenciaByNumDocumento
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataResponseAsistencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResponseBloque
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResultBloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.refrigerio.DataRequestRefrigerio
@@ -74,11 +72,12 @@ class ColaboradorController @Autowired constructor(
     /******** ENDPOINTS PARA LA ENTIDAD COLABORADOR_CONGRESO ********/
     @GetMapping("/{id}")
     fun getColaboradorWithCongresoById(@PathVariable id: Long): ResponseEntity<DataResponseColaboradorWithCongreso> {
-        val colaboradorCongreso = congresoColaboradorService.getCOlaboradorWithCongresoById(id)
+        val colaboradorCongreso = congresoColaboradorService.getColaboradorWithCongresoById(id)
 
         // Mapear la entidad colaboradorCongreso
         val dataResponseColaboradorWithCongreso = DataResponseColaboradorWithCongreso(
             colaborador = DataResultColaborador(
+                id = colaboradorCongreso.colaborador.id!!,
                 nombres = colaboradorCongreso.colaborador.nombres,
                 escuelaProfesional = DataResponseEscuelaProfesional(
                     id = colaboradorCongreso.colaborador.escuelaProfesional.id!!,

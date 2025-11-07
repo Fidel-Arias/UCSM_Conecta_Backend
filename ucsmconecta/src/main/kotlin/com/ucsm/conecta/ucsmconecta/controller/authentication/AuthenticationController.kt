@@ -21,6 +21,6 @@ class AuthenticationController @Autowired constructor(
     fun login(@RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
         val user = userService.authenticate(request)
         val token = jwtUtil.generateToken(user)
-        return ResponseEntity.ok(LoginResponse(token, user.role))
+        return ResponseEntity.ok(LoginResponse(token, user.role, user.id))
     }
 }

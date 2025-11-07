@@ -6,6 +6,7 @@ import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponen
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ubicacion.Ubicacion
 import com.ucsm.conecta.ucsmconecta.domain.users.administrador.Administrador
 import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
+import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.CongresoColaborador
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.domain.users.ponente.Ponente
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
@@ -26,7 +27,6 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataRequ
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResponseUbicacion
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResultUbicacion
 import com.ucsm.conecta.ucsmconecta.dto.universidad.gradoacademico.DataResponseGradoAcademico
-import com.ucsm.conecta.ucsmconecta.dto.users.register.admin.RegisterAdminWithCongresoData
 import com.ucsm.conecta.ucsmconecta.dto.users.register.admin.UpdateDataAdministrador
 import com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador.RegisterColaboradorData
 import com.ucsm.conecta.ucsmconecta.dto.users.register.colaborador.UpdateDataColaborador
@@ -34,6 +34,8 @@ import com.ucsm.conecta.ucsmconecta.dto.users.register.participante.UpdateDataPa
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.admin.DataResponseAdmin
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.ColaboradorBusquedaDTO
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResponseColaborador
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResponseColaboradorWithCongreso
+import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResultColaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseTipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResultParticipante
@@ -54,13 +56,7 @@ import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
 import com.ucsm.conecta.ucsmconecta.services.users.PonenteService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -70,7 +66,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
@@ -78,7 +73,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RequestMapping("/api/administrador")
 class AdministradorController @Autowired constructor(
     private val adminService: AdminService,
-    private val restTemplate: RestTemplate, // o WebClient si prefieres,
     private val congresoService: CongresoService,
     private val diaService: DiaService,
     private val ubicacionService: UbicacionService,
@@ -638,26 +632,29 @@ class AdministradorController @Autowired constructor(
     /******** ENDPOINTS PARA LA ENTIDAD COLABORADOR ********/
     // Endpoint para crear un nuevo colaborador
     @PostMapping("/create-colaborador")
-    fun createColaborador(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<DataResponseColaborador> {
+    fun createColaboradorWithCongreso(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, uriComponentsBuilder: ServletUriComponentsBuilder, @RequestParam idCongreso: Long): ResponseEntity<DataResponseColaboradorWithCongreso> {
         // Crear el colaborador
-        val colaborador: Colaborador = colaboradorService.createColaborador(registerColaboradorData)
+        val colaboradorCongreso: CongresoColaborador = colaboradorService.createColaboradorWithCongreso(registerColaboradorData, idCongreso)
 
         // Se pasan los datos creados a DataResponseColaborador para visualizarlos
-        val dataResponseColaborador = DataResponseColaborador(
-            id = colaborador.id!!,
-            nombres = colaborador.nombres,
-            aPaterno = colaborador.aPaterno,
-            aMaterno = colaborador.aMaterno,
-            email = colaborador.email,
-            estado = colaborador.estado,
-            escuelaProfesional = DataResponseEscuelaProfesional(
-                id = colaborador.escuelaProfesional.id!!,
-                nombre = colaborador.escuelaProfesional.nombre,
+        val dataResponseColaborador = DataResponseColaboradorWithCongreso(
+            colaborador = DataResultColaborador(
+                id = colaboradorCongreso.colaborador.id!!,
+                nombres = colaboradorCongreso.colaborador.nombres,
+                escuelaProfesional = DataResponseEscuelaProfesional(
+                    id = colaboradorCongreso.colaborador.escuelaProfesional.id!!,
+                    nombre = colaboradorCongreso.colaborador.escuelaProfesional.nombre,
+                )
+            ),
+            congreso = DataResultCongreso(
+                id = colaboradorCongreso.congreso.id!!,
+                nombre = colaboradorCongreso.congreso.nombre
             )
         )
-        // Construir la URI del nuevo recurso creado
-        val uri = uriComponentsBuilder.path("/api/colaboradores/{id}")
-            .buildAndExpand(colaborador.id).toUri()
+
+        // Crear la URI para el nuevo recurso creado
+        val uri = uriComponentsBuilder.path("/api/administrador/colaborador/{id}")
+            .buildAndExpand(colaboradorCongreso.id).toUri()
 
         return ResponseEntity.created(uri).body(dataResponseColaborador)
     }
