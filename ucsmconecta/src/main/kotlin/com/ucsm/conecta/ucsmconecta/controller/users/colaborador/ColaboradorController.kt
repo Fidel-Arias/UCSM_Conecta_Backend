@@ -1,6 +1,7 @@
 package com.ucsm.conecta.ucsmconecta.controller.users.colaborador
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques.Bloque
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ubicacion.Ubicacion
 import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
@@ -11,6 +12,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.refrigerio.DataRequestRefrigerio
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.refrigerio.DataResponseRefrigerio
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResponseUbicacion
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResultUbicacion
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResponseColaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResponseColaboradorWithCongreso
@@ -20,6 +22,7 @@ import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.asistencia.AsistenciaService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques.BloqueService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.refrigerio.RefrigerioService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ubicacion.UbicacionService
 import com.ucsm.conecta.ucsmconecta.services.users.ColaboradorService
 import com.ucsm.conecta.ucsmconecta.services.users.CongresoColaboradorService
 import jakarta.validation.Valid
@@ -39,6 +42,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 class ColaboradorController @Autowired constructor(
     private val congresoColaboradorService: CongresoColaboradorService,
     private val colaboradorService: ColaboradorService,
+    private val ubicacionService: UbicacionService,
     private val asistenciaService: AsistenciaService,
     private val refrigerioService: RefrigerioService,
     private val bloqueService: BloqueService
@@ -112,6 +116,29 @@ class ColaboradorController @Autowired constructor(
         val response: Map<String, String> = mapOf("success" to "Registro exitoso")
 
         return ResponseEntity.ok(response)
+    }
+
+    /******** ENDPOINTS PARA LA ENTIDAD UBICACION ********/
+    // Endpoint para obtener todas las Ubicaciones
+    @GetMapping("/ubicaciones")
+    fun getAllUbicaciones(): ResponseEntity<List<DataResponseUbicacion>> {
+        // Obtener todas las Ubicaciones
+        val ubicaciones: List<Ubicacion> = ubicacionService.getAllUbicaciones()
+
+        if (ubicaciones.isEmpty())
+            return ResponseEntity.noContent().build()
+
+        // Mapear las ubicaciones a una lista de DataResponseUbicacion
+        val dataResponseUbicaciones = ubicaciones.map { ubicacion ->
+            DataResponseUbicacion(
+                id = ubicacion.id!!,
+                nombre = ubicacion.nombre,
+                estado = null
+            )
+        }
+
+        // Retornar la respuesta con la lista de recursos encontrados
+        return ResponseEntity.ok(dataResponseUbicaciones)
     }
 
     /******** ENDPOINTS PARA LA ENTIDAD BLOQUE ********/
