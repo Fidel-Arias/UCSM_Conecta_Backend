@@ -29,7 +29,7 @@ class AdminService @Autowired constructor(
     @Transactional
     fun createAdmin(@RequestBody @Valid registerAdminData: RegisterAdminData, congreso: Congreso): Administrador {
         // Buscar escuela profesional asociada
-        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(registerAdminData.escuelaProfesionalId)
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchByCodigo(registerAdminData.escuelaProfesionalCod)
 
         val encodedPassword = passwordEncoder.encode(registerAdminData.password)
 
