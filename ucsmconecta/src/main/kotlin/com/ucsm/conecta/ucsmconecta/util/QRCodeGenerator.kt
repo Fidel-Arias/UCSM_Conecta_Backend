@@ -15,10 +15,7 @@ object QRCodeGenerator {
         numDocumento: String,
     ): String {
         val qrWriter = QRCodeWriter()
-        val contenidoQR = """
-            Nombre: $nombres
-            Documento: $numDocumento
-        """.trimIndent()
+        val contenidoQR = "{\"nombres\":\"$nombres\", \"numDocumento\": \"$numDocumento\""
 
         val hints = mapOf(EncodeHintType.CHARACTER_SET to "UTF-8")
 
