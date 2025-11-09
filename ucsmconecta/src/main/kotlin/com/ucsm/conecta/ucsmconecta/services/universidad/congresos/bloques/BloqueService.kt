@@ -82,7 +82,7 @@ class BloqueService @Autowired constructor(
         val diaActual = LocalDate.now()
         val horaActual = LocalTime.now()
         return bloqueRepository.findAllByOrderByIdAsc()
-            .filter { it.dia.fecha == diaActual && (horaActual <= it.horaFinal) }
+            .filter { it.dia.fecha == diaActual && (horaActual.isBefore(it.horaFinal.plusMinutes(10))) }
     }
 
     // Metodo para eliminar un bloque por su ID
