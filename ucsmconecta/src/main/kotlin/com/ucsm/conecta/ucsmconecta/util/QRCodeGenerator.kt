@@ -25,7 +25,7 @@ object QRCodeGenerator {
         val bitMatrix = qrWriter.encode(contenidoQR, BarcodeFormat.QR_CODE, 300, 300, hints)
 
         // Carpeta de salida (asegúrate de que exista)
-        val carpetaQR = "src/main/resources/static/qrcodes"
+        val carpetaQR = "/var/ucsmconecta/qrcodes"
         File(carpetaQR).mkdirs()
 
         // Nombre único para el QR
@@ -34,6 +34,6 @@ object QRCodeGenerator {
 
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", rutaArchivo)
 
-        return "/static/qrcodes/$nombreArchivo"
+        return "/qrcodes/$nombreArchivo"
     }
 }
