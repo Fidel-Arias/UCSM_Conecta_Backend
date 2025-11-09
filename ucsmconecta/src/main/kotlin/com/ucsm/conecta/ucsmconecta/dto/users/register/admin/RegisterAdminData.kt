@@ -41,5 +41,8 @@ data class RegisterAdminData(
     val password: String,
 
     @get:NotNull(message = "El id de la escuela profesional es obligatorio")
-    val escuelaProfesionalId: Long
+    @get:NotBlank(message = "La contraseña no puede estar en blanco")
+    @get:NotEmpty(message = "La contraseña no puede estar vacia")
+    @get:Size(min = 8, message = "El codigo es de al menos 8 caracteres")
+    val escuelaProfesionalCod: String
 )
