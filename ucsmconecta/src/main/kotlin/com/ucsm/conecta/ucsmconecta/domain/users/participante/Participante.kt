@@ -39,7 +39,7 @@ open class Participante(
     @JoinColumn(name = "congreso_id")
     open val congreso: Congreso,
 
-    @Column(nullable = false, length = 17)
+    @Column(nullable = false, length = 30)
     open var estado: String,
 
     @Column(nullable = true)

@@ -24,7 +24,7 @@ class ComentarioService @Autowired constructor(
     @Transactional
     fun createComentario(@RequestBody @Valid dataRequestComentario: DataRequestComentario): Comentario {
         // Buscar participante por id
-        val participante: Participante = participanteService.getParticipanteById(dataRequestComentario.participanteId)
+        val participante: Participante = participanteService.searchByNumDocumento(dataRequestComentario.documentoParticipante)
 
         // Verificar las groserias del comentario
         val comentarioPermitido: Boolean = verificationGroserias(dataRequestComentario.texto)

@@ -34,8 +34,8 @@ class ParticipanteService @Autowired constructor(
         val adminCongreso = congresoAdministradorService.getAdministradorWithCongresoById(adminId)
 
         // Cachear entidades comunes (no repetir consultas)
-        val escuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(adminCongreso.administrador.escuelaProfesional.id!!)
-        val congreso = congresoService.getCongresoById(adminCongreso.congreso.id!!)
+        val escuelaProfesional = escuelaProfesionalService.searchByCodigo(adminCongreso.administrador.escuelaProfesional.codigo)
+        val congreso = congresoService.searchByCodigo(adminCongreso.congreso.codigo)
 
         // Lista mutable de participantes registrados
         val existentes = participanteRepository.findAllNumDocumentos()
@@ -48,10 +48,6 @@ class ParticipanteService @Autowired constructor(
                 continue
             }
 
-            if (!verificarEstado(p.estado)) {
-                continue
-            }
-
             // Buscar y verificar que exista el Tipo Participante
             val tipoParticipante: TipoParticipante = tipoParticipanteService.searchByDescripcion(p.tipoParticipante)
 
@@ -59,10 +55,6 @@ class ParticipanteService @Autowired constructor(
             val qrPath = QRCodeGenerator.generarQR(
                 nombres = "${p.nombres} ${p.apPaterno} ${p.apMaterno}",
                 numDocumento = p.numDocumento,
-                estado = p.estado,
-                congreso = congreso.nombre,
-                escuelaProfesional = escuelaProfesional.nombre,
-                tipoParticipante = tipoParticipante.descripcion
             )
 
             nuevos.add(
@@ -75,7 +67,7 @@ class ParticipanteService @Autowired constructor(
                     tipoParticipante = tipoParticipante,
                     escuelaProfesional = escuelaProfesional,
                     congreso = congreso,
-                    estado = p.estado,
+                    estado = verificarEstado(p.estado),
                     qr_code = qrPath
                 )
             )
@@ -92,8 +84,8 @@ class ParticipanteService @Autowired constructor(
     }
 
     // Metodo para validar si se agrega o no a la base de datos segun su estado
-    fun verificarEstado(estado: String): Boolean {
-        return estado == "3PG"
+    fun verificarEstado(estado: String): String {
+        return if (estado == "3PG") "MATRICULADO" else "EN PROCESO"
     }
 
     // Metodo para buscar participante por su numero de documento

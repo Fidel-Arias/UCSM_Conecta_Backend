@@ -40,6 +40,9 @@ data class RegisterColaboradorData(
     )
     val password: String,
 
-    @get:NotNull(message = "El id de la escuela profesional es obligatorio")
-    val escuelaProfesionalId: Long
+    @get:NotNull(message = "El codigo de la escuela es obligatorio")
+    @get:NotBlank(message = "El codigo de la escuela no puede estar en blanco")
+    @get:NotEmpty(message = "El codigo de la escuela no puede estar vacia")
+    @get:Size(min = 8, message = "El codigo es de al menos 8 caracteres")
+    val escuelaProfesionalCod: String
 )

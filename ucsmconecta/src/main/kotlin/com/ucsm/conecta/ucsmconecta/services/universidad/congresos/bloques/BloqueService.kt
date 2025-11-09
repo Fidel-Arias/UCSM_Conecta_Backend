@@ -80,8 +80,9 @@ class BloqueService @Autowired constructor(
     // Metodo para obtener todos los bloques segun el dia actual
     fun getAllBloquesByDia(): List<Bloque> {
         val diaActual = LocalDate.now()
+        val horaActual = LocalTime.now()
         return bloqueRepository.findAllByOrderByIdAsc()
-            .filter { it.dia.fecha == diaActual }
+            .filter { it.dia.fecha == diaActual && (horaActual <= it.horaFinal) }
     }
 
     // Metodo para eliminar un bloque por su ID

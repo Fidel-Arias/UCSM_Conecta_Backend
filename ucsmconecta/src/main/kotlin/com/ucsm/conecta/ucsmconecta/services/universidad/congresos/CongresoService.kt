@@ -6,6 +6,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataRequestCongres
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.CongresoRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
+import com.ucsm.conecta.ucsmconecta.util.UUIDGenerator
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,14 +24,18 @@ class CongresoService @Autowired constructor(
     fun searchByNombre(nombre: String):Congreso = congresoRepository.findByNombre(nombre)
         .orElseThrow { ResourceNotFoundException("Congreso no encontrado") }
 
+    fun searchByCodigo(codigo: String): Congreso = congresoRepository.findByCodigo(codigo)
+        .orElseThrow { ResourceNotFoundException("Congreso no encontrado") }
+
     @Transactional
     fun createCongreso(@RequestBody @Valid dataRequestCongreso: DataRequestCongreso): Congreso {
-        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(
-            dataRequestCongreso.escuelaProfesionalId
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchByCodigo(
+            dataRequestCongreso.escuelaProfesionalCod
         )
 
         return congresoRepository.save(
             Congreso(
+                codigo = UUIDGenerator.generarCodigoUnico(),
                 nombre = dataRequestCongreso.nombre,
                 fechaInicio = dataRequestCongreso.fechaInicio,
                 fechaFin = dataRequestCongreso.fechaFin,

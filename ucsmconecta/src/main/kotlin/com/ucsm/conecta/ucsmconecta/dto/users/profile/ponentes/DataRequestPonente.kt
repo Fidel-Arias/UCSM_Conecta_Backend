@@ -1,6 +1,5 @@
 package com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes
 
-import com.ucsm.conecta.ucsmconecta.domain.universidad.gradoacademico.GradoAcademico
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
@@ -19,6 +18,8 @@ data class DataRequestPonente(
     @get:NotNull(message = "El 'grado academico' es obligatorio")
     val gradoAcademicoId: Long,
 
-    @get:NotNull(message = "El id del 'congreso' es obligatorio")
-    val congresoId: Long
+    @get:NotNull(message = "El codigo del 'congreso' es obligatorio")
+    @get:NotBlank(message = "El codigo del 'congreso' no puede estar en blanco")
+    @get:NotEmpty(message = "El codigo del 'congreso' no puede estar vacio")
+    val congresoCod: String
 )

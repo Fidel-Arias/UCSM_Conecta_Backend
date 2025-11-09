@@ -101,7 +101,8 @@ class AdministradorController @Autowired constructor(
             estado = admin.estado,
             escuelaProfesional = DataResponseEscuelaProfesional(
                 id = admin.escuelaProfesional.id!!,
-                nombre = admin.escuelaProfesional.nombre
+                nombre = admin.escuelaProfesional.nombre,
+                admin.escuelaProfesional.codigo
             )
         )
 
@@ -131,13 +132,14 @@ class AdministradorController @Autowired constructor(
 
     /******** ENDPOINTS PARA LA ENTIDAD CONGRESO ********/
     // Endpoint para obtener el congreso por su ID
-    @GetMapping("/congreso/{id}")
-    fun getCongresoById(@PathVariable id: Long): ResponseEntity<DataResponseCongreso> {
-        val congreso: Congreso = congresoService.getCongresoById(id)
+    @GetMapping("/congreso/search")
+    fun getCongresoByCodigo(@RequestParam codigo: String): ResponseEntity<DataResponseCongreso> {
+        val congreso: Congreso = congresoService.searchByCodigo(codigo)
 
         // Se pasan los datos a DataResponseCongreso para visualizarlos
         val dataResponseCongreso = DataResponseCongreso(
             id = congreso.id!!,
+            codigo = congreso.codigo,
             nombre = congreso.nombre,
             fechaInicio = congreso.fechaInicio,
             fechaFin = congreso.fechaFin,
@@ -146,6 +148,7 @@ class AdministradorController @Autowired constructor(
             escuelaProfesional = DataResponseEscuelaProfesional(
                 id = congreso.escuelaProfesional.id!!,
                 nombre = congreso.escuelaProfesional.nombre,
+                codigo = congreso.escuelaProfesional.codigo
             )
         )
 
@@ -167,7 +170,8 @@ class AdministradorController @Autowired constructor(
             estado = dia.estado,
             congreso = DataResultCongreso(
                 id = dia.congreso.id!!,
-                nombre = dia.congreso.nombre
+                nombre = dia.congreso.nombre,
+                codigo = dia.congreso.codigo
             )
         )
 
@@ -189,7 +193,8 @@ class AdministradorController @Autowired constructor(
                 estado = dia.estado,
                 congreso = DataResultCongreso(
                     id = dia.congreso.id!!,
-                    nombre = dia.congreso.nombre
+                    nombre = dia.congreso.nombre,
+                    codigo = dia.congreso.codigo
                 )
             )
         }
@@ -305,6 +310,7 @@ class AdministradorController @Autowired constructor(
             congreso = DataResultCongreso(
                 id = ponente.congreso.id!!,
                 nombre = ponente.congreso.nombre,
+                codigo = ponente.congreso.codigo
             )
         )
 
@@ -332,6 +338,7 @@ class AdministradorController @Autowired constructor(
             congreso = DataResultCongreso(
                 id = ponente.congreso.id!!,
                 nombre = ponente.congreso.nombre,
+                codigo = ponente.congreso.codigo
             )
         )
 
@@ -359,6 +366,7 @@ class AdministradorController @Autowired constructor(
                 congreso = DataResultCongreso(
                     id = ponente.congreso.id!!,
                     nombre = ponente.congreso.nombre,
+                    codigo = ponente.congreso.codigo
                 )
             )
         }
@@ -400,6 +408,7 @@ class AdministradorController @Autowired constructor(
             congreso = DataResultCongreso(
                 id = ponencia.congreso.id!!,
                 nombre = ponencia.congreso.nombre,
+                codigo = ponencia.congreso.codigo
             )
         )
 
@@ -431,6 +440,7 @@ class AdministradorController @Autowired constructor(
             congreso = DataResultCongreso(
                 id = ponencia.congreso.id!!,
                 nombre = ponencia.congreso.nombre,
+                codigo = ponencia.congreso.codigo
             )
         )
 
@@ -458,6 +468,7 @@ class AdministradorController @Autowired constructor(
                 congreso = DataResultCongreso(
                     id = ponencia.congreso.id!!,
                     nombre = ponencia.congreso.nombre,
+                    codigo = ponencia.congreso.codigo
                 )
             )
         }
@@ -482,6 +493,7 @@ class AdministradorController @Autowired constructor(
             congreso = DataResultCongreso(
                 id = ponencia.congreso.id!!,
                 nombre = ponencia.congreso.nombre,
+                codigo = ponencia.congreso.codigo
             )
         )
 
@@ -632,9 +644,9 @@ class AdministradorController @Autowired constructor(
     /******** ENDPOINTS PARA LA ENTIDAD COLABORADOR ********/
     // Endpoint para crear un nuevo colaborador
     @PostMapping("/create-colaborador")
-    fun createColaboradorWithCongreso(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, uriComponentsBuilder: ServletUriComponentsBuilder, @RequestParam idCongreso: Long): ResponseEntity<DataResponseColaboradorWithCongreso> {
+    fun createColaboradorWithCongreso(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, uriComponentsBuilder: ServletUriComponentsBuilder, @RequestParam codCongreso: String): ResponseEntity<DataResponseColaboradorWithCongreso> {
         // Crear el colaborador
-        val colaboradorCongreso: CongresoColaborador = colaboradorService.createColaboradorWithCongreso(registerColaboradorData, idCongreso)
+        val colaboradorCongreso: CongresoColaborador = colaboradorService.createColaboradorWithCongreso(registerColaboradorData, codCongreso)
 
         // Se pasan los datos creados a DataResponseColaborador para visualizarlos
         val dataResponseColaborador = DataResponseColaboradorWithCongreso(
@@ -644,11 +656,13 @@ class AdministradorController @Autowired constructor(
                 escuelaProfesional = DataResponseEscuelaProfesional(
                     id = colaboradorCongreso.colaborador.escuelaProfesional.id!!,
                     nombre = colaboradorCongreso.colaborador.escuelaProfesional.nombre,
+                    codigo = colaboradorCongreso.colaborador.escuelaProfesional.codigo
                 )
             ),
             congreso = DataResultCongreso(
                 id = colaboradorCongreso.congreso.id!!,
-                nombre = colaboradorCongreso.congreso.nombre
+                nombre = colaboradorCongreso.congreso.nombre,
+                codigo = colaboradorCongreso.congreso.codigo
             )
         )
 
@@ -678,6 +692,7 @@ class AdministradorController @Autowired constructor(
             escuelaProfesional = DataResponseEscuelaProfesional(
                 id = colaborador.escuelaProfesional.id!!,
                 nombre = colaborador.escuelaProfesional.nombre,
+                codigo = colaborador.escuelaProfesional.codigo
             )
         )
 
@@ -704,6 +719,7 @@ class AdministradorController @Autowired constructor(
                 escuelaProfesional = DataResponseEscuelaProfesional(
                     id = colaborador.escuelaProfesional.id!!,
                     nombre = colaborador.escuelaProfesional.nombre,
+                    codigo = colaborador.escuelaProfesional.codigo
                 )
             )
         }
@@ -794,7 +810,8 @@ class AdministradorController @Autowired constructor(
                 escuelaProfesional = participante.escuelaProfesional.let {
                     DataResponseEscuelaProfesional(
                         id = it.id!!,
-                        nombre = it.nombre
+                        nombre = it.nombre,
+                        codigo = it.codigo
                     )
                 },
                 tipoParticipante = participante.tipoParticipante.let {
@@ -807,6 +824,7 @@ class AdministradorController @Autowired constructor(
                     DataResultCongreso(
                         id = it.id!!,
                         nombre = it.nombre,
+                        codigo = it.codigo
                     )
                 },
                 qrCode = participante.qr_code
@@ -920,7 +938,8 @@ class AdministradorController @Autowired constructor(
             ),
             congreso = DataResultCongreso(
                 id = asistencia.congreso.id!!,
-                nombre = asistencia.congreso.nombre
+                nombre = asistencia.congreso.nombre,
+                codigo = asistencia.congreso.codigo
             )
         )
 

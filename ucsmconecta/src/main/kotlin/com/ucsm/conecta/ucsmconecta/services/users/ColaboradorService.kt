@@ -28,14 +28,14 @@ class ColaboradorService @Autowired constructor(
 ){
     // Metodo para crear un nuevo colaborador
     @Transactional
-    fun createColaboradorWithCongreso(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, idCongreso: Long): CongresoColaborador {
+    fun createColaboradorWithCongreso(@RequestBody @Valid registerColaboradorData: RegisterColaboradorData, codCongreso: String): CongresoColaborador {
         // Buscar escuela profesional
-        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(registerColaboradorData.escuelaProfesionalId)
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchByCodigo(registerColaboradorData.escuelaProfesionalCod)
 
         val encodedPassword = passwordEncoder.encode(registerColaboradorData.password)
 
         // Encontrar congreso
-        val congreso = congresoService.getCongresoById(idCongreso)
+        val congreso = congresoService.searchByCodigo(codCongreso)
 
         val colaborador = colaboradorRepository.save(Colaborador(
             nombres = registerColaboradorData.nombres,

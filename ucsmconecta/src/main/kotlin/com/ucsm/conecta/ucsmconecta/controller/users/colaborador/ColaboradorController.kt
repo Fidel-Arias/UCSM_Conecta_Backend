@@ -6,7 +6,6 @@ import com.ucsm.conecta.ucsmconecta.domain.users.colaborador.Colaborador
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataRequestAsistencia
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.asistencia.DataRequestAsistenciaByNumDocumento
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResponseBloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
@@ -67,6 +66,7 @@ class ColaboradorController @Autowired constructor(
             escuelaProfesional = DataResponseEscuelaProfesional(
                 id = colaborador.escuelaProfesional.id!!,
                 nombre = colaborador.escuelaProfesional.nombre,
+                codigo = colaborador.escuelaProfesional.codigo
             )
         )
 
@@ -85,12 +85,14 @@ class ColaboradorController @Autowired constructor(
                 nombres = colaboradorCongreso.colaborador.nombres,
                 escuelaProfesional = DataResponseEscuelaProfesional(
                     id = colaboradorCongreso.colaborador.escuelaProfesional.id!!,
-                    nombre = colaboradorCongreso.colaborador.escuelaProfesional.nombre
+                    nombre = colaboradorCongreso.colaborador.escuelaProfesional.nombre,
+                    codigo = colaboradorCongreso.colaborador.escuelaProfesional.codigo
                 )
             ),
             congreso = DataResultCongreso(
                 id = colaboradorCongreso.congreso.id!!,
-                nombre = colaboradorCongreso.congreso.nombre
+                nombre = colaboradorCongreso.congreso.nombre,
+                codigo = colaboradorCongreso.congreso.codigo
             )
         )
 
@@ -99,20 +101,10 @@ class ColaboradorController @Autowired constructor(
 
     /******** ENDPOINTS PARA LA ENTIDAD ASISTENCIA ********/
     // Endpoint para registrar la asistencia de los participantes por QR
-    @PostMapping("/registrar-asistencia/qr")
-    fun createAsistenciaWithQR(@RequestBody @Valid dataRequestAsistencia: DataRequestAsistencia): ResponseEntity<Map<String, String>> {
+    @PostMapping("/registrar-asistencia")
+    fun createAsistencia(@RequestBody @Valid dataRequestAsistencia: DataRequestAsistencia): ResponseEntity<Map<String, String>> {
         // creacion de la asistencia con el servicio
-        val asistencia = asistenciaService.createAsistenciaWithQR(dataRequestAsistencia)
-        val response: Map<String, String> = mapOf("success" to "Registro exitoso")
-
-        return ResponseEntity.ok(response)
-    }
-
-    // Endpoint para registrar la asistencia de los participantes por numDocumento
-    @PostMapping("/registrar-asistencia/form")
-    fun createAsistenciaWithNumDocumento(@RequestBody @Valid dataRequestAsistenciaByNumDocumento: DataRequestAsistenciaByNumDocumento): ResponseEntity<Map<String, String>> {
-        // creacion de la asistencia con el servicio
-        val asistencia = asistenciaService.createAsistenciaWithNumDocumento(dataRequestAsistenciaByNumDocumento)
+        val asistencia = asistenciaService.createAsistencia(dataRequestAsistencia)
         val response: Map<String, String> = mapOf("success" to "Registro exitoso")
 
         return ResponseEntity.ok(response)
@@ -179,26 +171,13 @@ class ColaboradorController @Autowired constructor(
 
     /******** ENDPOINTS PARA LA ENTIDAD REFRIGERIO ********/
     // Endpoint para crear refrigerio del participante por QR
-    @PostMapping("/registrar-refrigerio/qr")
-    fun createRefrigerioWithQR(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<Map<String, String>> {
+    @PostMapping("/registrar-refrigerio")
+    fun createRefrigerio(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<Map<String, String>> {
         // Crear refrigerio
-        val refrigerio = refrigerioService.createRefrigerioWithQR(dataRequestRefrigerio)
+        val refrigerio = refrigerioService.createRefrigerio(dataRequestRefrigerio)
 
         // Mapear a DataResponseRefrigerio
-        val response: Map<String, String> = mapOf("success" to "Registro exitoso")
-
-        // Retornar respuesta con el nuevo recurso creado
-        return ResponseEntity.ok(response)
-    }
-
-    // Endpoint para crear refrigerio del participante por numero de documento
-    @PostMapping("/registrar-refrigerio/form")
-    fun createRefrigerioWithNumDocumento(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio, uriComponentsBuilder: ServletUriComponentsBuilder): ResponseEntity<Map<String, String>> {
-        // Crear refrigerio
-        val refrigerio = refrigerioService.createRefrigerioWithQR(dataRequestRefrigerio)
-
-        // Mapear a DataResponseRefrigerio
-        val response: Map<String, String> = mapOf("success" to "Registro exitoso")
+        val response: Map<String, String> = mapOf("success" to "Refrigerio exitoso")
 
         // Retornar respuesta con el nuevo recurso creado
         return ResponseEntity.ok(response)
@@ -224,6 +203,7 @@ class ColaboradorController @Autowired constructor(
             congreso = DataResultCongreso(
                 id = refrigerio.congreso.id!!,
                 nombre = refrigerio.congreso.nombre,
+                codigo = refrigerio.congreso.codigo
             )
         )
         // Retornar respuesta con el refrigerio

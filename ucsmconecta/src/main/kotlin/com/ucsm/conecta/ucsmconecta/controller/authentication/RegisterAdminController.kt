@@ -44,11 +44,13 @@ class RegisterAdminController @Autowired constructor(
                 estado = admin.estado,
                 escuelaProfesional = DataResponseEscuelaProfesional(
                     id = admin.escuelaProfesional.id!!,
-                    nombre = admin.escuelaProfesional.nombre
+                    nombre = admin.escuelaProfesional.nombre,
+                    codigo = admin.escuelaProfesional.codigo
                 )
             ),
             "congreso" to DataResponseCongreso(
                 id = congreso.id!!,
+                codigo = congreso.codigo,
                 nombre = congreso.nombre,
                 fechaInicio = congreso.fechaInicio,
                 fechaFin = congreso.fechaFin,
@@ -56,7 +58,8 @@ class RegisterAdminController @Autowired constructor(
                 numRefrigerios = congreso.numRefrigerios,
                 escuelaProfesional = DataResponseEscuelaProfesional(
                     id = congreso.escuelaProfesional.id!!,
-                    nombre = congreso.escuelaProfesional.nombre
+                    nombre = congreso.escuelaProfesional.nombre,
+                    codigo = congreso.escuelaProfesional.codigo
                 )
             )
         )

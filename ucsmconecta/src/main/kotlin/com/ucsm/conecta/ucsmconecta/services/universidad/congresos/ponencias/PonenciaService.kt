@@ -28,7 +28,7 @@ class PonenciaService @Autowired constructor(
         val ponente: Ponente = ponenteService.getPonenteById(dataRequestPonencia.ponenteId)
 
         // Buscar congreso relacionado
-        val congreso: Congreso = congresoService.getCongresoById(dataRequestPonencia.congresoId)
+        val congreso: Congreso = congresoService.searchByCodigo(dataRequestPonencia.congresoCod)
 
         return ponenciaRepository.save(Ponencia(
             nombre = dataRequestPonencia.nombre,

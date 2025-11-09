@@ -27,13 +27,13 @@ class VotacionService @Autowired constructor(
     @Transactional
     fun createVotacion(@RequestBody @Valid dataRequestVotacion: DataRequestVotacion): Votacion {
         // Buscar participante asociado
-        val participante: Participante = participanteService.getParticipanteById(dataRequestVotacion.participanteId)
+        val participante: Participante = participanteService.searchByNumDocumento(dataRequestVotacion.documentoParticipante)
 
         // Buscar ponencia asociada
         val ponencia: Ponencia = ponenciaService.getPonenciaById(dataRequestVotacion.ponenciaId)
 
         // Buscar congreso asociado
-        val congreso: Congreso = congresoService.getCongresoById(dataRequestVotacion.congresoId)
+        val congreso: Congreso = congresoService.searchByCodigo(dataRequestVotacion.congresoCod)
 
         // Guardar Votacion
         return votacionRepository.save(Votacion(

@@ -57,7 +57,8 @@ class ParticipanteController @Autowired constructor(
             numDocumento = participante.numDocumento,
             escuelaProfesional = DataResponseEscuelaProfesional(
                 id = participante.escuelaProfesional.id!!,
-                nombre = participante.escuelaProfesional.nombre
+                nombre = participante.escuelaProfesional.nombre,
+                codigo = participante.escuelaProfesional.codigo
             ),
             tipoParticipante = DataResponseTipoParticipante(
                 id = participante.tipoParticipante.id!!,
@@ -66,6 +67,7 @@ class ParticipanteController @Autowired constructor(
             congreso = DataResultCongreso(
                 id = participante.congreso.id!!,
                 nombre = participante.congreso.nombre,
+                codigo = participante.congreso.codigo
             ),
             qrCode = participante.qr_code
         )
@@ -95,6 +97,7 @@ class ParticipanteController @Autowired constructor(
                 congreso = DataResultCongreso(
                     id = ponencia.congreso.id!!,
                     nombre = ponencia.congreso.nombre,
+                    codigo = ponencia.congreso.codigo
                 )
             )
         }
@@ -188,7 +191,8 @@ class ParticipanteController @Autowired constructor(
             ),
             congreso = DataResultCongreso(
                 id = votacion.congreso.id!!,
-                nombre = votacion.congreso.nombre
+                nombre = votacion.congreso.nombre,
+                codigo = votacion.congreso.codigo
             )
         )
 
@@ -229,7 +233,8 @@ class ParticipanteController @Autowired constructor(
                 ),
                 congreso = DataResultCongreso(
                     id = votacion.congreso.id!!,
-                    nombre = votacion.congreso.nombre
+                    nombre = votacion.congreso.nombre,
+                    codigo = votacion.congreso.codigo
                 )
             )
         }

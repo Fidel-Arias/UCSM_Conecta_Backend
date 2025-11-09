@@ -10,15 +10,17 @@ open class EscuelaProfesional(
     open val id: Long?,
 
     @Column(nullable = false)
-    open var nombre: String
+    open var nombre: String,
+
+    @Column(nullable = false)
+    open var codigo: String
 ) {
     constructor(
-        nombre: String
+        nombre: String,
+        codigo: String
     ) : this(
         null,
-        nombre
+        nombre,
+        codigo
     )
-        override fun toString(): String {
-        return "EscuelaProfesional(id=$id, nombre=$nombre)"
-    }
 }

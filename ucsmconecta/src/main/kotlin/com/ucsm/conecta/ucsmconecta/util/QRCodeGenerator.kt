@@ -13,19 +13,11 @@ object QRCodeGenerator {
     fun generarQR(
         nombres: String,
         numDocumento: String,
-        estado: String,
-        congreso: String,
-        escuelaProfesional: String,
-        tipoParticipante: String
     ): String {
         val qrWriter = QRCodeWriter()
         val contenidoQR = """
             Nombre: $nombres
             Documento: $numDocumento
-            Estado: $estado
-            Congreso: $congreso
-            Escuela: $escuelaProfesional
-            Tipo_Participante: $tipoParticipante
         """.trimIndent()
 
         val hints = mapOf(EncodeHintType.CHARACTER_SET to "UTF-8")

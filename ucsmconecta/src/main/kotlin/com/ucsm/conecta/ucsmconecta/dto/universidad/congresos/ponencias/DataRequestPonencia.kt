@@ -3,6 +3,7 @@ package com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Size
 
 data class DataRequestPonencia(
     @get:NotNull(message = "El 'nombre' es obligatorio")
@@ -13,6 +14,9 @@ data class DataRequestPonencia(
     @get:NotNull(message = "El id del 'ponente' es obligatorio")
     val ponenteId: Long,
 
-    @get:NotNull(message = "El id del 'congreso' es obligatorio")
-    val congresoId: Long
-){}
+    @get:NotNull(message = "El codigo del 'congreso' es obligatorio")
+    @get:NotBlank(message = "El codigo del 'congreso' no puede estar en blanco")
+    @get:NotEmpty(message = "El codigo del 'congreso' no puede estar vacio")
+    @get:Size(min = 8, message = "El codigo es de al menos 8 caracteres")
+    val congresoCod: String
+)

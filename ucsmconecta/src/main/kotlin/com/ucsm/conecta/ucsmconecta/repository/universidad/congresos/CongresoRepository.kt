@@ -6,4 +6,5 @@ import java.util.Optional
 
 interface CongresoRepository: JpaRepository<Congreso, Long> {
     fun findByNombre(nombre: String): Optional<Congreso>
+    fun findByCodigo(codigo: String): Optional<Congreso>
 }

@@ -20,12 +20,12 @@ class RefrigerioService @Autowired constructor(
 ) {
     // Metodo para crear refrigerio
     @Transactional
-    fun createRefrigerioWithQR(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio): Refrigerio {
+    fun createRefrigerio(@RequestBody @Valid dataRequestRefrigerio: DataRequestRefrigerio): Refrigerio {
         // Buscar participante asociado al refrigerio
-        val participante = participanteService.getParticipanteById(dataRequestRefrigerio.participanteId)
+        val participante = participanteService.searchByNumDocumento(dataRequestRefrigerio.documentoParticipante)
 
         // Buscar congreso asociado al refrigerio
-        val congreso = congresoService.getCongresoById(dataRequestRefrigerio.congresoId)
+        val congreso = congresoService.searchByCodigo(dataRequestRefrigerio.congresoCod)
 
         // Validar la cantidad de refrigerios asignados al participante en el congreso
         val refrigeriosAsignados = refrigerioRepository.countByParticipante_IdAndCongreso_Id(participante.id!!, congreso.id!!)

@@ -5,6 +5,7 @@ import java.time.LocalDate
 
 data class DataResponseCongreso(
     val id: Long,
+    val codigo: String,
     val nombre: String,
     val fechaInicio: LocalDate,
     val fechaFin: LocalDate,

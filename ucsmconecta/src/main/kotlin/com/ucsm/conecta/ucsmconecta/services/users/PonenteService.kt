@@ -26,7 +26,7 @@ class PonenteService @Autowired constructor(
         val gradoAcademico = gradoAcademicoService.getGradoAcademicoById(dataRequestPonente.gradoAcademicoId)
 
         // Buscar congreso relacionado
-        val congreso = congresoService.getCongresoById(dataRequestPonente.congresoId)
+        val congreso = congresoService.searchByCodigo(dataRequestPonente.congresoCod)
 
         return ponenteRepository.save(Ponente(
             nombres = dataRequestPonente.nombres,

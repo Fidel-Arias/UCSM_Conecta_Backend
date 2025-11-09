@@ -30,7 +30,8 @@ class EscuelaProfesionalController @Autowired constructor(
         // Se pasan los datos creados a DataResponseEscuelaProfesional para visualizarlos
         val dataResponseEscuelaProfesional: DataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
             id = escuelaProfesional.id!!,
-            nombre = escuelaProfesional.nombre
+            nombre = escuelaProfesional.nombre,
+            codigo = escuelaProfesional.codigo
         )
 
         // Construir la URI del nuevo recurso creado
@@ -53,28 +54,30 @@ class EscuelaProfesionalController @Autowired constructor(
         val dataResponseEscuelaProfesional = escuelasProfesionales.map { escuela ->
             DataResponseEscuelaProfesional(
                 id = escuela.id!!,
-                nombre = escuela.nombre
+                nombre = escuela.nombre,
+                codigo = escuela.codigo
             )
         }
         return ResponseEntity.ok(dataResponseEscuelaProfesional)
     }
 
-    @GetMapping("/{id}")
-    fun getEscuelaProfesionalById(@PathVariable id: Long): ResponseEntity<DataResponseEscuelaProfesional> {
+    @GetMapping("/search/code")
+    fun getEscuelaProfesionalByCodigo(@RequestParam codigo: String): ResponseEntity<DataResponseEscuelaProfesional> {
         // Lógica para obtener una escuela profesional por su ID
-        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchEscuelaProfesionalById(id)
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchByCodigo(codigo)
 
         // Se pasan los datos obtenidos a DataResponseEscuelaProfesional para visualizarlos
         val dataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
             id = escuelaProfesional.id!!,
-            nombre = escuelaProfesional.nombre
+            nombre = escuelaProfesional.nombre,
+            codigo = escuelaProfesional.codigo
         )
 
         // Retornar la respuesta con el código de estado 200 OK y los datos de la escuela profesional
         return ResponseEntity.ok(dataResponseEscuelaProfesional)
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/name")
     fun searchEscuelaProfesionalByNombre(@RequestParam nombre: String): ResponseEntity<DataResponseEscuelaProfesional> {
         // Lógica para buscar una escuela profesional por su nombre
         val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchByNombre(nombre)
@@ -82,7 +85,8 @@ class EscuelaProfesionalController @Autowired constructor(
         // Se pasan los datos obtenidos a DataResponseEscuelaProfesional para visualizarlos
         val dataResponseEscuelaProfesional = DataResponseEscuelaProfesional(
             id = escuelaProfesional.id!!,
-            nombre = escuelaProfesional.nombre
+            nombre = escuelaProfesional.nombre,
+            codigo = escuelaProfesional.codigo
         )
 
         // Retornar la respuesta con el código de estado 200 OK y los datos de la escuela profesional

@@ -12,6 +12,9 @@ open class Congreso(
     @Column(name = "id")
     open val id: Long?,
 
+    @Column(nullable = false)
+    open var codigo: String,
+
     @Column(name = "nombre", nullable = false, length = 255)
     open var nombre: String,
 
@@ -35,6 +38,7 @@ open class Congreso(
     open var escuelaProfesional: EscuelaProfesional
 ) {
     constructor(
+        codigo: String,
         nombre: String,
         fechaInicio: LocalDate,
         fechaFin: LocalDate,
@@ -43,6 +47,7 @@ open class Congreso(
         escuelaProfesional: EscuelaProfesional
     ) : this(
         id = null,
+        codigo = codigo,
         nombre = nombre,
         fechaInicio = fechaInicio,
         fechaFin = fechaFin,
@@ -51,8 +56,4 @@ open class Congreso(
         estado = true,
         escuelaProfesional = escuelaProfesional
     )
-
-    override fun toString(): String {
-        return "Congreso(id=$id, nombre='$nombre', fechaInicio=$fechaInicio, fechaFin=$fechaFin, numAsistencias=$numAsistencias, numRefrigerios=$numRefrigerios, estado=$estado, escuelaProfesional=${escuelaProfesional.id})"
-    }
 }
