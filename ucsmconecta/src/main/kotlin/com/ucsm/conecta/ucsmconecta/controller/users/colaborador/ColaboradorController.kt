@@ -148,7 +148,12 @@ class ColaboradorController @Autowired constructor(
                 horaFinal = bloque.horaFinal,
                 dia = DataResultDia(
                     id = bloque.dia.id!!,
-                    fecha = bloque.dia.fecha
+                    fecha = bloque.dia.fecha,
+                    congreso = DataResultCongreso(
+                        id = bloque.dia.congreso.id!!,
+                        nombre = bloque.dia.congreso.nombre,
+                        codigo = bloque.dia.congreso.codigo
+                    )
                 ),
                 ubicacion = DataResultUbicacion(
                     id = bloque.ubicacion.id!!,

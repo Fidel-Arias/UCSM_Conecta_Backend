@@ -19,6 +19,7 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResult
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.UpdateDataBloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResponseDia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDiaAsistencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataRequestPonencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResponsePonencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
@@ -540,7 +541,12 @@ class AdministradorController @Autowired constructor(
             horaFinal = nuevoBloque.horaFinal,
             dia = DataResultDia(
                 id = nuevoBloque.dia.id!!,
-                fecha = nuevoBloque.dia.fecha
+                fecha = nuevoBloque.dia.fecha,
+                congreso = DataResultCongreso(
+                    id = nuevoBloque.dia.congreso.id!!,
+                    nombre = nuevoBloque.dia.congreso.nombre,
+                    codigo = nuevoBloque.dia.congreso.codigo
+                )
             ),
             ubicacion = DataResultUbicacion(
                 id = nuevoBloque.ubicacion.id!!,
@@ -574,7 +580,12 @@ class AdministradorController @Autowired constructor(
                 horaFinal = bloque.horaFinal,
                 dia = DataResultDia(
                     id = bloque.dia.id!!,
-                    fecha = bloque.dia.fecha
+                    fecha = bloque.dia.fecha,
+                    congreso = DataResultCongreso(
+                        id = bloque.dia.congreso.id!!,
+                        nombre = bloque.dia.congreso.nombre,
+                        codigo = bloque.dia.congreso.codigo
+                    )
                 ),
                 ubicacion = DataResultUbicacion(
                     id = bloque.ubicacion.id!!,
@@ -605,7 +616,12 @@ class AdministradorController @Autowired constructor(
             horaFinal = bloque.horaFinal,
             dia = DataResultDia(
                 id = bloque.dia.id!!,
-                fecha = bloque.dia.fecha
+                fecha = bloque.dia.fecha,
+                congreso = DataResultCongreso(
+                    id = bloque.dia.congreso.id!!,
+                    nombre = bloque.dia.congreso.nombre,
+                    codigo = bloque.dia.congreso.codigo
+                )
             ),
             ubicacion = DataResultUbicacion(
                 id = bloque.ubicacion.id!!,
@@ -927,7 +943,7 @@ class AdministradorController @Autowired constructor(
                 id = asistencia.bloque.id!!,
                 horaInicial = asistencia.bloque.horaInicio,
                 horaFinal = asistencia.bloque.horaFinal,
-                dia = DataResultDia(
+                dia = DataResultDiaAsistencia(
                     id = asistencia.bloque.dia.id!!,
                     fecha = asistencia.bloque.dia.fecha
                 ),
