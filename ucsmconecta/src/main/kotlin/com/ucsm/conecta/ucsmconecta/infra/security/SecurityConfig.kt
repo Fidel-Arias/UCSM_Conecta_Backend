@@ -24,7 +24,7 @@ open class SecurityConfig(
                     //Permitir archivos estáticos y recursos públicos
                 .requestMatchers(
                 "/", "/index.html", "/app.html", "/main.css", "/app.js",
-                "/ws/**", "/topic/**", "/sockjs/**", "/index.html/info").permitAll()
+                "/ws/**", "/topic/**", "/sockjs/**", "/index.html/info", "/qrcodes/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/grados-academicos/**").permitAll()
                     .requestMatchers("/api/escuelas-profesionales/**").permitAll()

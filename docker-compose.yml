@@ -12,6 +12,8 @@ services:
     depends_on:
       ucsmconecta_bd:
         condition: service_healthy
+    volumes:
+      - /var/ucsmconecta/qrcodes:/var/ucsmconecta/qrcodes
   ucsmconecta_bd:
     image: postgres:16
     ports:
