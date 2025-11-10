@@ -1,5 +1,6 @@
 package com.ucsm.conecta.ucsmconecta.infra.errors
 
+import com.ucsm.conecta.ucsmconecta.exceptions.EntityFoundException
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import jakarta.el.MethodNotFoundException
 import jakarta.persistence.EntityNotFoundException
@@ -112,6 +113,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleNotFound(ex: ResourceNotFoundException): ResponseEntity<Map<String, String>> =
         ResponseEntity(mapOf("error" to ex.message!!), HttpStatus.NOT_FOUND)
+
+    // Maneja los errores de recursos ya existentes
+    @ExceptionHandler(EntityFoundException::class)
+    fun handleEntityFound(ex: EntityFoundException): ResponseEntity<Map<String, String>> = ResponseEntity(mapOf("error" to ex.message!!), HttpStatus.FOUND)
 
     // Maneja el error IllegalStateException
     @ExceptionHandler(IllegalStateException::class)
