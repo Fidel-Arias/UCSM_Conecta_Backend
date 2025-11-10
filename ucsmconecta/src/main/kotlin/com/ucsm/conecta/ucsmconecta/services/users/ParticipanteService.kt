@@ -88,7 +88,7 @@ class ParticipanteService @Autowired constructor(
 
     @Transactional
     fun registrarParticipantesManual(@RequestBody @Valid registerParticipanteData: RegisterParticipanteDataforColab, escuelaCod: String, congresoCod: String): Map<String, Any> {
-        if (participanteRepository.existByNumDocumento(registerParticipanteData.numDocumento))
+        if (participanteRepository.existsByNumDocumento(registerParticipanteData.numDocumento))
             throw RuntimeException("Nº de documento existente")
 
         // Buscar las entidades en base al codigo

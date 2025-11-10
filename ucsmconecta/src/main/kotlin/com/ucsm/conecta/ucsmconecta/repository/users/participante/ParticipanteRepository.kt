@@ -25,5 +25,5 @@ interface ParticipanteRepository : JpaRepository<Participante, Long> {
     @Query("SELECT p.numDocumento FROM Participante p")
     fun findAllNumDocumentos(): List<String>
 
-    fun existByNumDocumento(numDocumento: String): Boolean
+    fun existsByNumDocumento(numDocumento: String): Boolean
 }
