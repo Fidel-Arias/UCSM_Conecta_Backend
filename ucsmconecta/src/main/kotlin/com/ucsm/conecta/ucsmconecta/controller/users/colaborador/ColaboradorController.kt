@@ -18,12 +18,14 @@ import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResponseCo
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.colaborador.DataResultColaborador
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResultParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
+import com.ucsm.conecta.ucsmconecta.dto.users.register.participante.RegisterParticipanteDataforColab
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.asistencia.AsistenciaService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques.BloqueService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.refrigerio.RefrigerioService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ubicacion.UbicacionService
 import com.ucsm.conecta.ucsmconecta.services.users.ColaboradorService
 import com.ucsm.conecta.ucsmconecta.services.users.CongresoColaboradorService
+import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -44,8 +46,19 @@ class ColaboradorController @Autowired constructor(
     private val ubicacionService: UbicacionService,
     private val asistenciaService: AsistenciaService,
     private val refrigerioService: RefrigerioService,
-    private val bloqueService: BloqueService
+    private val bloqueService: BloqueService,
+    private val participanteService: ParticipanteService
 ){
+    /******** ENDPOINTS PARA LA ENTIDAD PARTICIPANTE ********/
+    @PostMapping("/registrar-participante")
+    fun registrarParticipante(
+        @RequestBody @Valid registerParticipanteData: RegisterParticipanteDataforColab,
+        @RequestParam("escuelaCod") escuelaCod: String,
+        @RequestParam("congresoCod") congresoCod: String
+    ): ResponseEntity<Map<String, Any>> {
+        val resultado = participanteService.registrarParticipantesManual(registerParticipanteData, escuelaCod, congresoCod)
+        return ResponseEntity.ok(resultado)
+    }
     /******** ENDPOINTS PARA LA ENTIDAD COLABORADOR ********/
     // Endpoint para obtener un colaborador por su id
     @GetMapping("/profile/{id}")

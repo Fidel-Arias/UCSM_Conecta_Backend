@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
-data class RegisterParticipanteData(
+data class RegisterParticipanteDataforColab(
     @get:NotNull(message = "El 'nombre' es obligatorio")
     @get:NotEmpty(message = "El 'nombre' no puede estar vacio")
     @get:NotBlank(message = "El 'nombre' no puede estar en blanco")
@@ -35,13 +35,5 @@ data class RegisterParticipanteData(
     val email: String,
 
     @get:NotNull(message = "El campo 'tipo de participante' es obligatorio")
-    @get:NotEmpty(message = "El campo 'tipo de participante' no puede estar vacio")
-    @get:NotBlank(message = "El campo 'tipo de participante' no puede estar en blanco")
-    val tipoParticipante: String,
-
-    @get:NotNull(message = "El 'estado' es obligatorio")
-    @get:NotEmpty(message = "El 'estado' no puede estar vacio")
-    @get:NotBlank(message = "El 'estado' no puede estar en blanco")
-    @get:Size(min = 1, max = 17, message = "El 'estado' debe tener entre 1 y 14 caracteres")
-    val estado: String,
+    val tipoParticipanteId: Long,
 )

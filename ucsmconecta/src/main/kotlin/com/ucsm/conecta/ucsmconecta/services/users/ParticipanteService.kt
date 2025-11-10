@@ -1,9 +1,12 @@
 package com.ucsm.conecta.ucsmconecta.services.users
 
+import com.ucsm.conecta.ucsmconecta.domain.universidad.carrera.EscuelaProfesional
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.Congreso
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.TipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.register.participante.UpdateDataParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.ParticipanteBusquedaDTO
+import com.ucsm.conecta.ucsmconecta.dto.users.register.participante.RegisterParticipanteDataforColab
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.services.universidad.carrera.EscuelaProfesionalService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
@@ -51,7 +54,7 @@ class ParticipanteService @Autowired constructor(
             // Buscar y verificar que exista el Tipo Participante
             val tipoParticipante: TipoParticipante = tipoParticipanteService.searchByDescripcion(p.tipoParticipante)
 
-            // ✅ Generar QR para este participante
+            // Generar QR para este participante
             val qrPath = QRCodeGenerator.generarQR(
                 nombres = "${p.nombres} ${p.apPaterno} ${p.apMaterno}",
                 numDocumento = p.numDocumento,
@@ -83,9 +86,44 @@ class ParticipanteService @Autowired constructor(
         )
     }
 
+    @Transactional
+    fun registrarParticipantesManual(@RequestBody @Valid registerParticipanteData: RegisterParticipanteDataforColab, escuelaCod: String, congresoCod: String): Map<String, Any> {
+        if (participanteRepository.existByNumDocumento(registerParticipanteData.numDocumento))
+            throw RuntimeException("Nº de documento existente")
+
+        // Buscar las entidades en base al codigo
+        val tipoParticipante: TipoParticipante = tipoParticipanteService.searchById(registerParticipanteData.tipoParticipanteId)
+
+        val escuelaProfesional: EscuelaProfesional = escuelaProfesionalService.searchByCodigo(escuelaCod)
+
+        val congreso: Congreso = congresoService.searchByCodigo(congresoCod)
+
+        // Generar QR para este participante
+        val qrPath = QRCodeGenerator.generarQR(
+            nombres = "${registerParticipanteData.nombres} ${registerParticipanteData.apPaterno} ${registerParticipanteData.apMaterno}",
+            numDocumento = registerParticipanteData.numDocumento,
+        )
+
+        participanteRepository.save(Participante(
+            nombres = registerParticipanteData.nombres,
+            apPaterno = registerParticipanteData.apPaterno,
+            apMaterno = registerParticipanteData.apMaterno,
+            numDocumento = registerParticipanteData.numDocumento,
+            email = registerParticipanteData.email,
+            tipoParticipante = tipoParticipante,
+            escuelaProfesional = escuelaProfesional,
+            congreso = congreso,
+            estado = "EN PROCESO",
+            qr_code = qrPath
+        ))
+        return mapOf(
+            "success" to "registro exitoso"
+        )
+    }
+
     // Metodo para validar si se agrega o no a la base de datos segun su estado
     fun verificarEstado(estado: String): String {
-        return if (estado == "3PG") "MATRICULADO" else "EN PROCESO"
+        return if (estado == "FINALIZADO") "MATRICULADO" else "EN PROCESO"
     }
 
     // Metodo para buscar participante por su numero de documento
