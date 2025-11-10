@@ -90,7 +90,7 @@ class ParticipanteService @Autowired constructor(
 
     // Metodo para buscar participante por su numero de documento
     fun searchByNumDocumento(numDocumento: String): Participante = participanteRepository.findByNumDocumento(numDocumento)
-        .orElseThrow { ResourceNotFoundException("Participante no encontrado por su numero de documento $numDocumento") }
+        .orElseThrow { ResourceNotFoundException("Nº de documento $numDocumento desconocido") }
 
     // Metodo para buscar participantes por nombres
     fun searchByNombres(nombres: String): List<ParticipanteBusquedaDTO> = participanteRepository.findByNombres(nombres)
@@ -112,7 +112,7 @@ class ParticipanteService @Autowired constructor(
 
     // Metodo para obtener un participante por su ID
     fun getParticipanteById(id: Long): Participante = participanteRepository.findById(id)
-        .orElseThrow { ResourceNotFoundException("Participante con id $id no encontrado") }
+        .orElseThrow { ResourceNotFoundException("Participante no encontrado") }
 
     // Metodo para actualizar el estado de un participante por su ID
     @Transactional
