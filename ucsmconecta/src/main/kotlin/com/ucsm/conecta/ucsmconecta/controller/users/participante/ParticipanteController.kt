@@ -1,13 +1,15 @@
 package com.ucsm.conecta.ucsmconecta.controller.users.participante
 
-import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ponencias.Ponencia
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques.Bloque
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.valoracion.Comentario
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.valoracion.Votacion
 import com.ucsm.conecta.ucsmconecta.domain.users.participante.Participante
 import com.ucsm.conecta.ucsmconecta.dto.universidad.carrera.DataResponseEscuelaProfesional
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.DataResultCongreso
-import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResponsePonencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataResultBloque
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.dia.DataResultDiaAsistencia
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ponencias.DataResultPonencia
+import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.ubicacion.DataResultUbicacion
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.valoracion.comentarios.DataRequestComentario
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.valoracion.comentarios.DataResponseComentario
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.valoracion.votaciones.DataRequestVotacion
@@ -16,7 +18,7 @@ import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseP
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseTipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResultParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
-import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.ponencias.PonenciaService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques.BloqueService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.valoracion.ComentarioService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.valoracion.VotacionService
 import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
@@ -24,23 +26,28 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.simp.SimpMessagingTemplate
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.time.Instant
+import java.util.Map
+
 
 @RestController
-@RequestMapping("/api/participantes")
+@RequestMapping("/api/participante")
 class ParticipanteController @Autowired constructor(
     private val participanteService: ParticipanteService,
     private val comentarioService: ComentarioService,
     private val votacionService: VotacionService,
     private val messagingTemplate: SimpMessagingTemplate,
-    private val ponenciaService: PonenciaService
+    private val bloqueService: BloqueService
     ) {
+    /******** ENDPOINTS PARA OBTENER LA FECHA ********/
+    @GetMapping("/time")
+    fun getServerTime(): MutableMap<String?, String?> {
+        val now = Instant.now().toString() // siempre UTC
+        print("TIME: $now")
+        return Map.of<String?, String?>("serverTime", now)
+    }
     /******** ENDPOINTS PARA LA ENTIDAD PARTICIPANTE ********/
     // Metodo para obtener un participante por su ID
     @GetMapping("/{id}")
@@ -75,29 +82,36 @@ class ParticipanteController @Autowired constructor(
         return ResponseEntity.ok(dataResponseParticipante)
     }
 
-    /******** ENDPOINTS PARA LA ENTIDAD PONENCIAS ********/
-    // Endpoint para obtener todas las ponencias activas
-    @GetMapping("/ponencias")
-    fun getAllPonencias(): ResponseEntity<List<DataResponsePonencia>> {
-        val ponencias: List<Ponencia> = ponenciaService.getAllPonencias()
+    /******** ENDPOINTS PARA LA ENTIDAD BLOQUE ********/
+    // Endpoint para obtener todos los bloques por dia
+    @GetMapping("/bloques")
+    fun getAllBloquesByDia(): ResponseEntity<List<DataResultBloque>> {
+        val bloques: List<Bloque> = bloqueService.getAllBloquesByDia()
 
-        if (ponencias.isEmpty())
+        if (bloques.isEmpty())
             return ResponseEntity.noContent().build()
 
-        val dataResponsePonencias = ponencias.map { ponencia ->
-            DataResponsePonencia(
-                id = ponencia.id!!,
-                nombre = ponencia.nombre,
-                estado = ponencia.estado,
-                ponente = DataResultPonente(
-                    id = ponencia.ponente.id!!,
-                    nombres = ponencia.ponente.nombres,
-                    apellidos = ponencia.ponente.apellidos,
+        val dataResponsePonencias = bloques.map { bloque ->
+            DataResultBloque(
+                id = bloque.id!!,
+                horaInicial = bloque.horaInicio,
+                horaFinal = bloque.horaFinal,
+                dia = DataResultDiaAsistencia(
+                    id = bloque.dia.id!!,
+                    fecha = bloque.dia.fecha,
                 ),
-                congreso = DataResultCongreso(
-                    id = ponencia.congreso.id!!,
-                    nombre = ponencia.congreso.nombre,
-                    codigo = ponencia.congreso.codigo
+                ubicacion = DataResultUbicacion(
+                    id = bloque.ubicacion.id!!,
+                    nombre = bloque.ubicacion.nombre
+                ),
+                ponencia = DataResultPonencia(
+                    id = bloque.ponencia.id!!,
+                    nombre = bloque.ponencia.nombre,
+                    ponente = DataResultPonente(
+                        id = bloque.ponencia.ponente.id!!,
+                        nombres = bloque.ponencia.ponente.nombres,
+                        apellidos = bloque.ponencia.ponente.apellidos
+                    )
                 )
             )
         }

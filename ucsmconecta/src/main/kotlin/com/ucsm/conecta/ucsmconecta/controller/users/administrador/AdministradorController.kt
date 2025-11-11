@@ -950,6 +950,15 @@ class AdministradorController @Autowired constructor(
                 ubicacion = DataResultUbicacion(
                     id = asistencia.bloque.ubicacion.id!!,
                     nombre = asistencia.bloque.ubicacion.nombre
+                ),
+                ponencia = DataResultPonencia(
+                    id = asistencia.bloque.ponencia.id!!,
+                    nombre = asistencia.bloque.ponencia.nombre,
+                    ponente = DataResultPonente(
+                        id = asistencia.bloque.ponencia.ponente.id!!,
+                        nombres = asistencia.bloque.ponencia.ponente.nombres,
+                        apellidos = asistencia.bloque.ponencia.ponente.apellidos
+                    )
                 )
             ),
             congreso = DataResultCongreso(

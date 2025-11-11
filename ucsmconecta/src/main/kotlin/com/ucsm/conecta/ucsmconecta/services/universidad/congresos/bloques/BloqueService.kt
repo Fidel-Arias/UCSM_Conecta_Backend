@@ -77,8 +77,14 @@ class BloqueService @Autowired constructor(
     // Método para obtener todos los bloques
     fun getAllBloques(): List<Bloque> = bloqueRepository.findAllByOrderByIdAsc()
 
-    // Metodo para obtener todos los bloques segun el dia actual
     fun getAllBloquesByDia(): List<Bloque> {
+        val diaActual = LocalDate.now()
+        return bloqueRepository.findAllByOrderByIdAsc()
+            .filter { it.dia.fecha == diaActual  }
+    }
+
+    // Metodo para obtener todos los bloques segun el dia actual
+    fun getAllBloquesByDiaAndHour(): List<Bloque> {
         val diaActual = LocalDate.now()
         val horaActual = LocalTime.now()
         return bloqueRepository.findAllByOrderByIdAsc()
