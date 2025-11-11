@@ -13,5 +13,5 @@ data class DataResponseParticipante(
     val tipoParticipante: DataResponseTipoParticipante?,
     val escuelaProfesional: DataResponseEscuelaProfesional?,
     val congreso: DataResultCongreso?,
-    private val qrCode: String?
+    val qrCode: String
 )

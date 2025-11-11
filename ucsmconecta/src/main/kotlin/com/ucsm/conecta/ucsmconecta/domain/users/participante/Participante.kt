@@ -43,7 +43,7 @@ open class Participante(
     open var estado: String,
 
     @Column(nullable = true)
-    open var qr_code: String? = null,
+    open var qr_code: String,
 ) {
     constructor(
         nombres: String,
@@ -55,7 +55,7 @@ open class Participante(
         escuelaProfesional: EscuelaProfesional,
         congreso: Congreso,
         estado: String,
-        qr_code: String?
+        qr_code: String
     ) : this(
         null,
         nombres,
