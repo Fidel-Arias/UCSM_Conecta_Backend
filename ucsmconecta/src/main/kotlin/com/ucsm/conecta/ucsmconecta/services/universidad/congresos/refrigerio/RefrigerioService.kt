@@ -5,18 +5,22 @@ import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.refrigerio.DataReq
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
 import com.ucsm.conecta.ucsmconecta.repository.universidad.congresos.refrigerio.RefrigerioRepository
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.CongresoService
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.dia.DiaService
 import com.ucsm.conecta.ucsmconecta.services.users.ParticipanteService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestBody
+import java.time.LocalDate
+import java.time.ZoneId
 
 @Service
 class RefrigerioService @Autowired constructor(
     private val refrigerioRepository: RefrigerioRepository,
     private val participanteService: ParticipanteService,
-    private val congresoService: CongresoService
+    private val congresoService: CongresoService,
+    private val diaService: DiaService
 ) {
     // Metodo para crear refrigerio
     @Transactional
@@ -27,11 +31,24 @@ class RefrigerioService @Autowired constructor(
         // Buscar congreso asociado al refrigerio
         val congreso = congresoService.searchByCodigo(dataRequestRefrigerio.congresoCod)
 
-        // Validar la cantidad de refrigerios asignados al participante en el congreso
-        val refrigeriosAsignados = refrigerioRepository.countByParticipante_IdAndCongreso_Id(participante.id!!, congreso.id!!)
+        // Obtener fecha actual del servidor (no del cliente)
+        val fechaHoy = LocalDate.now(ZoneId.of("America/Lima")) // zona horaria local
 
-        if (refrigeriosAsignados >= congreso.numRefrigerios) {
-            throw IllegalStateException("Límite alcanzado")
+        // Validar la cantidad de refrigerios asignados al participante en el congreso
+        val refrigeriosHoy = refrigerioRepository.countByParticipante_IdAndCongreso_IdAndFecha(participante.id!!, congreso.id!!, fechaHoy)
+
+        if (refrigeriosHoy >= 1) {
+            throw IllegalStateException("Límite alcanzado por hoy")
+        }
+
+        // Validar que no supere el total de refrigerios permitidos por congreso
+        val totalRefrigerios = refrigerioRepository.countByParticipante_IdAndCongreso_Id(
+            participante.id!!,
+            congreso.id!!
+        )
+
+        if (totalRefrigerios >= congreso.numRefrigerios) {
+            throw IllegalStateException("Límite de refrigerios del congreso alcanzado")
         }
 
         // Crear refrigerio

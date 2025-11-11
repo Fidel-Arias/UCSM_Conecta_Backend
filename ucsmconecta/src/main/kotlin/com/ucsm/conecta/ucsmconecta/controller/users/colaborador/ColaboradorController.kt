@@ -149,7 +149,7 @@ class ColaboradorController @Autowired constructor(
     /******** ENDPOINTS PARA LA ENTIDAD BLOQUE ********/
     @GetMapping("/bloques")
     fun getAllBloquesByDia(): ResponseEntity<List<DataResponseBloque>> {
-        val bloques: List<Bloque> = bloqueService.getAllBloquesByDia()
+        val bloques: List<Bloque> = bloqueService.getAllBloquesByDiaAndHour()
 
         if (bloques.isEmpty())
             return ResponseEntity.noContent().build()
