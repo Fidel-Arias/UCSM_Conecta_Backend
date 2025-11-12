@@ -18,6 +18,7 @@ import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseP
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResponseTipoParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.participante.DataResultParticipante
 import com.ucsm.conecta.ucsmconecta.dto.users.profile.ponentes.DataResultPonente
+import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.asistencia.AsistenciaService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques.BloqueService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.valoracion.ComentarioService
 import com.ucsm.conecta.ucsmconecta.services.universidad.congresos.valoracion.VotacionService
@@ -39,13 +40,13 @@ class ParticipanteController @Autowired constructor(
     private val comentarioService: ComentarioService,
     private val votacionService: VotacionService,
     private val messagingTemplate: SimpMessagingTemplate,
-    private val bloqueService: BloqueService
+    private val bloqueService: BloqueService,
+    private val asistenciaService: AsistenciaService
     ) {
     /******** ENDPOINTS PARA OBTENER LA FECHA ********/
     @GetMapping("/time")
     fun getServerTime(): MutableMap<String?, String?> {
         val now = Instant.now().toString() // siempre UTC
-        print("TIME: $now")
         return Map.of<String?, String?>("serverTime", now)
     }
     /******** ENDPOINTS PARA LA ENTIDAD PARTICIPANTE ********/
@@ -80,6 +81,16 @@ class ParticipanteController @Autowired constructor(
         )
 
         return ResponseEntity.ok(dataResponseParticipante)
+    }
+
+    @GetMapping("/contar")
+    fun contarAsistencias(
+        @RequestParam numDocumento: String,
+        @RequestParam congresoCod: String
+    ): ResponseEntity<kotlin.collections.Map<String, Any>?> {
+        val resultado = asistenciaService.contarAsistencias(numDocumento, congresoCod)
+
+        return ResponseEntity.ok(resultado)
     }
 
     /******** ENDPOINTS PARA LA ENTIDAD BLOQUE ********/

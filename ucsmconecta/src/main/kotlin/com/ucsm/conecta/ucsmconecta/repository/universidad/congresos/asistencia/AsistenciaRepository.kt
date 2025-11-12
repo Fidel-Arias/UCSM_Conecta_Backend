@@ -10,4 +10,9 @@ interface AsistenciaRepository: JpaRepository<Asistencia, Long> {
         bloqueId: Long,
         congresoId: Long
     ): Boolean
+
+    fun countByParticipanteNumDocumentoAndCongresoCodigo(
+        participanteNumDocumento: String,
+        congresoCodigo: String
+    ): Int
 }

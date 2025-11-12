@@ -69,6 +69,18 @@ class AsistenciaService @Autowired constructor(
         ))
     }
 
+    fun contarAsistencias(numDocumento: String, congresoCod: String): Map<String, Any> {
+        // Buscar si existe participante
+        val participante = participanteService.searchByNumDocumento(numDocumento)
+
+        // Cuenta el total de asistencias
+        val totalAsistencias = asistenciaRepository.countByParticipanteNumDocumentoAndCongresoCodigo(numDocumento, congresoCod)
+
+        return mapOf(
+            "totalAsistencias" to totalAsistencias
+        )
+    }
+
     // Metodo para obtener la asistencia por id
     fun getAsistenciaById(id: Long) = asistenciaRepository.findById(id).
             orElseThrow { ResourceNotFoundException("Asistencia con id $id no encontrado") }
