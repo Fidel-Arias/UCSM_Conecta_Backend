@@ -1,6 +1,7 @@
 package com.ucsm.conecta.ucsmconecta.services.universidad.congresos.bloques
 
 import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.bloques.Bloque
+import com.ucsm.conecta.ucsmconecta.domain.universidad.congresos.ubicacion.Ubicacion
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.DataRequestBloque
 import com.ucsm.conecta.ucsmconecta.dto.universidad.congresos.bloques.UpdateDataBloque
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
@@ -89,6 +90,15 @@ class BloqueService @Autowired constructor(
         val horaActual = LocalTime.now()
         return bloqueRepository.findAllByOrderByIdAsc()
             .filter { it.dia.fecha == diaActual && (horaActual.isBefore(it.horaFinal.plusMinutes(10))) }
+    }
+
+    // Metodo para obtener los bloques por Dia, hora y Ubicacion
+    fun getALlBloquesByDiaAndHourAndUbicacion(ubicacionId: Long): List<Bloque> {
+        val diaActual = LocalDate.now()
+        val horaActual = LocalTime.now()
+        val ubicacion: Ubicacion = ubicacionService.getUbicacionById(ubicacionId)
+        return bloqueRepository.findAllByOrderByIdAsc()
+            .filter { it.dia.fecha == diaActual && it.ubicacion.id == ubicacion.id && (horaActual.isBefore(it.horaFinal.plusMinutes(10))) }
     }
 
     // Metodo para eliminar un bloque por su ID
