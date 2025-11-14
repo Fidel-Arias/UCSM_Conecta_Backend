@@ -27,8 +27,10 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.nio.file.AccessDeniedException
 import java.time.Instant
 import java.util.Map
 
@@ -53,8 +55,22 @@ class ParticipanteController @Autowired constructor(
     // Metodo para obtener un participante por su ID
     @GetMapping("/{id}")
     fun getParticipanteById(@PathVariable id: Long): ResponseEntity<DataResponseParticipante> {
+        // 1. Obtener el nombre de usuario (numDocumento/email) del contexto de seguridad
+        val authentication = SecurityContextHolder.getContext().authentication
+        val usernameAutenticado = (authentication.principal as String)
         // Buscar el participante por ID
         val participante: Participante = participanteService.getParticipanteById(id)
+
+        // 3. VERIFICACIÓN DE CONTROL DE ACCESO (La Clave de la Solución IDOR)
+        // Se asume que el ID solicitado SÓLO debe ser accesible si el usuario autenticado tiene el mismo numDocumento o es un ADMIN.
+        // **Nota:** Para administradores y colaboradores, se puede hacer una excepción, ya que tienen permisos para ver a todos.
+        val esAdmin = authentication.authorities.any { it.authority == "ADMIN" }
+
+        // Si no es Admin/Colaborador, debe ser su propio ID de documento
+        if (!esAdmin && participante.numDocumento != usernameAutenticado) {
+            // Lanza una excepción de acceso denegado (403 Forbidden)
+            throw AccessDeniedException("Acceso denegado. Un participante solo puede acceder a su propia información.")
+        }
 
         val dataResponseParticipante = DataResponseParticipante(
             id = participante.id!!,

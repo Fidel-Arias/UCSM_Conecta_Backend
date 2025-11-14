@@ -2,8 +2,6 @@ package com.ucsm.conecta.ucsmconecta.infra.errors
 
 import com.ucsm.conecta.ucsmconecta.exceptions.EntityFoundException
 import com.ucsm.conecta.ucsmconecta.exceptions.ResourceNotFoundException
-import jakarta.el.MethodNotFoundException
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,12 +12,35 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.NoHandlerFoundException
+import java.time.Instant
 import java.time.LocalDateTime
 
 @ControllerAdvice
 class GlobalExceptionHandler {
+
+    /**
+     * Maneja AccessDeniedException, generalmente lanzada por el framework de seguridad
+     * (o manualmente, como en el caso de la verificación IDOR) cuando el usuario
+     * no tiene permiso para realizar una acción.
+     */
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleAccessDeniedException(
+        ex: AccessDeniedException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now().toString(),
+            status = HttpStatus.FORBIDDEN.value(),
+            error = "Forbidden",
+            message = ex.message ?: "Acceso denegado. No tiene permisos para este recurso.",
+            path = request.getDescription(false).replace("uri=", "") // Limpiar la URI
+        )
+        // Retorna HTTP 403 Forbidden
+        return ResponseEntity(errorResponse, HttpStatus.FORBIDDEN)
+    }
     // ⚠️ Manejo de rutas inexistentes (404)
     @ExceptionHandler(NoHandlerFoundException::class)
     fun handleNotFound(ex: NoHandlerFoundException): ResponseEntity<Map<String, Any>> {
@@ -133,3 +154,14 @@ class GlobalExceptionHandler {
     }
 
 }
+
+/**
+ * Definición de la estructura de la respuesta de error para el cliente.
+ */
+data class ErrorResponse(
+    val timestamp: String,
+    val status: Int,
+    val error: String,
+    val message: String,
+    val path: String
+)
